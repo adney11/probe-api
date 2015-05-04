@@ -4,13 +4,11 @@
 
 #include <json\json.h>
 
-#include <iostream>
-
 using namespace std;
 
 //------------------------------------------------------
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
 	const string config_doc = R"zzz(
 // Configuration options
@@ -38,7 +36,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		// report to the user the failure and their locations in the document.
 		cout << "Failed to parse configuration\n"
 			<< reader.getFormattedErrorMessages();
-		return 0;
+		return 1;
 	}
 
 	// Get the value of the member of root named 'encoding', return 'UTF-8' if there is no
