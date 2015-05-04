@@ -1,4 +1,4 @@
-// Created by Sergey Kolomenkin
+// This file is created by Sergey Kolomenkin
 
 #include "stdafx.h"
 
@@ -7,27 +7,27 @@
 /// If defined, indicates that the source file is amalgated
 /// to prevent private header inclusion.
 #define JSON_IS_AMALGAMATION
-#include "version.h"
-#include "config.h"
-#include "forwards.h"
-#include "features.h"
-#include "value.h"
-#include "reader.h"
-#include "writer.h"
-#include "assertions.h"
+#include <json/version.h>
+#include <json/config.h>
+#include <json/forwards.h>
+#include <json/features.h>
+#include <json/value.h>
+#include <json/reader.h>
+#include <json/writer.h>
+#include <json/assertions.h>
 #endif //ifndef JSON_AMALGATED_H_INCLUDED
 
 // MSVS fix:
 #undef min
 #undef max
 
-#include "json_tool.h"
-#include "json_valueiterator.inl"
+#include <json/json_tool.h>
+#include <json/json_valueiterator.inl>
 
 //------------------------------------------------------
 
-#include "json_value.cpp"
-#include "json_reader.cpp"
-#include "json_writer.cpp"
+#include <json/json_value.cpp>
+#include <json/json_reader.cpp>
+#include <json/json_writer.cpp>
 
 //------------------------------------------------------
