@@ -4,6 +4,14 @@
 *.ipch
 *.opensdf
 
+# MSVS compiled files
+Intermediate
+ipch
+*.ilk
+*.pdb
+*.idb
+*.tlog
+
 # Local user MSVC files
 *.user
 
