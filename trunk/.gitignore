@@ -1,6 +1,11 @@
-# Auto-created MSVC files
+# Auto-generated MSVC files
 *.suo
 *.sdf
+*.ipch
+*.opensdf
+
+# Local user MSVC files
+*.user
 
 # Compiled Object files
 *.slo
