@@ -4,3 +4,30 @@ https://www.openssl.org/source/
 https://www.openssl.org/source/openssl-1.0.2a.tar.gz
 
 Folders include, ssl, util should go directly at this level!
+
+=============================
+HOW TO BUILD OpenSSL:
+http://p-nand-q.com/programming/windows/building_openssl_with_visual_studio_2013.html
+
+You need to install Perl. I used ActivePerl 5.16.3 for Windows (x86):
+http://www.activestate.com/activeperl/downloads/thank-you?dl=http://downloads.activestate.com/ActivePerl/releases/5.20.2.2001/ActivePerl-5.20.2.2001-MSWin32-x64-298913.msi
+
+Building the 32-bit version
+
+    Open CMD.EXE in the directory C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin
+    Run vcvars32.bat
+    Change to the source directory, for example C:\openssl-src-32
+    Run perl Configure VC-WIN32 --prefix=C:\Build-OpenSSL-VC-32. This will make C:\Build-OpenSSL-VC-32 your output directory; it should be fairly obvious how you can change that.
+    Run ms\do_ms
+    Run nmake -f ms\ntdll.mak
+    Run nmake -f ms\ntdll.mak install
+    Optional: I copy the PDB files from C:\openssl-src-32\out32dll to the output folder C:\Build-OpenSSL-VC-32, but that may be just me.
+
+    Note: you can stop reading here if you only need the release build. The next few steps show you how to build the debug binaries as well.
+
+    Run perl Configure debug-VC-WIN32 --prefix=C:\Build-OpenSSL-VC-32-dbg
+    Run ms\do_ms
+    Run nmake -f ms\ntdll.mak
+    Run nmake -f ms\ntdll.mak install
+    Optional: I copy the PDB files from C:\openssl-src-32\out32dll.dbg to the output folder C:\Build-OpenSSL-VC-32-dbg, but that may be just me.
+

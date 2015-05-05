@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="common">
-      <UniqueIdentifier>{55da7119-268e-487f-8784-622030e041e8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="jsoncpp">
-      <UniqueIdentifier>{4482cc0a-a13b-498b-81ee-a9590c5b20f8}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -31,9 +25,6 @@
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\json\json_amalgamation.cpp">
-      <Filter>jsoncpp</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

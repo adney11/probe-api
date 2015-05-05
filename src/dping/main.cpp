@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 
-#include <json\json.h>
+//#include <json\json.h>
 
 #include <iostream>
 
@@ -12,6 +12,7 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
+#if 0
 	const string config_doc = R"zzz(
 // Configuration options
 {
@@ -58,7 +59,7 @@ int main(int argc, char* argv[])
 
 	// And you can write to a stream, using the StyledWriter automatically.
 	cout << root["plug-ins"] << endl;
-
+#endif
 	return 0;
 }
 

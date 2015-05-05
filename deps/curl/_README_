@@ -3,4 +3,4 @@ This folder should contain unpacked cURL project:
 http://curl.haxx.se/download.html
 http://curl.haxx.se/download/curl-7.42.1.zip
 
-Folders lib, src, include should go directly at this level!
+Folders include, lib, src should go directly at this level!
