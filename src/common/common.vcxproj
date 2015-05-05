@@ -24,6 +24,10 @@
     <ClInclude Include="HttpRequest.h" />
     <ClInclude Include="ParseReply.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="version.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="VerInfo.ver" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DDB11010-0F0D-46ab-8378-CC85ED9FDA7E}</ProjectGuid>
