@@ -2,6 +2,10 @@
 #include "stdafx.h"
 #include "ParseReply.h"
 
+#if _MSC_VER > 1000
+#pragma comment (lib, "jsoncpp.lib")
+#endif // _MSC_VER > 1000
+
 //------------------------------------------------------
 
 
