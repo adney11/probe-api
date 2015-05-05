@@ -65,10 +65,10 @@
     <ClCompile Include="src\curlpp\internal\SList.cpp">
       <Filter>Source Files\internal</Filter>
     </ClCompile>
-    <ClCompile Include="src\utilspp\singleton\LifetimeLibrary.cpp">
+    <ClCompile Include="src\utilspp\LifetimeLibrary.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
-    <ClCompile Include="src\utilspp\singleton\PrivateMembers.cpp">
+    <ClCompile Include="src\utilspp\PrivateMembers.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
   </ItemGroup>
