@@ -1,3 +1,6 @@
+# External dependencies
+deps
+
 # Auto-generated MSVC files
 *.suo
 *.sdf
@@ -15,6 +18,9 @@ ipch
 
 # Local user MSVC files
 *.user
+
+# Incredibuild files
+*.ib_preset
 
 # Compiled Object files
 *.slo
