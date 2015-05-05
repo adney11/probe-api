@@ -1,0 +1,6 @@
+This folder should contain unpacked jsoncpp project:
+
+https://github.com/open-source-parsers/jsoncpp/releases
+https://github.com/open-source-parsers/jsoncpp/archive/0.10.2.zip
+
+Folders src, include should go directly at this level!

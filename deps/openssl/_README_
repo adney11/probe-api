@@ -1,0 +1,6 @@
+This folder should contain unpacked openSSL project:
+
+https://www.openssl.org/source/
+https://www.openssl.org/source/openssl-1.0.2a.tar.gz
+
+Folders include, ssl, util should go directly at this level!

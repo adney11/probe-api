@@ -11,6 +11,7 @@ ipch
 *.pdb
 *.idb
 *.tlog
+*.exp
 
 # Local user MSVC files
 *.user
