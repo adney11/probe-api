@@ -6,14 +6,53 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include <string>
+#include <list>
+
 //------------------------------------------------------
 
+class HttpRequester
+{
+public:
+	HttpRequester();
+	~HttpRequester();
 
+public:
+	struct Request
+	{
+		enum HTTP_METHOD
+		{
+			HTTP_GET,
+			//HTTP_POST,
+		};
+		HTTP_METHOD		eMethod;
+		std::string		sUrl;
+		//std::string		sBody;
 
+		std::list<std::pair<std::string, std::string>> headers;
+		std::string		sUserAgent;
+		std::string		sReferer;
 
+		int				nHttpTimeoutSec;
+		bool			bKnownBadSslCertificate;
 
+		Request() : eMethod(HTTP_GET), nHttpTimeoutSec(5*60), bKnownBadSslCertificate(false)
+		{}
+	};
 
+	struct Reply
+	{
+		bool			bSucceeded;
+		int				nHttpCode;
+		std::string		sBody;
 
+		Reply() : bSucceeded(false), nHttpCode(0)
+		{}
+	};
+
+public:
+	Reply DoRequest(const Request& requestInfo);
+};
 
 //------------------------------------------------------
 #endif //ifndef _HTTPREQUEST_H_UID000003466406882C
