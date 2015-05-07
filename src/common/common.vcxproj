@@ -21,6 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
+    <ClInclude Include="config.h" />
     <ClInclude Include="HttpRequest.h" />
     <ClInclude Include="ParseReply.h" />
     <ClInclude Include="stdafx.h" />

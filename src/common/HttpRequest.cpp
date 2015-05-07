@@ -40,11 +40,11 @@ HttpRequester::~HttpRequester()
 	}
 	catch (curlpp::LogicError& e)
 	{
-		cerr << "EXCEPTION inside of " << __FUNCTION__ << ": " << e.what() << endl;
+		cerr << "EXCEPTION was catched in " << __FUNCTION__ << ": " << e.what() << endl;
 	}
 	catch (curlpp::RuntimeError& e)
 	{
-		cerr << "EXCEPTION inside of " << __FUNCTION__ << ": " << e.what() << endl;
+		cerr << "EXCEPTION was catched in " << __FUNCTION__ << ": " << e.what() << endl;
 	}
 }
 
@@ -95,13 +95,22 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 
 		if (info.bKnownBadSslCertificate)
 		{
-			req.setOpt(new SslVerifyHost(false));
+			req.setOpt(new SslVerifyHost(false));	// SslVerifyHost does not support "1" value
 		}
 
-		req.setOpt(new UserAgent(info.sUserAgent));
-		req.setOpt(new Referer(info.sReferer));
+		if (!info.sUserAgent.empty())
+		{
+			req.setOpt(new UserAgent(info.sUserAgent));
+		}
+		if (!info.sReferer.empty())
+		{
+			req.setOpt(new Referer(info.sReferer));
+		}
 
-		req.setOpt(new HttpHeader(headers));
+		if (!headers.empty())
+		{
+			req.setOpt(new HttpHeader(headers));
+		}
 
 		//req.setOpt(new PostFields(info.sBody));
 		//req.setOpt(new PostFieldSize(info.sBody.length()));
@@ -116,11 +125,11 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 	}
 	catch (curlpp::LogicError& e)
 	{
-		cerr << "EXCEPTION inside of " << __FUNCTION__ << ": " << e.what() << endl;
+		cerr << "EXCEPTION was catched in " << __FUNCTION__ << ": " << e.what() << endl;
 	}
 	catch (curlpp::RuntimeError& e)
 	{
-		cerr << "EXCEPTION inside of " << __FUNCTION__ << ": " << e.what() << endl;
+		cerr << "EXCEPTION was catched in " << __FUNCTION__ << ": " << e.what() << endl;
 	}
 
 	return reply;
