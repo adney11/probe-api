@@ -8,7 +8,28 @@
 
 //------------------------------------------------------
 
+#if 0
+reply HTTP code: 401 Unauthorized
+Content-Type: application/json
+{"message":"Missing Mashape application key. Go to http:\/\/docs.mashape.com\/api-keys to learn how to get your API application key."}
 
+reply HTTP code: 402
+Content - Type : application / json
+{"message":"You need to subscribe to a plan before consuming the API"}
+
+reply HTTP code : 403
+Content - Type : application / json
+{"message":"Invalid Mashape Key"}
+
+reply HTTP code: 404
+Content-Type: text/html; charset=UTF-8
+<body>
+<div id="content">
+<p class="heading1">Service</p>
+<p>Endpoint not found.</p>
+</div>
+</body>
+#endif
 
 //------------------------------------------------------
 

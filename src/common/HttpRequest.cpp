@@ -51,7 +51,7 @@ HttpRequester::~HttpRequester()
 
 //------------------------------------------------------
 
-void SetupHttpRequest(curlpp::Easy &req, const HttpRequester::Request &info)
+void PrepareHttpRequest(curlpp::Easy &req, const HttpRequester::Request &info)
 {
 	list<string> headers;
 	for (auto p : info.headers)
@@ -135,7 +135,7 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 		}));
 #endif
 
-		SetupHttpRequest(req, info);
+		PrepareHttpRequest(req, info);
 
 		req.perform();
 
@@ -146,11 +146,11 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 	}
 	catch (curlpp::LogicError& e)
 	{
-		reply.sErrorDescription = string() + "LogicError EXCEPTION was catched in " + __FUNCTION__ + ": " + e.what();
+		reply.sErrorDescription = string("LogicError: ") + e.what();
 	}
 	catch (curlpp::RuntimeError& e)
 	{
-		reply.sErrorDescription = string() + "RuntimeError EXCEPTION was catched in " + __FUNCTION__ + ": " + e.what();
+		reply.sErrorDescription = string("RuntimeError: ") + e.what();
 	}
 
 	return reply;

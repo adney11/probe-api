@@ -13,11 +13,11 @@ ProbeApiRequest::ProbeApiRequest(const std::string& sRequestWithArgs)
 {
 	eMethod = HTTP_GET;
 	sUrl = MASHAPE_API_URL + sRequestWithArgs;
-	headers.push_back(make_pair("X-Mashape-Key", MASHAPE_API_ID));
-	headers.push_back(make_pair("Accept", "application/json"));
+	headers.emplace_back("X-Mashape-Key", MASHAPE_API_ID);
+	headers.emplace_back("Accept", "application/json");
 
 	sUserAgent = VERSION_PRODUCT_NAME " HTTP client v." MAIN_PRODUCT_VERSION_STR_A;
-	nHttpTimeoutSec = 30;
+	nHttpTimeoutSec = 60;
 	bKnownBadSslCertificate = false;
 }
 
