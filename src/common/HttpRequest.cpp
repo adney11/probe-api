@@ -6,6 +6,7 @@
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
 #include <curlpp/Exception.hpp>
+#include <curlpp/Infos.hpp>
 
 //------------------------------------------------------
 
@@ -40,17 +41,71 @@ HttpRequester::~HttpRequester()
 	}
 	catch (curlpp::LogicError& e)
 	{
-		cerr << "EXCEPTION was catched in " << __FUNCTION__ << ": " << e.what() << endl;
+		cerr << "LogicError EXCEPTION was catched in " << __FUNCTION__ << ": " << e.what() << endl;
 	}
 	catch (curlpp::RuntimeError& e)
 	{
-		cerr << "EXCEPTION was catched in " << __FUNCTION__ << ": " << e.what() << endl;
+		cerr << "RuntimeError EXCEPTION was catched in " << __FUNCTION__ << ": " << e.what() << endl;
 	}
 }
 
 //------------------------------------------------------
 
-HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info)
+void SetupHttpRequest(curlpp::Easy &req, const HttpRequester::Request &info)
+{
+	list<string> headers;
+	for (auto p : info.headers)
+	{
+		headers.push_back(p.first + ": " + p.second);
+	}
+
+	using namespace curlpp::Options;
+
+	req.setOpt(new Url(info.sUrl));
+
+	switch (info.eMethod)
+	{
+	case HttpRequester::Request::HTTP_GET:
+		//req.setOpt(new CustomRequest("GET"));
+		req.setOpt(new HttpGet(true));
+		break;
+// 	case HttpRequester::Request::HTTP_POST:
+// 		//req.setOpt(new CustomRequest("POST"));
+// 		req.setOpt(new Post(true));
+// 		break;
+	}
+
+	if (info.bKnownBadSslCertificate)
+	{
+		req.setOpt(new SslVerifyHost(false));	// SslVerifyHost does not support "1" value
+	}
+
+	if (!info.sUserAgent.empty())
+	{
+		req.setOpt(new UserAgent(info.sUserAgent));
+	}
+	if (!info.sReferer.empty())
+	{
+		req.setOpt(new Referer(info.sReferer));
+	}
+
+	if (!headers.empty())
+	{
+		req.setOpt(new HttpHeader(headers));
+	}
+
+	//req.setOpt(new PostFields(info.sBody));
+	//req.setOpt(new PostFieldSize(info.sBody.length()));
+
+	req.setOpt(new Timeout(info.nHttpTimeoutSec));
+	req.setOpt(new ConnectTimeout(info.nHttpTimeoutSec));
+
+	req.setOpt(new FollowLocation(true));
+}
+
+//------------------------------------------------------
+
+HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info, const bool bVerbose)
 {
 	HttpRequester::Reply reply;
 	reply.bSucceeded = false;
@@ -59,77 +114,43 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 	{
 		curlpp::Easy req;
 
-		list<string> headers;
-		for (auto p : info.headers)
-		{
-			headers.push_back(p.first + ": " + p.second);
-		}
-
 		using namespace curlpp::Options;
 
-		req.setOpt(new Verbose(true));
-#if 1
-		req.setOpt(DebugFunction([](curl_infotype, char *data, size_t size) -> int
+		req.setOpt(new Verbose(bVerbose));
+#if 0
+		req.setOpt(DebugFunction([](curl_infotype type, char *data, size_t size) -> int
 		{
 			//curlpp::raiseException(runtime_error("EXCEPTION: " + string(data, size)));
-			cerr << "DEBUG: " << string(data, size);
+			cerr << "DEBUG(" << (int)type << "): " << string(data, size);
 			return size;
 		}));
 #endif
 
-		//------------------------------------------------------
-
-		req.setOpt(new Url(info.sUrl));
-
-		switch (info.eMethod)
+#if 1
+		req.setOpt(WriteFunction([&reply](char* ptr, size_t size, size_t nmemb) -> int
 		{
-		case Request::HTTP_GET:
-			//req.setOpt(new CustomRequest("GET"));
-			req.setOpt(new HttpGet(true));
-			break;
-// 		case Request::HTTP_POST:
-// 			//req.setOpt(new CustomRequest("POST"));
-// 			req.setOpt(new Post(true));
-// 			break;
-		}
+			const size_t realsize = size * nmemb;
+			reply.sBody.append(ptr, realsize);
+			return realsize;
+		}));
+#endif
 
-		if (info.bKnownBadSslCertificate)
-		{
-			req.setOpt(new SslVerifyHost(false));	// SslVerifyHost does not support "1" value
-		}
-
-		if (!info.sUserAgent.empty())
-		{
-			req.setOpt(new UserAgent(info.sUserAgent));
-		}
-		if (!info.sReferer.empty())
-		{
-			req.setOpt(new Referer(info.sReferer));
-		}
-
-		if (!headers.empty())
-		{
-			req.setOpt(new HttpHeader(headers));
-		}
-
-		//req.setOpt(new PostFields(info.sBody));
-		//req.setOpt(new PostFieldSize(info.sBody.length()));
-
-		req.setOpt(new Timeout(info.nHttpTimeoutSec));
-		req.setOpt(new ConnectTimeout(info.nHttpTimeoutSec));
-
-		req.setOpt(new FollowLocation(true));
+		SetupHttpRequest(req, info);
 
 		req.perform();
 
+		reply.bSucceeded = true;
+		reply.nHttpCode = curlpp::infos::ResponseCode::get(req);
+		reply.sContentType = curlpp::infos::ContentType::get(req);
+		reply.sEffectiveUrl = curlpp::infos::EffectiveUrl::get(req);
 	}
 	catch (curlpp::LogicError& e)
 	{
-		cerr << "EXCEPTION was catched in " << __FUNCTION__ << ": " << e.what() << endl;
+		reply.sErrorDescription = string() + "LogicError EXCEPTION was catched in " + __FUNCTION__ + ": " + e.what();
 	}
 	catch (curlpp::RuntimeError& e)
 	{
-		cerr << "EXCEPTION was catched in " << __FUNCTION__ << ": " << e.what() << endl;
+		reply.sErrorDescription = string() + "RuntimeError EXCEPTION was catched in " + __FUNCTION__ + ": " + e.what();
 	}
 
 	return reply;

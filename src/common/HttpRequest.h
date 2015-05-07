@@ -43,7 +43,12 @@ public:
 	struct Reply
 	{
 		bool			bSucceeded;
+		std::string		sErrorDescription;
+
 		int				nHttpCode;
+		std::string		sEffectiveUrl;
+		std::string		sContentType;
+
 		std::string		sBody;
 
 		Reply() : bSucceeded(false), nHttpCode(0)
@@ -51,7 +56,7 @@ public:
 	};
 
 public:
-	Reply DoRequest(const Request& requestInfo);
+	Reply DoRequest(const Request& requestInfo, const bool bVerbose);
 };
 
 //------------------------------------------------------

@@ -10,7 +10,7 @@ using namespace std;
 
 //------------------------------------------------------
 
-ProgramOptions::ProgramOptions()
+ProgramOptions::ProgramOptions() : bVerbose(false)
 {
 
 }
@@ -36,6 +36,8 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 			return 100;
 		}
 	}
+
+	//bVerbose = true;
 
 	return 0;
 }

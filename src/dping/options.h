@@ -18,6 +18,7 @@ public:
 	int ProcessCommandLine(const int argc, const char* const argv[]);	// returns non-zero result if process exit required
 
 public:
+	bool	bVerbose;
 };
 
 //------------------------------------------------------
