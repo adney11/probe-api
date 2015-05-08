@@ -10,11 +10,15 @@
 #include <sstream>
 #define OSSFMT(expr)	(static_cast<std::ostringstream&>(std::ostringstream() << expr).str())
 
-using namespace std;
+//------------------------------------------------------
 
 #ifdef _MSC_VER
 #pragma comment (lib, "jsoncpp.lib")
 #endif // _MSC_VER > 1000
+
+//------------------------------------------------------
+
+using namespace std;
 
 //------------------------------------------------------
 

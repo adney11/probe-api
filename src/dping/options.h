@@ -7,6 +7,7 @@
 #endif // _MSC_VER > 1000
 
 #include <string>
+#include <stdint.h>
 
 //------------------------------------------------------
 
@@ -18,7 +19,22 @@ public:
 	int ProcessCommandLine(const int argc, const char* const argv[]);	// returns non-zero result if process exit required
 
 public:
-	bool	bVerbose;
+	bool		bVerbose;
+	uint32_t	nMaxTimeoutMs;
+	uint32_t	nPingCount;
+
+	enum eMode
+	{
+		MODE_UNKNOWN,
+		MODE_GET_COUNTRIES,
+		MODE_GET_ASNS,
+		MODE_PING_BY_COUNTRY,
+		MODE_PING_BY_ASN,
+	};
+
+	eMode		mode;
+	std::string	sModeArgument;
+	std::string	sTarget;
 };
 
 //------------------------------------------------------
