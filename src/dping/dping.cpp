@@ -12,11 +12,11 @@ using namespace std;
 
 int Dping(const ProgramOptions& options)
 {
-	HttpRequester requester;
+	ProbeApiRequester requester;
 
-	ProbeApiRequest request("GetCountries");
+	ProbeApiRequester::Request request("GetCountries");
 	//request.sUrl = "https://google.com/";
-	HttpRequester::Reply reply = requester.DoRequest(request, options.bVerbose);
+	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bVerbose);
 
 	cout << "request succeeded: " << reply.bSucceeded << endl;
 	cout << "request error desc: " << reply.sErrorDescription << endl;

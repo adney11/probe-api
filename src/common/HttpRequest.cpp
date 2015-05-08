@@ -10,7 +10,7 @@
 
 //------------------------------------------------------
 
-#if _MSC_VER > 1000
+#ifdef _MSC_VER
 #pragma comment (lib, "libcurl.lib")
 #pragma comment (lib, "curlpp.lib")
 // libcurl DLL dependencies:
