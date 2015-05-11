@@ -2,7 +2,8 @@
 #include "stdafx.h"
 #include "options.h"
 
-#include "common\version.h"			// for VERSION_PRODUCT_NAME, FILE_INTERNAL_NAME, MAIN_PRODUCT_VERSION_STR_A
+#include "common/Common.h"
+#include "common/version.h"			// for VERSION_PRODUCT_NAME, FILE_INTERNAL_NAME, MAIN_PRODUCT_VERSION_STR_A
 
 #include <iostream>
 
@@ -99,12 +100,12 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 			{
 				cout << GetPrintVersion();
 				cout << GetPrintHelp();
-				return 100;
+				return eRetCode::OK;
 			}
 			if (bFirstArg && sArg == "--version")
 			{
 				cout << GetPrintVersion();
-				return 100;
+				return eRetCode::OK;
 			}
 
 			if (sArg == "-v")
@@ -176,12 +177,12 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 	{
 		cerr << "ERROR! " << e.what() << endl;
 		cerr << GetPrintHelpSuggest();
-		return 1;
+		return eRetCode::BadArguments;
 	}
 
 	//bVerbose = true;
 
-	return 0;
+	return eRetCode::NoValue;
 }
 
 //------------------------------------------------------

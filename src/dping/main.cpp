@@ -5,6 +5,8 @@
 #include "options.h"
 #include "dping.h"
 
+#include "common/Common.h"
+
 //------------------------------------------------------
 
 #ifdef _MSC_VER
@@ -22,7 +24,7 @@ int main(int argc, char* argv[])
 	ProgramOptions options;
 
 	const int nCmdLineRes = options.ProcessCommandLine(argc, argv);
-	if (nCmdLineRes != 0)
+	if (nCmdLineRes != eRetCode::NoValue)
 	{
 		return nCmdLineRes;
 	}

@@ -5,7 +5,7 @@
 #include "config.h"					// for MASHAPE_API_URL, MASHAPE_API_ID
 #include "version.h"				// for VERSION_PRODUCT_NAME, MAIN_PRODUCT_VERSION_STR_A
 
-#include <json\json.h>
+#include <json/json.h>
 
 #include <sstream>
 #define OSSFMT(expr)	(static_cast<std::ostringstream&>(std::ostringstream() << expr).str())
@@ -71,8 +71,8 @@ ProbeApiRequester::Reply ProbeApiRequester::DoRequest(const ProbeApiRequester::R
 			{
 				Json::Reader reader;
 				Json::Value root;
-				const bool parsingSuccessful = reader.parse(reply.sBody, root);
-				if (parsingSuccessful)
+				const bool parsedOK = reader.parse(reply.sBody, root);
+				if (parsedOK)
 				{
 					sMessage = root.get("message", "").asString();
 				}

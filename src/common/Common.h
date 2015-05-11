@@ -25,6 +25,22 @@ public:
 };
 
 //------------------------------------------------------
+// error codes returned by the process:
+
+namespace eRetCode
+{
+	enum enumRetCode: int
+	{
+		NoValue			= -1,
+		OK				= 0,
+		BadArguments	= 10,
+		NotSupported	= 20,
+		ApiFailure		= 100,
+		OtherError		= 500,
+	};
+}
+
+//------------------------------------------------------
 
 inline bool contains(const std::string& str, const std::string& substr)
 {
