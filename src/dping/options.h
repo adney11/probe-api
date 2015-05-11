@@ -37,5 +37,7 @@ public:
 	std::string	sTarget;
 };
 
+#define DEFAULT_PING_COUNTRY_STR	"<default>"
+
 //------------------------------------------------------
 #endif //ifndef _OPTIONS_H_UID000003A649B0548E

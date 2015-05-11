@@ -105,6 +105,9 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 			if (bFirstArg && sArg == "--version")
 			{
 				cout << GetPrintVersion();
+				vector<string> names;
+				names.emplace_back("Sergey Kolomenkin");
+				cout << "Authors & contributors: " << implode(names, ", ") << endl;
 				return eRetCode::OK;
 			}
 
@@ -165,7 +168,7 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 		if (MODE_UNKNOWN == mode)
 		{
 			mode = MODE_PING_BY_COUNTRY;
-			sModeArgument = "<own>";
+			sModeArgument = DEFAULT_PING_COUNTRY_STR;
 		}
 
 		if ((MODE_PING_BY_COUNTRY == mode || MODE_PING_BY_ASN == mode) && !bTargetSet)
