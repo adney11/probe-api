@@ -25,7 +25,7 @@ public:
 			HTTP_GET,
 			//HTTP_POST,
 		};
-		HTTP_METHOD		eMethod;
+		HTTP_METHOD		eMethod = HTTP_GET;
 		std::string		sUrl;
 		//std::string		sBody;
 
@@ -33,26 +33,20 @@ public:
 		std::string		sUserAgent;
 		std::string		sReferer;
 
-		int				nHttpTimeoutSec;
-		bool			bKnownBadSslCertificate;
-
-		Request() : eMethod(HTTP_GET), nHttpTimeoutSec(5*60), bKnownBadSslCertificate(false)
-		{}
+		int				nHttpTimeoutSec = 5 * 60;
+		bool			bKnownBadSslCertificate = false;
 	};
 
 	struct Reply
 	{
-		bool			bSucceeded;
+		bool			bSucceeded = false;
 		std::string		sErrorDescription;
 
-		int				nHttpCode;
+		int				nHttpCode = 0;
 		std::string		sEffectiveUrl;
 		std::string		sContentType;
 
 		std::string		sBody;
-
-		Reply() : bSucceeded(false), nHttpCode(0)
-		{}
 	};
 
 public:

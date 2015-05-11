@@ -11,6 +11,11 @@
 
 //------------------------------------------------------
 
+#define DEFAULT_PING_COUNTRY_META		"<default>"
+#define DEFAULT_PING_COUNTRY_CODE		"CZ"
+
+//------------------------------------------------------
+
 class ProgramOptions
 {
 public:
@@ -36,8 +41,6 @@ public:
 	std::string	sModeArgument;
 	std::string	sTarget;
 };
-
-#define DEFAULT_PING_COUNTRY_STR	"<default>"
 
 //------------------------------------------------------
 #endif //ifndef _OPTIONS_H_UID000003A649B0548E

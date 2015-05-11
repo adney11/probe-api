@@ -5,10 +5,9 @@
 #include "config.h"					// for MASHAPE_API_URL, MASHAPE_API_ID
 #include "version.h"				// for VERSION_PRODUCT_NAME, MAIN_PRODUCT_VERSION_STR_A
 
-#include <json/json.h>
+#include <iostream>
 
-#include <sstream>
-#define OSSFMT(expr)	(static_cast<std::ostringstream&>(std::ostringstream() << expr).str())
+#include <json/json.h>
 
 //------------------------------------------------------
 
@@ -88,7 +87,26 @@ ProbeApiRequester::Reply ProbeApiRequester::DoRequest(const ProbeApiRequester::R
 		}
 	}
 
+	if (bVerbose)
+	{
+		HttpReplyDebugPrint(reply);
+	}
+
 	return reply;
+}
+
+//------------------------------------------------------
+
+void ProbeApiRequester::HttpReplyDebugPrint(const ProbeApiRequester::Reply &reply)
+{
+	cout << "request succeeded: " << reply.bSucceeded << endl;
+	cout << "request error desc: " << reply.sErrorDescription << endl;
+	cout << "reply HTTP code: " << reply.nHttpCode << endl;
+	cout << "reply EffectiveUrl: " << reply.sEffectiveUrl << endl;
+	cout << "reply Content-Type: " << reply.sContentType << endl;
+	cout << "reply body length: " << reply.sBody.length() << endl;
+
+	cout << "REPLY BODY: [[[" << reply.sBody << "]]]" << endl;
 }
 
 //------------------------------------------------------

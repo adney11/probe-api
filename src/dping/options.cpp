@@ -7,9 +7,6 @@
 
 #include <iostream>
 
-#include <sstream>
-#define OSSFMT(expr)	(static_cast<std::ostringstream&>(std::ostringstream() << expr).str())
-
 using namespace std;
 
 //------------------------------------------------------
@@ -17,7 +14,7 @@ using namespace std;
 ProgramOptions::ProgramOptions()
 	: bVerbose(false)
 	, nMaxTimeoutMs(5000)
-	, nPingCount(4)
+	, nPingCount(20)
 	, mode(MODE_UNKNOWN)
 {
 
@@ -168,7 +165,7 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 		if (MODE_UNKNOWN == mode)
 		{
 			mode = MODE_PING_BY_COUNTRY;
-			sModeArgument = DEFAULT_PING_COUNTRY_STR;
+			sModeArgument = DEFAULT_PING_COUNTRY_META;
 		}
 
 		if ((MODE_PING_BY_COUNTRY == mode || MODE_PING_BY_ASN == mode) && !bTargetSet)

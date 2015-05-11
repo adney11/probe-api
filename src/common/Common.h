@@ -12,6 +12,9 @@
 #include <string>
 #include <vector>
 
+#include <sstream>
+#define OSSFMT(expr)	(static_cast<std::ostringstream&>(std::ostringstream() << expr).str())
+
 //------------------------------------------------------
 
 class ProbeApiRequester: protected HttpRequester
@@ -26,6 +29,8 @@ public:
 
 public:
 	Reply DoRequest(const Request& requestInfo, const bool bVerbose);
+
+	static void HttpReplyDebugPrint(const ProbeApiRequester::Reply &reply);
 };
 
 //------------------------------------------------------

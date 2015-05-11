@@ -105,6 +105,32 @@ void PrepareHttpRequest(curlpp::Easy &req, const HttpRequester::Request &info)
 
 //------------------------------------------------------
 
+string GetDebugPrefix(const curl_infotype type)
+{
+	switch (type)
+	{
+	case CURLINFO_TEXT:
+		return "t: ";
+	case CURLINFO_HEADER_IN:
+		return "h< ";
+	case CURLINFO_DATA_IN:
+		return "d< ";
+	case CURLINFO_SSL_DATA_IN:
+		return "s< ";
+	case CURLINFO_HEADER_OUT:
+		return "h> ";
+	case CURLINFO_DATA_OUT:
+		return "d> ";
+	case CURLINFO_SSL_DATA_OUT:
+		return "s> ";
+	case CURLINFO_END:
+		return "e: ";
+	}
+	return "z: ";
+}
+
+//------------------------------------------------------
+
 HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info, const bool bVerbose)
 {
 	HttpRequester::Reply reply;
@@ -117,17 +143,16 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 		using namespace curlpp::Options;
 
 		req.setOpt(new Verbose(bVerbose));
-#if 0
-		req.setOpt(DebugFunction([](curl_infotype type, char *data, size_t size) -> int
+#if 1
+		req.setOpt(DebugFunction([](const curl_infotype type, const char *data, const size_t size) -> int
 		{
-			//curlpp::raiseException(runtime_error("EXCEPTION: " + string(data, size)));
-			cerr << "DEBUG(" << (int)type << "): " << string(data, size);
+			cout << GetDebugPrefix(type) << string(data, size);
 			return size;
 		}));
 #endif
 
 #if 1
-		req.setOpt(WriteFunction([&reply](char* ptr, size_t size, size_t nmemb) -> int
+		req.setOpt(WriteFunction([&reply](const char* ptr, const size_t size, const size_t nmemb) -> int
 		{
 			const size_t realsize = size * nmemb;
 			reply.sBody.append(ptr, realsize);
