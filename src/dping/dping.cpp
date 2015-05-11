@@ -140,7 +140,7 @@ int PingByCountry(const ProgramOptions& options)
 	}
 
 	cout << endl << "Ping statistics for " << sTarget << endl;
-	cout << "    Packets : Sent = " << nSent << ", Received = " << nReceived << ", Lost = " << (nSent - nReceived) << " (" << (nReceived * 100 / (nSent ? nSent : 1) ) << " % loss)," << endl;
+	cout << "    Packets : Sent = " << nSent << ", Received = " << nReceived << ", Lost = " << (nSent - nReceived) << " (" << ((nSent - nReceived) * 100 / (nSent ? nSent : 1)) << " % loss)," << endl;
 	if (nReceived > 0)
 	{
 		cout << "Approximate round trip times in milli-seconds:" << endl;

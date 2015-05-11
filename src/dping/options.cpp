@@ -55,7 +55,7 @@ Options:
     --asn id        Ping from specified ASN (autonomous system number) network.
     -n count        Number of echo requests to send.
     -w timeout      Timeout in milliseconds to wait for each reply.
-    --list-country  List countries available.
+    --list-country  List available countries.
     --list-asn code List ASNs for specified 2 letter country code.
     -v              Verbose output
 
