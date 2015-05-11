@@ -6,6 +6,7 @@ deps
 *.sdf
 *.ipch
 *.opensdf
+*.aps
 
 # MSVS compiled files
 Intermediate

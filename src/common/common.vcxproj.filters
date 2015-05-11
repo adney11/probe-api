@@ -3,9 +3,14 @@
   <ItemGroup>
     <Filter Include="Header Files">
       <UniqueIdentifier>{8f900dd5-0aac-45df-9777-e54d8fe5074e}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{e47fa3c2-aa5d-4df2-9cca-d178b7c44a03}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="other">
+      <UniqueIdentifier>{24d5e239-25be-4f42-8347-44c61fafd407}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -35,5 +40,12 @@
     <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="version.h" />
+    <ClInclude Include="config.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="VerInfo.ver">
+      <Filter>other</Filter>
+    </None>
   </ItemGroup>
 </Project>
