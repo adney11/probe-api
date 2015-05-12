@@ -47,7 +47,7 @@ namespace ProbeAPI
 		NetworkInfo(const Json::Value& v);
 	};
 
-	struct PingResultInfo
+	struct ProbeInfo
 	{
 		bool			bTimeout = false;
 		int				nTimeMs = 0;
@@ -58,13 +58,17 @@ namespace ProbeAPI
 		AsnInfo			asn;
 		NetworkInfo		network;
 
-		PingResultInfo()
+		ProbeInfo()
 		{}
-		PingResultInfo(const Json::Value& v);
+		ProbeInfo(const Json::Value& v);
 	};
 
 	std::vector<ProbeAPI::CountryInfo> ParseCountries(const std::string& sJson);
-	std::vector<ProbeAPI::PingResultInfo> ParsePingResults(const std::string& sJson);
+
+	std::vector<ProbeAPI::ProbeInfo> ParsePingTestByCountryResult(const std::string& sJson);
+	std::vector<ProbeAPI::ProbeInfo> ParseGetProbesByCountryResult(const std::string& sJson);
+
+	std::vector<ProbeAPI::ProbeInfo> ParseProbeList(const std::string& sJson, const std::string& sJsonRootItemName);
 }
 
 //------------------------------------------------------

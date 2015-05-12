@@ -93,7 +93,7 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 			const bool bFirstArg = (1 == i);
 			const bool bLastArg = (i + 1 == argc);
 
-			if (bFirstArg && sArg == "--help")
+			if (bFirstArg && (sArg == "--help" || sArg == "/?"))
 			{
 				cout << GetPrintVersion();
 				cout << GetPrintHelp();

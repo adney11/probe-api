@@ -8,7 +8,7 @@
 
 //------------------------------------------------------
 
-#define VERSION_PRODUCT_NAME			"Probe API Utils"
+#define VERSION_PRODUCT_NAME			"Probe API Tools"
 #define VERSION_COMPANY_NAME			"Optimal Software s.r.o."
 #define VERSION_COPYRIGHT				"Copyright \xA9 2015 Optimal Software s.r.o. All rights reserved."	// 0xA9 == '©' (c)
 #define VERSION_COMMENT					"Probe API gives access to a set of network utilities for distributed network tests."
@@ -17,7 +17,7 @@
 #define VERSION_PRODUCT_VER1			0
 #define VERSION_PRODUCT_VER2			5
 // This is a build version. It is incremented after any significant fix or feature added:
-#define VERSION_PRODUCT_VER3			11
+#define VERSION_PRODUCT_VER3			12
 #define VERSION_PRODUCT_VER4			0
 
 #define PRODUCT_BUILD_VER				VERSION_PRODUCT_VER3

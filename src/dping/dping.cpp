@@ -98,11 +98,11 @@ int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, 
 	}
 
 	using namespace ProbeAPI;
-	std::vector<PingResultInfo> items;
+	std::vector<ProbeInfo> items;
 
 	try
 	{
-		items = ParsePingResults(reply.sBody);
+		items = ParsePingTestByCountryResult(reply.sBody);
 	}
 	catch (exception& e)
 	{
@@ -153,11 +153,12 @@ int PingByCountry(const ProgramOptions& options)
 {
 	int res = eRetCode::OK;
 
-	ProbeApiRequester requester;
-
 	const string& sTarget = options.sTarget;
 
-	cout << endl << "Pinging " << sTarget << " with " << PROBEAPI_PING_PACKET_SIZE << " bytes of data" << flush;
+	cout << endl << "Pinging " << sTarget << " with " << PROBEAPI_PING_PACKET_SIZE << " bytes of data";
+	cout << flush;
+
+	ProbeApiRequester requester;
 
 	string sCountryCode = options.sModeArgument;
 	if (DEFAULT_PING_COUNTRY_META == sCountryCode)
@@ -165,7 +166,8 @@ int PingByCountry(const ProgramOptions& options)
 		sCountryCode = GetDefaultCountryToPing(requester, options);
 	}
 
-	cout << " from country code " << sCountryCode << ":" << endl << flush;
+	cout << " from country code " << sCountryCode << ":" << endl;
+	cout << flush;
 
 	PingingStats stats;
 
@@ -211,6 +213,10 @@ int PingByAsn(const ProgramOptions& options)
 
 int ListCountries(const ProgramOptions& options)
 {
+	cout << setw(2) << "ID" << " " << setw(40) << left << "Country Name" << " " << setw(5) << "Number of hosts" << endl;
+	cout << setfill('-') << setw(2 + 1 + 40 + 1 + 5 + 10) << "-" << setfill(' ') << endl;
+	cout << flush;
+
 	ProbeApiRequester requester;
 
 	ProbeApiRequester::Request request("GetCountries");
@@ -250,9 +256,6 @@ int ListCountries(const ProgramOptions& options)
 		return false;
 	});
 
-	cout << setw(2) << "ID" << " " << setw(40) << left << "Country Name" << " " << setw(5) << "Number of hosts" << endl;
-	cout << setfill('-') << setw(2 + 1 + 40 + 1 + 5 + 10) << "-" << setfill(' ') << endl;
-
 	for (const auto& info : items)
 	{
 		if (0 == info.nProbes)
@@ -270,8 +273,57 @@ int ListCountries(const ProgramOptions& options)
 
 int ListAsns(const ProgramOptions& options)
 {
-	cerr << "ERROR! This program mode is not implemented yet!" << endl;
-	return eRetCode::NotSupported;
+	const string sCountryCode = options.sModeArgument;
+
+	cout << setw(10) << left << "ASN id" << right << " " << "ASN name" << endl;
+	cout << flush;
+
+	ProbeApiRequester requester;
+
+	const string sUrl = OSSFMT("GetProbesByCountry?countrycode=" << sCountryCode);
+
+	ProbeApiRequester::Request request(sUrl);
+
+	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
+	if (!reply.bSucceeded)
+	{
+		cerr << "ERROR! " << reply.sErrorDescription << endl;
+		return eRetCode::ApiFailure;
+	}
+
+	cout << setfill('-') << setw(10 + 1 + 30) << "-" << setfill(' ') << endl;
+	cout << flush;
+
+	using namespace ProbeAPI;
+	std::vector<ProbeInfo> items;
+
+	try
+	{
+		items = ParseGetProbesByCountryResult(reply.sBody);
+	}
+	catch (exception& e)
+	{
+		cerr << "ERROR! " << e.what() << endl;
+		return eRetCode::ApiFailure;
+	}
+
+	map<string, ProbeInfo> items2;
+	for (const auto& info : items)
+	{
+		const string& key = info.asn.sId;
+		if (items2.find(key) == items2.end())
+		{
+			items2.emplace(key, info);
+		}
+	}
+
+	for (const auto& p : items2)
+	{
+		const auto& info = p.second;
+		cout << setw(10) << left << info.asn.sId << right << " " << info.asn.sName << endl;
+	}
+
+	return eRetCode::OK;
 }
 
 //------------------------------------------------------
