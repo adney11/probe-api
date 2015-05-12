@@ -14,7 +14,7 @@ using namespace std;
 ProgramOptions::ProgramOptions()
 	: bVerbose(false)
 	, nMaxTimeoutMs(5000)
-	, nPingCount(20)
+	, nPingCount(4)
 	, mode(MODE_UNKNOWN)
 {
 

@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "dping.h"
 
+#include "common/config.h"					// for PROBEAPI_PING_PACKET_SIZE, PROBEAPI_PING_TTL
 #include "common/Common.h"
 #include "common/ParseReply.h"
 
@@ -72,13 +73,15 @@ int PingByCountry(const ProgramOptions& options)
 
 	const string& sTarget = options.sTarget;
 
-	cout << endl << "Pinging " << sTarget << ":" << endl << flush;
+	cout << endl << "Pinging " << sTarget << " with " << PROBEAPI_PING_PACKET_SIZE << " bytes of data" << flush;
 
 	string sCountryCode = options.sModeArgument;
 	if (DEFAULT_PING_COUNTRY_META == sCountryCode)
 	{
 		sCountryCode = GetDefaultCountryToPing(requester, options);
 	}
+
+	cout << " from country code " << sCountryCode << ":" << endl << flush;
 
 	const string sUrl = OSSFMT("StartPingTestByCountry?countrycode=" << sCountryCode
 		<< "&destination=" << sTarget
@@ -108,6 +111,7 @@ int PingByCountry(const ProgramOptions& options)
 		return eRetCode::ApiFailure;
 	}
 
+	bool bFirstIteration = true;
 	int64_t nSent = 0;
 	int64_t nReceived = 0;
 	int nPingMin = INT_MAX;
@@ -116,13 +120,14 @@ int PingByCountry(const ProgramOptions& options)
 
 	for (const auto& info : items)
 	{
-		if (true)
+		if (!bFirstIteration)
 		{
 			cout << flush;
 			const int nMaxDelay = 500;
 			const int nDelayMs = info.bTimeout ? 500 : info.nTimeMs;
 			std::this_thread::sleep_for(std::chrono::milliseconds((min)(nDelayMs, nMaxDelay)));
 		}
+		bFirstIteration = false;
 
 		++nSent;
 		if (info.bTimeout)
@@ -135,7 +140,7 @@ int PingByCountry(const ProgramOptions& options)
 			nPingMin = (min)(nPingMin, info.nTimeMs);
 			nPingMax = (max)(nPingMax, info.nTimeMs);
 			nPingSum += info.nTimeMs;
-			cout << "Reply from " << sTarget << ": time=" << info.nTimeMs << "ms" << endl;
+			cout << "Reply from " << sTarget << ": bytes=" << PROBEAPI_PING_PACKET_SIZE << " time=" << info.nTimeMs << "ms TTL=" << PROBEAPI_PING_TTL << endl;
 		}
 	}
 
