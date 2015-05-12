@@ -8,9 +8,6 @@
 
 #include <json/json.h>
 
-#include <iostream>
-#include <iomanip>
-
 #include <algorithm>
 #include <thread>
 #include <chrono>
@@ -23,7 +20,7 @@ string GetDefaultCountryToPing(ProbeApiRequester& requester, const ProgramOption
 {
 	ProbeApiRequester::Request request("GetCountries");
 
-	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bVerbose);
+	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
 	{
 		throw exception(("GetDefaultCountryToPing: " + reply.sErrorDescription).c_str());
@@ -62,7 +59,7 @@ string GetDefaultCountryToPing(ProbeApiRequester& requester, const ProgramOption
 		return DEFAULT_PING_COUNTRY_CODE;
 	}
 
-	return countries[0].sCountryCode;
+	return countries[0].sCode;
 }
 
 //------------------------------------------------------
@@ -82,16 +79,18 @@ struct PingingStats
 int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, const ProgramOptions& options, ProbeApiRequester& requester, PingingStats& stats)
 {
 	const auto nRestPings = options.nPingCount - stats.nSent;
+	const auto nDesiredProbeCount = nRestPings * 4;
+	const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
 
 	const string sUrl = OSSFMT("StartPingTestByCountry?countrycode=" << sCountryCode
 		<< "&destination=" << sTarget
-		<< "&probeslimit=" << (nRestPings * 4)
+		<< "&probeslimit=" << nRequestedProbeCount
 		<< "&timeout=" << options.nMaxTimeoutMs);
 
 	ProbeApiRequester::Request request(sUrl);
 	request.nHttpTimeoutSec += options.nMaxTimeoutMs / 1000;
 
-	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bVerbose);
+	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
 	{
 		cerr << "ERROR! " << reply.sErrorDescription << endl;
@@ -126,7 +125,7 @@ int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, 
 		++stats.nSent;
 		if (info.bTimeout)
 		{
-			cout << "Request timed out." << endl;
+			cout << "Request timed out.";
 		}
 		else
 		{
@@ -134,8 +133,15 @@ int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, 
 			stats.nPingMin = (min)(stats.nPingMin, info.nTimeMs);
 			stats.nPingMax = (max)(stats.nPingMax, info.nTimeMs);
 			stats.nPingSum += info.nTimeMs;
-			cout << "Reply from " << sTarget << ": bytes=" << PROBEAPI_PING_PACKET_SIZE << " time=" << info.nTimeMs << "ms TTL=" << PROBEAPI_PING_TTL << endl;
+			cout << "Reply from " << sTarget << ": bytes=" << PROBEAPI_PING_PACKET_SIZE << " time=" << info.nTimeMs << "ms TTL=" << PROBEAPI_PING_TTL;
 		}
+
+		if (options.bVerbose)
+		{
+			cout << " to " << info.sUniqueId << " (" << info.network.sName << ")";
+		}
+
+		cout << endl;
 	}
 
 	return eRetCode::OK;
@@ -145,6 +151,8 @@ int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, 
 
 int PingByCountry(const ProgramOptions& options)
 {
+	int res = eRetCode::OK;
+
 	ProbeApiRequester requester;
 
 	const string& sTarget = options.sTarget;
@@ -161,12 +169,20 @@ int PingByCountry(const ProgramOptions& options)
 
 	PingingStats stats;
 
-	// TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	while (stats.nSent < options.nPingCount)
 	{
+		const auto nPreviousSend = stats.nSent;
+
 		const int nRes = MakePackOfPingsByCountry(sCountryCode, sTarget, options, requester, stats);
 		if (eRetCode::OK != nRes)
 		{
-			return nRes;
+			res = nRes;
+			break;
+		}
+		if (nPreviousSend == stats.nSent)
+		{
+			// don't try again if no results are returned!
+			break;
 		}
 	}
 
@@ -180,7 +196,7 @@ int PingByCountry(const ProgramOptions& options)
 		cout << "    Minimum = " << stats.nPingMin << "ms, Maximum = " << stats.nPingMax << "ms, Average = " << (stats.nPingSum / stats.nReceived) << "ms" << endl;
 	}
 
-	return eRetCode::OK;
+	return res;
 }
 
 //------------------------------------------------------
@@ -199,7 +215,7 @@ int ListCountries(const ProgramOptions& options)
 
 	ProbeApiRequester::Request request("GetCountries");
 
-	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bVerbose);
+	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
 	{
 		cerr << "ERROR! " << reply.sErrorDescription << endl;
@@ -227,9 +243,9 @@ int ListCountries(const ProgramOptions& options)
 			return a.nProbes > b.nProbes;
 		}
 		// sCountryName ASC
-		if (a.sCountryName != b.sCountryName)
+		if (a.sName != b.sName)
 		{
-			return a.sCountryName < b.sCountryName;
+			return a.sName < b.sName;
 		}
 		return false;
 	});
@@ -244,7 +260,7 @@ int ListCountries(const ProgramOptions& options)
 			//continue;
 		}
 
-		cout << setw(2) << info.sCountryCode << " " << setw(40) << left << info.sCountryName << right << " " << setw(5) << info.nProbes << endl;
+		cout << setw(2) << info.sCode << " " << setw(40) << left << info.sName << right << " " << setw(5) << info.nProbes << endl;
 	}
 
 	return eRetCode::OK;

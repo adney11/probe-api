@@ -8,13 +8,6 @@
 
 #include "HttpRequest.h"
 
-#include <memory>
-#include <string>
-#include <vector>
-
-#include <sstream>
-#define OSSFMT(expr)	(static_cast<std::ostringstream&>(std::ostringstream() << expr).str())
-
 //------------------------------------------------------
 
 class ProbeApiRequester: protected HttpRequester
