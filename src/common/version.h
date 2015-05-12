@@ -17,7 +17,7 @@
 #define VERSION_PRODUCT_VER1			0
 #define VERSION_PRODUCT_VER2			5
 // This is a build version. It is incremented after any significant fix or feature added:
-#define VERSION_PRODUCT_VER3			10
+#define VERSION_PRODUCT_VER3			11
 #define VERSION_PRODUCT_VER4			0
 
 #define PRODUCT_BUILD_VER				VERSION_PRODUCT_VER3
@@ -31,7 +31,7 @@
 #define FILE_DESCRIPTION				VERSION_PRODUCT_NAME ": Distributed Ping"
 #define FILE_INTERNAL_NAME				"dping"
 #define MODVERSION						0
-#define MODREVISION						5
+#define MODREVISION						6
 #define MODSUBREVISION					PRODUCT_BUILD_VER
 #define MODRELEASE						0
 #endif
