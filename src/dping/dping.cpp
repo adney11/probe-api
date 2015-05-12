@@ -67,25 +67,25 @@ string GetDefaultCountryToPing(ProbeApiRequester& requester, const ProgramOption
 
 //------------------------------------------------------
 
-int PingByCountry(const ProgramOptions& options)
+struct PingingStats
 {
-	ProbeApiRequester requester;
+	int64_t	nSent = 0;
+	int64_t	nReceived = 0;
+	int		nPingMin = INT_MAX;
+	int		nPingMax = 0;
+	int64_t	nPingSum = 0;
+};
 
-	const string& sTarget = options.sTarget;
+//------------------------------------------------------
 
-	cout << endl << "Pinging " << sTarget << " with " << PROBEAPI_PING_PACKET_SIZE << " bytes of data" << flush;
 
-	string sCountryCode = options.sModeArgument;
-	if (DEFAULT_PING_COUNTRY_META == sCountryCode)
-	{
-		sCountryCode = GetDefaultCountryToPing(requester, options);
-	}
-
-	cout << " from country code " << sCountryCode << ":" << endl << flush;
+int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, const ProgramOptions& options, ProbeApiRequester& requester, PingingStats& stats)
+{
+	const auto nRestPings = options.nPingCount - stats.nSent;
 
 	const string sUrl = OSSFMT("StartPingTestByCountry?countrycode=" << sCountryCode
 		<< "&destination=" << sTarget
-		<< "&probeslimit=" << options.nPingCount
+		<< "&probeslimit=" << (nRestPings * 4)
 		<< "&timeout=" << options.nMaxTimeoutMs);
 
 	ProbeApiRequester::Request request(sUrl);
@@ -111,15 +111,10 @@ int PingByCountry(const ProgramOptions& options)
 		return eRetCode::ApiFailure;
 	}
 
-	bool bFirstIteration = true;
-	int64_t nSent = 0;
-	int64_t nReceived = 0;
-	int nPingMin = INT_MAX;
-	int nPingMax = 0;
-	int64_t nPingSum = 0;
-
 	for (const auto& info : items)
 	{
+		const bool bFirstIteration = (0 == stats.nSent);
+
 		if (!bFirstIteration)
 		{
 			cout << flush;
@@ -127,29 +122,62 @@ int PingByCountry(const ProgramOptions& options)
 			const int nDelayMs = info.bTimeout ? 500 : info.nTimeMs;
 			std::this_thread::sleep_for(std::chrono::milliseconds((min)(nDelayMs, nMaxDelay)));
 		}
-		bFirstIteration = false;
 
-		++nSent;
+		++stats.nSent;
 		if (info.bTimeout)
 		{
 			cout << "Request timed out." << endl;
 		}
 		else
 		{
-			++nReceived;
-			nPingMin = (min)(nPingMin, info.nTimeMs);
-			nPingMax = (max)(nPingMax, info.nTimeMs);
-			nPingSum += info.nTimeMs;
+			++stats.nReceived;
+			stats.nPingMin = (min)(stats.nPingMin, info.nTimeMs);
+			stats.nPingMax = (max)(stats.nPingMax, info.nTimeMs);
+			stats.nPingSum += info.nTimeMs;
 			cout << "Reply from " << sTarget << ": bytes=" << PROBEAPI_PING_PACKET_SIZE << " time=" << info.nTimeMs << "ms TTL=" << PROBEAPI_PING_TTL << endl;
 		}
 	}
 
+	return eRetCode::OK;
+}
+
+//------------------------------------------------------
+
+int PingByCountry(const ProgramOptions& options)
+{
+	ProbeApiRequester requester;
+
+	const string& sTarget = options.sTarget;
+
+	cout << endl << "Pinging " << sTarget << " with " << PROBEAPI_PING_PACKET_SIZE << " bytes of data" << flush;
+
+	string sCountryCode = options.sModeArgument;
+	if (DEFAULT_PING_COUNTRY_META == sCountryCode)
+	{
+		sCountryCode = GetDefaultCountryToPing(requester, options);
+	}
+
+	cout << " from country code " << sCountryCode << ":" << endl << flush;
+
+	PingingStats stats;
+
+	// TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	{
+		const int nRes = MakePackOfPingsByCountry(sCountryCode, sTarget, options, requester, stats);
+		if (eRetCode::OK != nRes)
+		{
+			return nRes;
+		}
+	}
+
 	cout << endl << "Ping statistics for " << sTarget << endl;
-	cout << "    Packets : Sent = " << nSent << ", Received = " << nReceived << ", Lost = " << (nSent - nReceived) << " (" << ((nSent - nReceived) * 100 / (nSent ? nSent : 1)) << " % loss)," << endl;
-	if (nReceived > 0)
+	cout << "    Packets : Sent = " << stats.nSent << ", Received = " << stats.nReceived << ", Lost = " << (stats.nSent - stats.nReceived)
+		<< " (" << ((stats.nSent - stats.nReceived) * 100 / (stats.nSent ? stats.nSent : 1)) << " % loss)," << endl;
+
+	if (stats.nReceived > 0)
 	{
 		cout << "Approximate round trip times in milli-seconds:" << endl;
-		cout << "    Minimum = " << nPingMin << "ms, Maximum = " << nPingMax << "ms, Average = " << (nPingSum / nReceived) << "ms" << endl;
+		cout << "    Minimum = " << stats.nPingMin << "ms, Maximum = " << stats.nPingMax << "ms, Average = " << (stats.nPingSum / stats.nReceived) << "ms" << endl;
 	}
 
 	return eRetCode::OK;
