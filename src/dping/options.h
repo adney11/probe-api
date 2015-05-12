@@ -6,9 +6,6 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <string>
-#include <stdint.h>
-
 //------------------------------------------------------
 
 #define DEFAULT_PING_COUNTRY_META		"<default>"
@@ -25,6 +22,7 @@ public:
 
 public:
 	bool		bVerbose;
+	bool		bDebug;
 	uint32_t	nMaxTimeoutMs;
 	uint32_t	nPingCount;
 

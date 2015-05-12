@@ -6,9 +6,6 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <string>
-#include <list>
-
 //------------------------------------------------------
 
 class HttpRequester

@@ -5,8 +5,6 @@
 #include "config.h"					// for MASHAPE_API_URL, MASHAPE_API_ID
 #include "version.h"				// for VERSION_PRODUCT_NAME, MAIN_PRODUCT_VERSION_STR_A
 
-#include <iostream>
-
 #include <json/json.h>
 
 //------------------------------------------------------

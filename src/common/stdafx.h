@@ -9,6 +9,19 @@
 
 //------------------------------------------------------
 
+#include <stdint.h>
+
+#include <iostream>
+#include <iomanip>
+#include <memory>
+
+#include <sstream>
+#define OSSFMT(expr)	(static_cast<std::ostringstream&>(std::ostringstream() << expr).str())
+
+#include <string>
+#include <vector>
+#include <list>
+#include <map>
 
 //------------------------------------------------------
 

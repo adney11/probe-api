@@ -5,16 +5,15 @@
 #include "common/Common.h"
 #include "common/version.h"			// for VERSION_PRODUCT_NAME, FILE_INTERNAL_NAME, MAIN_PRODUCT_VERSION_STR_A
 
-#include <iostream>
-
 using namespace std;
 
 //------------------------------------------------------
 
 ProgramOptions::ProgramOptions()
 	: bVerbose(false)
+	, bDebug(false)
 	, nMaxTimeoutMs(5000)
-	, nPingCount(20)
+	, nPingCount(4)
 	, mode(MODE_UNKNOWN)
 {
 
@@ -41,9 +40,9 @@ string GetPrintHelp()
 	const char* pszHelpInfo = R"zzz(
 Usage: dping [--help]
              [--version]
-             [--country code|--asn id] [-n count] [-w timeout] [-v] {target_name}
-             --list-country [-v]
-             --list-asn code [-v]
+             [--country code|--asn id] [-n count] [-w timeout] [-v] [--debug] {target_name}
+             --list-country [-v] [--debug]
+             --list-asn code [-v] [--debug]
 
 Options:
     {target_name}  Destination host IP or domain name.
@@ -55,9 +54,10 @@ Options:
     --asn id        Ping from specified ASN (autonomous system number) network.
     -n count        Number of echo requests to send.
     -w timeout      Timeout in milliseconds to wait for each reply.
-    --list-country  List countries available.
+    --list-country  List available countries.
     --list-asn code List ASNs for specified 2 letter country code.
     -v              Verbose output
+    --debug         Additional debug output
 
 )zzz";
 	return pszHelpInfo;
@@ -111,6 +111,10 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 			if (sArg == "-v")
 			{
 				bVerbose = true;
+			}
+			else if (sArg == "--debug")
+			{
+				bDebug = true;
 			}
 			else if (sArg == "-n" && !bLastArg)
 			{
