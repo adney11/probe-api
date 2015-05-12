@@ -9,6 +9,7 @@
 #include <json/json.h>
 
 #include <algorithm>
+#include <functional>
 #include <thread>
 #include <chrono>
 
@@ -214,7 +215,6 @@ int PingByAsn(const ProgramOptions& options)
 int ListCountries(const ProgramOptions& options)
 {
 	cout << setw(2) << "ID" << " " << setw(40) << left << "Country Name" << " " << setw(5) << "Number of hosts" << endl;
-	cout << setfill('-') << setw(2 + 1 + 40 + 1 + 5 + 10) << "-" << setfill(' ') << endl;
 	cout << flush;
 
 	ProbeApiRequester requester;
@@ -227,6 +227,9 @@ int ListCountries(const ProgramOptions& options)
 		cerr << "ERROR! " << reply.sErrorDescription << endl;
 		return eRetCode::ApiFailure;
 	}
+
+	cout << setfill('-') << setw(2 + 1 + 40 + 1 + 5 + 10) << "-" << setfill(' ') << endl;
+	cout << flush;
 
 	using namespace ProbeAPI;
 	std::vector<CountryInfo> items;
@@ -291,7 +294,7 @@ int ListAsns(const ProgramOptions& options)
 		return eRetCode::ApiFailure;
 	}
 
-	cout << setfill('-') << setw(10 + 1 + 30) << "-" << setfill(' ') << endl;
+	cout << setfill('-') << setw(10 + 1 + 40) << "-" << setfill(' ') << endl;
 	cout << flush;
 
 	using namespace ProbeAPI;
@@ -299,7 +302,7 @@ int ListAsns(const ProgramOptions& options)
 
 	try
 	{
-		items = ParseGetProbesByCountryResult(reply.sBody);
+		items = ParseGetProbesByCountryResult_AsnOnly(reply.sBody);
 	}
 	catch (exception& e)
 	{
@@ -307,14 +310,23 @@ int ListAsns(const ProgramOptions& options)
 		return eRetCode::ApiFailure;
 	}
 
-	map<string, ProbeInfo> items2;
+	typedef int32_t AsnId;
+	map<AsnId, ProbeInfo> items2;
 	for (const auto& info : items)
 	{
-		const string& key = info.asn.sId;
-		if (items2.find(key) == items2.end())
+		AsnId id = 0;
+		// Usually ASN id has a form "AS202732" where constant prefix "AS" is followed by integer:
+		if (begins(info.asn.sId, "AS"))
 		{
-			items2.emplace(key, info);
+			id = std::stoul(info.asn.sId.substr(2));
 		}
+		else
+		{
+			hash<string> h1;
+			id = h1(info.asn.sId);
+		}
+
+		items2[id] = info;
 	}
 
 	for (const auto& p : items2)

@@ -17,6 +17,12 @@ namespace Json
 
 namespace ProbeAPI
 {
+	enum eParseMode
+	{
+		ProbeList_All,
+		ProbeList_AsnOnly,
+	};
+
 	struct CountryInfo
 	{
 		std::string		sCode;
@@ -60,15 +66,13 @@ namespace ProbeAPI
 
 		ProbeInfo()
 		{}
-		ProbeInfo(const Json::Value& v);
+		ProbeInfo(const Json::Value& v, const eParseMode mode);
 	};
 
 	std::vector<ProbeAPI::CountryInfo> ParseCountries(const std::string& sJson);
 
 	std::vector<ProbeAPI::ProbeInfo> ParsePingTestByCountryResult(const std::string& sJson);
-	std::vector<ProbeAPI::ProbeInfo> ParseGetProbesByCountryResult(const std::string& sJson);
-
-	std::vector<ProbeAPI::ProbeInfo> ParseProbeList(const std::string& sJson, const std::string& sJsonRootItemName);
+	std::vector<ProbeAPI::ProbeInfo> ParseGetProbesByCountryResult_AsnOnly(const std::string& sJson);
 }
 
 //------------------------------------------------------
