@@ -17,6 +17,12 @@ namespace Json
 
 namespace ProbeAPI
 {
+	enum eParseMode
+	{
+		ProbeList_All,
+		ProbeList_AsnOnly,
+	};
+
 	struct CountryInfo
 	{
 		std::string		sCode;
@@ -47,7 +53,7 @@ namespace ProbeAPI
 		NetworkInfo(const Json::Value& v);
 	};
 
-	struct PingResultInfo
+	struct ProbeInfo
 	{
 		bool			bTimeout = false;
 		int				nTimeMs = 0;
@@ -58,13 +64,17 @@ namespace ProbeAPI
 		AsnInfo			asn;
 		NetworkInfo		network;
 
-		PingResultInfo()
+		ProbeInfo()
 		{}
-		PingResultInfo(const Json::Value& v);
+		ProbeInfo(const Json::Value& v, const eParseMode mode);
 	};
 
 	std::vector<ProbeAPI::CountryInfo> ParseCountries(const std::string& sJson);
-	std::vector<ProbeAPI::PingResultInfo> ParsePingResults(const std::string& sJson);
+
+	std::vector<ProbeAPI::ProbeInfo> ParsePingTestByCountryResult(const std::string& sJson);
+	std::vector<ProbeAPI::ProbeInfo> ParsePingTestByAsnResult(const std::string& sJson);
+
+	std::vector<ProbeAPI::ProbeInfo> ParseGetProbesByCountryResult_AsnOnly(const std::string& sJson);
 }
 
 //------------------------------------------------------

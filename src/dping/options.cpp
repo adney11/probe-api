@@ -99,6 +99,14 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 				cout << GetPrintHelp();
 				return eRetCode::OK;
 			}
+#ifdef OS_WINDOWS
+			if (bFirstArg && sArg == "/?")
+			{
+				cout << GetPrintVersion();
+				cout << GetPrintHelp();
+				return eRetCode::OK;
+			}
+#endif
 			if (bFirstArg && sArg == "--version")
 			{
 				cout << GetPrintVersion();

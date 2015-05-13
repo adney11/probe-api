@@ -8,16 +8,16 @@
 
 //------------------------------------------------------
 
-#define VERSION_PRODUCT_NAME			"Probe API Utils"
+#define VERSION_PRODUCT_NAME			"Probe API Tools"
 #define VERSION_COMPANY_NAME			"Optimal Software s.r.o."
 #define VERSION_COPYRIGHT				"Copyright \xA9 2015 Optimal Software s.r.o. All rights reserved."	// 0xA9 == '©' (c)
 #define VERSION_COMMENT					"Probe API gives access to a set of network utilities for distributed network tests."
 
 // VERSION_PRODUCT_VER1 and VERSION_PRODUCT_VER2 are product version. They are incremented during official releases:
-#define VERSION_PRODUCT_VER1			0
-#define VERSION_PRODUCT_VER2			5
+#define VERSION_PRODUCT_VER1			1
+#define VERSION_PRODUCT_VER2			0
 // This is a build version. It is incremented after any significant fix or feature added:
-#define VERSION_PRODUCT_VER3			10
+#define VERSION_PRODUCT_VER3			13
 #define VERSION_PRODUCT_VER4			0
 
 #define PRODUCT_BUILD_VER				VERSION_PRODUCT_VER3
@@ -30,8 +30,8 @@
 #define LOG_PREFIX						""
 #define FILE_DESCRIPTION				VERSION_PRODUCT_NAME ": Distributed Ping"
 #define FILE_INTERNAL_NAME				"dping"
-#define MODVERSION						0
-#define MODREVISION						5
+#define MODVERSION						1
+#define MODREVISION						0
 #define MODSUBREVISION					PRODUCT_BUILD_VER
 #define MODRELEASE						0
 #endif

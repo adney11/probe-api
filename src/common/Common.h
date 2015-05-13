@@ -37,8 +37,10 @@ namespace eRetCode
 		OK				= 0,
 		BadArguments	= 10,
 		NotSupported	= 20,
+		Cancelled		= 50,
 		ApiFailure		= 100,
 		OtherError		= 500,
+		HardFailure		= 1000,
 	};
 }
 

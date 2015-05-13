@@ -58,7 +58,7 @@ ProbeAPI::NetworkInfo::NetworkInfo(const Json::Value& v)
 
 //------------------------------------------------------
 
-ProbeAPI::PingResultInfo::PingResultInfo(const Json::Value& v)
+ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 {
 	//     {
 	//       "ASN": {
@@ -85,6 +85,12 @@ ProbeAPI::PingResultInfo::PingResultInfo(const Json::Value& v)
 	//       "PingTime": 35,
 	//       "UniqueID": "acadeec2-5c2f-4c28-96d0-a6fd72985f8d"
 	//     },
+
+	if (ProbeList_AsnOnly == mode)
+	{
+		asn = AsnInfo(v.get("ASN", ""));
+		return;
+	}
 
 	const int nDefaultVal = 9999;
 	const Json::Value valPingTime = v.get("PingTime", nDefaultVal);
@@ -152,9 +158,16 @@ std::vector<ProbeAPI::CountryInfo> ProbeAPI::ParseCountries(const std::string& s
 
 //------------------------------------------------------
 
-std::vector<ProbeAPI::PingResultInfo> ProbeAPI::ParsePingResults(const std::string& sJson)
+namespace ProbeAPI
 {
-	std::vector<PingResultInfo> res;
+	std::vector<ProbeAPI::ProbeInfo> ParseProbeList(const std::string& sJson, const std::string& sJsonRootItemName, const eParseMode mode);
+}
+
+//------------------------------------------------------
+
+std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseProbeList(const std::string& sJson, const std::string& sJsonRootItemName, const eParseMode mode)
+{
+	std::vector<ProbeInfo> res;
 
 	Json::Reader reader;
 	Json::Value root;
@@ -198,17 +211,38 @@ std::vector<ProbeAPI::PingResultInfo> ProbeAPI::ParsePingResults(const std::stri
 	//         "AsnName": "Liberty Global Operations B.V."
 	//       },
 
-	const Json::Value items = root["StartPingTestByCountryResult"];
+	const Json::Value items = root[sJsonRootItemName];
 
 	res.reserve(items.size());
 
 	for (size_t index = 0; index < items.size(); ++index)
 	{
 		const Json::Value item = items[index];
-		res.emplace_back(item);
+		res.emplace_back(item, mode);
 	}
 
 	return res;
+}
+
+//------------------------------------------------------
+
+std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParsePingTestByCountryResult(const std::string& sJson)
+{
+	return ParseProbeList(sJson, "StartPingTestByCountryResult", ProbeList_All);
+}
+
+//------------------------------------------------------
+
+std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParsePingTestByAsnResult(const std::string& sJson)
+{
+	return ParseProbeList(sJson, "StartPingTestByASNResult", ProbeList_All);
+}
+
+//------------------------------------------------------
+
+std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseGetProbesByCountryResult_AsnOnly(const std::string& sJson)
+{
+	return ParseProbeList(sJson, "GetProbesByCountryResult", ProbeList_AsnOnly);
 }
 
 //------------------------------------------------------
