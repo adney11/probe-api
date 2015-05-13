@@ -27,7 +27,7 @@
 
 #if defined(__linux__)
 #define OS_LINUX
-#elif defined(_WIN32)
+#elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 #define OS_WINDOWS
 #else
 #error Unsupported OS!
