@@ -21,11 +21,47 @@ using namespace std;
 
 //------------------------------------------------------
 
-void signal_handler(int s)
+string decode_signal(const int signal)
 {
-	cout << "Caught signal " << s << ". Program terminated." << endl;
+	switch (signal)
+	{
+	case SIGINT:
+		return "SIGINT";
+	case SIGILL:
+		return "SIGILL";
+	case SIGABRT_COMPAT:
+		return "SIGABRT_COMPAT";
+	case SIGFPE:
+		return "SIGFPE";
+	case SIGSEGV:
+		return "SIGSEGV";
+	case SIGTERM:
+		return "SIGTERM";
+	case SIGBREAK:
+		return "SIGBREAK";
+	case SIGABRT:
+		return "SIGABRT";
+	default:
+		return to_string(signal);
+	}
+}
 
-	switch (s)
+//------------------------------------------------------
+
+void signal_handler(const int signal)
+{
+	cout << flush;
+
+	if (g_pPingStats)
+	{
+		g_pPingStats->Print();
+	}
+
+	cout << endl << "Caught signal " << decode_signal(signal) << ". Program terminated." << endl;
+
+	cout << flush;
+
+	switch (signal)
 	{
 	case SIGINT:
 	case SIGABRT_COMPAT:

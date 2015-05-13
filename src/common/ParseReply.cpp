@@ -233,6 +233,13 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParsePingTestByCountryResult(const st
 
 //------------------------------------------------------
 
+std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParsePingTestByAsnResult(const std::string& sJson)
+{
+	return ParseProbeList(sJson, "StartPingTestByASNResult", ProbeList_All);
+}
+
+//------------------------------------------------------
+
 std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseGetProbesByCountryResult_AsnOnly(const std::string& sJson)
 {
 	return ParseProbeList(sJson, "GetProbesByCountryResult", ProbeList_AsnOnly);

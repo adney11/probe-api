@@ -72,6 +72,8 @@ namespace ProbeAPI
 	std::vector<ProbeAPI::CountryInfo> ParseCountries(const std::string& sJson);
 
 	std::vector<ProbeAPI::ProbeInfo> ParsePingTestByCountryResult(const std::string& sJson);
+	std::vector<ProbeAPI::ProbeInfo> ParsePingTestByAsnResult(const std::string& sJson);
+
 	std::vector<ProbeAPI::ProbeInfo> ParseGetProbesByCountryResult_AsnOnly(const std::string& sJson);
 }
 
