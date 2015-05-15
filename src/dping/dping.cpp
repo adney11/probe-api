@@ -396,12 +396,21 @@ int ListCountries(const ProgramOptions& options)
 
 //------------------------------------------------------
 
+struct MyAsnInfo
+{
+	ProbeAPI::ProbeInfo		probe;
+	int						nCount = 0;
+};
+
+//------------------------------------------------------
+
 int ListAsns(const ProgramOptions& options)
 {
 	const string sCountryCode = options.sModeArgument;
 
 	const int nWidth1 = 8;
-	cout << setw(nWidth1) << left << "ASN id" << right << " " << "ASN name" << endl;
+	const int nWidth2 = 6;
+	cout << setw(nWidth1) << left << "ASN id" << right << " " << setw(nWidth2) << "Probes" << " " << "ASN name" << endl;
 	cout << flush;
 
 	ProbeApiRequester requester;
@@ -417,7 +426,7 @@ int ListAsns(const ProgramOptions& options)
 		return eRetCode::ApiFailure;
 	}
 
-	cout << setfill('-') << setw(nWidth1 + 1 + 40) << "-" << setfill(' ') << endl;
+	cout << setfill('-') << setw(nWidth1 + 1 + nWidth2 + 1 + 40) << "-" << setfill(' ') << endl;
 	cout << flush;
 
 	using namespace ProbeAPI;
@@ -434,7 +443,8 @@ int ListAsns(const ProgramOptions& options)
 	}
 
 	typedef int32_t AsnId;
-	map<AsnId, ProbeInfo> items2;
+	map<AsnId, MyAsnInfo> items2;
+
 	for (const auto& info : items)
 	{
 		AsnId id = 0;
@@ -449,13 +459,15 @@ int ListAsns(const ProgramOptions& options)
 			id = h1(info.asn.sId);
 		}
 
-		items2[id] = info;
+		auto& item = items2[id];
+		item.probe = info;
+		++item.nCount;
 	}
 
 	for (const auto& p : items2)
 	{
 		const auto& info = p.second;
-		cout << setw(nWidth1) << left << info.asn.sId << right << " " << info.asn.sName << endl;
+		cout << setw(nWidth1) << left << info.probe.asn.sId << right << " " << setw(nWidth2) << info.nCount << " " << info.probe.asn.sName << endl;
 	}
 
 	return eRetCode::OK;

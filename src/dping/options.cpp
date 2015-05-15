@@ -51,7 +51,7 @@ Options:
     {target_name}  Destination host IP or domain name.
 
     --help          Display this help.
-    --version       Display program version.
+    --version       Display detailed program version and license info.
     --country code  Ping from specified 2 letter country code (ISO 3166-1 alpha-2).
                     Pinging by current country is a default setting.
     --asn id        Ping from specified ASN (autonomous system number) network.
