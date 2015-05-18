@@ -1,6 +1,6 @@
 # ProbeAPI Tools
 ## About
-`ProbeAPI Tools` is a set of cross platform console command line utilities which are using public ProbeAPI to make distributed pinging, tracerouting and etc.
+`ProbeAPI Tools` is a set of cross platform console command line utilities which are using public API to make distributed pinging, tracerouting and etc.
 
 ## Usage
 
