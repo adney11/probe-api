@@ -10,6 +10,8 @@
 
 using namespace std;
 
+//#define ALLOW_PINGING_BY_DEFAULT
+
 //------------------------------------------------------
 
 ProgramOptions::ProgramOptions()
@@ -43,17 +45,22 @@ string GetPrintHelp()
 	const char* pszHelpInfo = R"zzz(
 Usage: dping [--help]
              [--version]
-             [--country code|--asn id] [-n count] [-w timeout] [-v] [--debug] {target_name}
              --list-country [-v] [--debug]
              --list-asn code [-v] [--debug]
+             --country code [-n count] [-w timeout] [-v] [--debug] {target_name}
+             --asn id [-n count] [-w timeout] [-v] [--debug] {target_name}
 
 Options:
     {target_name}  Destination host IP or domain name.
 
     --help          Display this help.
     --version       Display detailed program version and license info.
-    --country code  Ping from specified 2 letter country code (ISO 3166-1 alpha-2).
-                    Pinging by current country is a default setting.
+    --country code  Ping from specified 2 letter country code (ISO 3166-1 alpha-2).)zzz"
+#ifdef ALLOW_PINGING_BY_DEFAULT
+R"zzz(
+                    Pinging by country with most probes available is a default setting.)zzz"
+#endif
+R"zzz(
     --asn id        Ping from specified ASN (autonomous system number) network.
     -n count        Number of echo requests to send.
     -w timeout      Timeout in milliseconds to wait for each reply.
@@ -61,6 +68,12 @@ Options:
     --list-asn code List ASNs for specified 2 letter country code.
     -v              Verbose output
     --debug         Additional debug output
+
+Examples:
+dping --list-country
+dping --list-asn ES
+dping --country US 8.8.8.8
+dping --asn AS3352 8.8.8.8
 
 )zzz";
 	return pszHelpInfo;
@@ -242,7 +255,11 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 				mode = MODE_GET_ASNS;
 				sModeArgument = sNextArg;
 			}
-			else if ((MODE_UNKNOWN == mode || MODE_PING_BY_COUNTRY == mode || MODE_PING_BY_ASN == mode) && bLastArg)
+			else if ((
+#ifdef ALLOW_PINGING_BY_DEFAULT
+				MODE_UNKNOWN == mode ||
+#endif
+				MODE_PING_BY_COUNTRY == mode || MODE_PING_BY_ASN == mode) && bLastArg)
 			{
 				CheckArgumentParameterNotEmpty("{target}", sArg);
 				sTarget = sArg;
@@ -256,8 +273,12 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 
 		if (MODE_UNKNOWN == mode)
 		{
+#ifdef ALLOW_PINGING_BY_DEFAULT
 			mode = MODE_PING_BY_COUNTRY;
 			sModeArgument = DEFAULT_PING_COUNTRY_META;
+#else
+			throw exception("Program mode is not specified.");
+#endif
 		}
 
 		if ((MODE_PING_BY_COUNTRY == mode || MODE_PING_BY_ASN == mode) && !bTargetSet)
