@@ -129,6 +129,9 @@ string GetPrintCredits()
 {
 	ostringstream buf;
 
+	buf << GetPrintVersion();
+	buf << VERSION_COPYRIGHT_2 << endl;
+
 	buf << endl;
 
 	buf << "Sources repository:  " << "https://github.com/optimal-software/probe-api" << endl
@@ -232,7 +235,6 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 #endif
 			if (bFirstArg && sArg == "--version")
 			{
-				cout << GetPrintVersion();
 				cout << GetPrintCredits();
 				return eRetCode::OK;
 			}

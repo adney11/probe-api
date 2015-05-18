@@ -8,10 +8,11 @@
 
 //------------------------------------------------------
 
-#define VERSION_PRODUCT_NAME			"Probe API Tools"
+#define VERSION_PRODUCT_NAME			"ProbeAPI Tools"
 #define VERSION_COMPANY_NAME			"Optimal Software s.r.o."
 #define VERSION_COPYRIGHT				"Copyright \xA9 2015 Optimal Software s.r.o. All rights reserved."	// 0xA9 == '©' (c)
-#define VERSION_COMMENT					"Probe API gives access to a set of network utilities for distributed network tests."
+#define VERSION_COPYRIGHT_2				"Copyright (c) 2015 Optimal Software s.r.o. All rights reserved."	// for printing to console
+#define VERSION_COMMENT					"ProbeAPI Tools is a set of cross platform console command line utilities which are using public ProbeAPI to make distributed pinging, tracerouting and etc."
 
 // VERSION_PRODUCT_VER1 and VERSION_PRODUCT_VER2 are product version. They are incremented during official releases:
 #define VERSION_PRODUCT_VER1			1
