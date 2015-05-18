@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
 		return nCmdLineRes;
 	}
 
-	const int nProgramRes = Dping(options);
+	const int nProgramRes = Application(options);
 
 	return nProgramRes;
 }

@@ -8,16 +8,17 @@
 
 //------------------------------------------------------
 
-#define VERSION_PRODUCT_NAME			"Probe API Tools"
+#define VERSION_PRODUCT_NAME			"ProbeAPI Tools"
 #define VERSION_COMPANY_NAME			"Optimal Software s.r.o."
 #define VERSION_COPYRIGHT				"Copyright \xA9 2015 Optimal Software s.r.o. All rights reserved."	// 0xA9 == '©' (c)
-#define VERSION_COMMENT					"Probe API gives access to a set of network utilities for distributed network tests."
+#define VERSION_COPYRIGHT_2				"Copyright (c) 2015 Optimal Software s.r.o. All rights reserved."	// for printing to console
+#define VERSION_COMMENT					"ProbeAPI Tools is a set of cross platform console command line utilities which are using public ProbeAPI to make distributed pinging, tracerouting and etc."
 
 // VERSION_PRODUCT_VER1 and VERSION_PRODUCT_VER2 are product version. They are incremented during official releases:
 #define VERSION_PRODUCT_VER1			1
 #define VERSION_PRODUCT_VER2			0
 // This is a build version. It is incremented after any significant fix or feature added:
-#define VERSION_PRODUCT_VER3			13
+#define VERSION_PRODUCT_VER3			16
 #define VERSION_PRODUCT_VER4			0
 
 #define PRODUCT_BUILD_VER				VERSION_PRODUCT_VER3
@@ -31,7 +32,7 @@
 #define FILE_DESCRIPTION				VERSION_PRODUCT_NAME ": Distributed Ping"
 #define FILE_INTERNAL_NAME				"dping"
 #define MODVERSION						1
-#define MODREVISION						0
+#define MODREVISION						1
 #define MODSUBREVISION					PRODUCT_BUILD_VER
 #define MODRELEASE						0
 #endif

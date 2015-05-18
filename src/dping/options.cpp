@@ -5,7 +5,12 @@
 #include "common/Common.h"
 #include "common/version.h"			// for VERSION_PRODUCT_NAME, FILE_INTERNAL_NAME, MAIN_PRODUCT_VERSION_STR_A
 
+#include <json/version.h>
+#include <curlpp/cURLpp.hpp>
+
 using namespace std;
+
+//#define ALLOW_PINGING_BY_DEFAULT
 
 //------------------------------------------------------
 
@@ -40,17 +45,22 @@ string GetPrintHelp()
 	const char* pszHelpInfo = R"zzz(
 Usage: dping [--help]
              [--version]
-             [--country code|--asn id] [-n count] [-w timeout] [-v] [--debug] {target_name}
              --list-country [-v] [--debug]
              --list-asn code [-v] [--debug]
+             --country code [-n count] [-w timeout] [-v] [--debug] {target_name}
+             --asn id [-n count] [-w timeout] [-v] [--debug] {target_name}
 
 Options:
     {target_name}  Destination host IP or domain name.
 
     --help          Display this help.
-    --version       Display program version.
-    --country code  Ping from specified 2 letter country code (ISO 3166-1 alpha-2).
-                    Pinging by current country is a default setting.
+    --version       Display detailed program version, copyright notices.
+    --country code  Ping from specified 2 letter country code (ISO 3166-1 alpha-2).)zzz"
+#ifdef ALLOW_PINGING_BY_DEFAULT
+R"zzz(
+                    Pinging by country with most probes available is a default setting.)zzz"
+#endif
+R"zzz(
     --asn id        Ping from specified ASN (autonomous system number) network.
     -n count        Number of echo requests to send.
     -w timeout      Timeout in milliseconds to wait for each reply.
@@ -59,8 +69,124 @@ Options:
     -v              Verbose output
     --debug         Additional debug output
 
+Examples:
+dping --list-country
+dping --list-asn ES
+dping --country US 8.8.8.8
+dping --asn AS3352 8.8.8.8
+
 )zzz";
 	return pszHelpInfo;
+}
+
+//------------------------------------------------------
+
+string GetCurlFullVersion()
+{
+	string res = curlpp::libcurlVersion();
+	curl_version_info_data* pCurlInfo = curl_version_info(CURLVERSION_NOW);
+	if (pCurlInfo)
+	{
+		res += "; Protocols:";
+		for (const char* const* p = pCurlInfo->protocols; *p != nullptr; ++p)
+		{
+			res += " ";
+			res += *p;
+		}
+	}
+	return res;
+}
+
+//------------------------------------------------------
+
+string FormatLibraryInfo(
+	const string& sName,
+	const string& sVersion,
+	const string& sWebsite,
+	const string& sRepository,
+	const string& sLicenseType,
+	const string& sLicenseURL)
+{
+	ostringstream buf;
+	const size_t nTab1 = 4;
+	const size_t nTab2 = 12;
+	const string sPad(nTab1, ' ');
+
+	buf
+		<< left
+		<< setw(nTab2) << sName << ": " << sVersion << endl
+		<< sPad << setw(nTab2 - nTab1) << "Website" << ": " << sWebsite << endl
+		<< sPad << setw(nTab2 - nTab1) << "Repo" << ": " << sRepository << endl
+		<< sPad << setw(nTab2 - nTab1) << "License" << ": " << sLicenseType << "; " << sLicenseURL << endl
+		<< right
+		;
+	return buf.str();
+}
+
+//------------------------------------------------------
+
+string GetPrintCredits()
+{
+	ostringstream buf;
+
+	buf << GetPrintVersion();
+	buf << VERSION_COPYRIGHT_2 << endl;
+
+	buf << endl;
+
+	buf << "Sources repository:  " << "https://github.com/optimal-software/probe-api" << endl
+		<< "Latest license:      " << "https://github.com/optimal-software/probe-api/blob/master/LICENSE" << endl
+		;
+
+	buf << endl;
+
+	buf << "Authors: "
+		<< implode(vector < string > {"Sergey Kolomenkin"}, ", ")
+		<< endl;
+
+	buf << R"zzz(
+===============================================================================
+
+The MIT License (MIT)
+
+Copyright (c) 2015 ProbeAPI Tools
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+===============================================================================
+)zzz";
+
+	buf << endl;
+
+	buf << "Used third-party libraries: " << endl;
+	buf << FormatLibraryInfo("cURL", GetCurlFullVersion(), "http://curl.haxx.se/", "https://github.com/bagder/curl",
+		"MIT", "http://curl.haxx.se/docs/copyright.html");
+	buf << FormatLibraryInfo("cURLpp", LIBCURLPP_VERSION, "http://rrette.com/curlpp.html", "https://github.com/jpbarrette/curlpp",
+		"MIT", "http://www.curlpp.org/#license");
+	buf << FormatLibraryInfo("jsoncpp", JSONCPP_VERSION_STRING, "https://github.com/open-source-parsers/jsoncpp", "https://github.com/open-source-parsers/jsoncpp",
+		"Public Domain, MIT", "https://github.com/open-source-parsers/jsoncpp/blob/master/LICENSE");
+#ifndef OS_WINDOWS
+	buf << FormatLibraryInfo("OpenSSL", "????", "https://www.openssl.org/", "https://github.com/openssl/openssl",
+		"BSD-based", "http://www.openssl.org/source/license.html");
+#endif
+
+	return buf.str();
 }
 
 //------------------------------------------------------
@@ -109,10 +235,7 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 #endif
 			if (bFirstArg && sArg == "--version")
 			{
-				cout << GetPrintVersion();
-				vector<string> names;
-				names.emplace_back("Sergey Kolomenkin");
-				cout << "Authors & contributors: " << implode(names, ", ") << endl;
+				cout << GetPrintCredits();
 				return eRetCode::OK;
 			}
 
@@ -162,7 +285,11 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 				mode = MODE_GET_ASNS;
 				sModeArgument = sNextArg;
 			}
-			else if ((MODE_UNKNOWN == mode || MODE_PING_BY_COUNTRY == mode || MODE_PING_BY_ASN == mode) && bLastArg)
+			else if ((
+#ifdef ALLOW_PINGING_BY_DEFAULT
+				MODE_UNKNOWN == mode ||
+#endif
+				MODE_PING_BY_COUNTRY == mode || MODE_PING_BY_ASN == mode) && bLastArg)
 			{
 				CheckArgumentParameterNotEmpty("{target}", sArg);
 				sTarget = sArg;
@@ -176,8 +303,12 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 
 		if (MODE_UNKNOWN == mode)
 		{
+#ifdef ALLOW_PINGING_BY_DEFAULT
 			mode = MODE_PING_BY_COUNTRY;
 			sModeArgument = DEFAULT_PING_COUNTRY_META;
+#else
+			throw exception("Program mode is not specified.");
+#endif
 		}
 
 		if ((MODE_PING_BY_COUNTRY == mode || MODE_PING_BY_ASN == mode) && !bTargetSet)
