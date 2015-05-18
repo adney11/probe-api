@@ -29,7 +29,7 @@ extern PingingStats*	g_pPingStats;
 
 //------------------------------------------------------
 
-int Dping(const ProgramOptions& options);
+int Application(const ProgramOptions& options);
 
 //------------------------------------------------------
 #endif //ifndef _DPING_H_UID000003A64AF9C20F

@@ -475,7 +475,7 @@ int ListAsns(const ProgramOptions& options)
 
 //------------------------------------------------------
 
-int Dping(const ProgramOptions& options)
+int Application(const ProgramOptions& options)
 {
 	switch (options.mode)
 	{
