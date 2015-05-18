@@ -131,23 +131,9 @@ string GetPrintCredits()
 
 	buf << endl;
 
-	buf << "Repo:    " << "https://github.com/optimal-software/probe-api" << endl
-		<< "License: " << "https://github.com/optimal-software/probe-api/blob/master/LICENSE" << endl
+	buf << "Sources repository:  " << "https://github.com/optimal-software/probe-api" << endl
+		<< "Latest license:      " << "https://github.com/optimal-software/probe-api/blob/master/LICENSE" << endl
 		;
-
-	buf << endl;
-
-	buf << "Used third-party libraries: " << endl;
-	buf << FormatLibraryInfo("cURL", GetCurlFullVersion(), "http://curl.haxx.se/", "https://github.com/bagder/curl",
-		"MIT", "http://curl.haxx.se/docs/copyright.html");
-	buf << FormatLibraryInfo("cURLpp", LIBCURLPP_VERSION, "http://rrette.com/curlpp.html", "https://github.com/jpbarrette/curlpp",
-		"MIT", "http://www.curlpp.org/#license");
-	buf << FormatLibraryInfo("jsoncpp", JSONCPP_VERSION_STRING, "https://github.com/open-source-parsers/jsoncpp", "https://github.com/open-source-parsers/jsoncpp",
-		"Public Domain, MIT", "https://github.com/open-source-parsers/jsoncpp/blob/master/LICENSE");
-#ifndef OS_WINDOWS
-	buf << FormatLibraryInfo("OpenSSL", "????", "https://www.openssl.org/", "https://github.com/openssl/openssl",
-		"BSD-based", "http://www.openssl.org/source/license.html");
-#endif
 
 	buf << endl;
 
@@ -182,6 +168,20 @@ SOFTWARE.
 
 ===============================================================================
 )zzz";
+
+	buf << endl;
+
+	buf << "Used third-party libraries: " << endl;
+	buf << FormatLibraryInfo("cURL", GetCurlFullVersion(), "http://curl.haxx.se/", "https://github.com/bagder/curl",
+		"MIT", "http://curl.haxx.se/docs/copyright.html");
+	buf << FormatLibraryInfo("cURLpp", LIBCURLPP_VERSION, "http://rrette.com/curlpp.html", "https://github.com/jpbarrette/curlpp",
+		"MIT", "http://www.curlpp.org/#license");
+	buf << FormatLibraryInfo("jsoncpp", JSONCPP_VERSION_STRING, "https://github.com/open-source-parsers/jsoncpp", "https://github.com/open-source-parsers/jsoncpp",
+		"Public Domain, MIT", "https://github.com/open-source-parsers/jsoncpp/blob/master/LICENSE");
+#ifndef OS_WINDOWS
+	buf << FormatLibraryInfo("OpenSSL", "????", "https://www.openssl.org/", "https://github.com/openssl/openssl",
+		"BSD-based", "http://www.openssl.org/source/license.html");
+#endif
 
 	return buf.str();
 }
