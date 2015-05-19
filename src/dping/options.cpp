@@ -42,7 +42,7 @@ string GetPrintHelpSuggest()
 
 string GetPrintHelp()
 {
-	const char* pszHelpInfo = R"zzz(
+	const string sHelpInfo = R"zzz(
 Usage: dping [--help]
              [--version]
              --list-country [-v] [--debug]
@@ -69,6 +69,17 @@ R"zzz(
     -v              Verbose output
     --debug         Additional debug output
 
+Return Codes:
+)zzz"
+#define HELP_RET_CODE(id)	+ OSSFMT(setw(5) << id << " - " #id  << endl)
+HELP_RET_CODE(eRetCode::OK)
+HELP_RET_CODE(eRetCode::BadArguments)
+HELP_RET_CODE(eRetCode::NotSupported)
+HELP_RET_CODE(eRetCode::Cancelled)
+HELP_RET_CODE(eRetCode::ApiFailure)
+HELP_RET_CODE(eRetCode::OtherError)
+HELP_RET_CODE(eRetCode::HardFailure)
++ R"zzz(
 Examples:
 dping --list-country
 dping --list-asn ES
@@ -76,7 +87,8 @@ dping --country US 8.8.8.8
 dping --asn AS3352 8.8.8.8
 
 )zzz";
-	return pszHelpInfo;
+
+	return sHelpInfo;
 }
 
 //------------------------------------------------------
