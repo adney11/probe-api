@@ -133,6 +133,7 @@ ProbeAPI::TracerouteInfo::TracerouteInfo(const Json::Value& v)
 	const Json::Value v3 = v2.get("Tracert", "");
 
 	const size_t n = v3.size();
+	assert(v3.isArray());
 	vectHops.reserve(n);
 
 	for (size_t i = 0; i < n; ++i)
@@ -185,7 +186,10 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 	country = CountryInfo(v.get("Country", ""));
 	asn = AsnInfo(v.get("ASN", ""));
 	network = NetworkInfo(v.get("Network", ""));
-	tracert = TracerouteInfo(v.get("TRACERoute", ""));
+	if (ProbeList_All_Tracert == mode)
+	{
+		tracert = TracerouteInfo(v.get("TRACERoute", ""));
+	}
 }
 
 //------------------------------------------------------
@@ -220,6 +224,7 @@ std::vector<ProbeAPI::CountryInfo> ProbeAPI::ParseCountries(const std::string& s
 
 	const Json::Value items = root["GetCountriesResult"];
 
+	assert(items.isArray());
 	res.reserve(items.size());
 
 	for (size_t index = 0; index < items.size(); ++index)
@@ -286,8 +291,10 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseProbeList(const std::string& sJs
 	//         "AsnName": "Liberty Global Operations B.V."
 	//       },
 
+	assert(root.isMember(sJsonRootItemName));
 	const Json::Value items = root[sJsonRootItemName];
 
+	assert(items.isArray());
 	res.reserve(items.size());
 
 	for (size_t index = 0; index < items.size(); ++index)
@@ -324,7 +331,14 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseGetProbesByCountryResult_AsnOnly
 
 std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseTracertTestByCountryResult(const std::string& sJson)
 {
-	return ParseProbeList(sJson, "StartTracertTestByCountryResult", ProbeList_All);
+	return ParseProbeList(sJson, "StartTracertTestByCountryResult", ProbeList_All_Tracert);
+}
+
+//------------------------------------------------------
+
+std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseTracertTestByAsnResult(const std::string& sJson)
+{
+	return ParseProbeList(sJson, "StartTracertTestByAsnResult", ProbeList_All_Tracert);
 }
 
 //------------------------------------------------------

@@ -20,6 +20,7 @@ namespace ProbeAPI
 	enum eParseMode
 	{
 		ProbeList_All,
+		ProbeList_All_Tracert,
 		ProbeList_AsnOnly,
 	};
 
@@ -107,6 +108,7 @@ namespace ProbeAPI
 	std::vector<ProbeAPI::ProbeInfo> ParseGetProbesByCountryResult_AsnOnly(const std::string& sJson);
 
 	std::vector<ProbeAPI::ProbeInfo> ParseTracertTestByCountryResult(const std::string& sJson);
+	std::vector<ProbeAPI::ProbeInfo> ParseTracertTestByAsnResult(const std::string& sJson);
 }
 
 //------------------------------------------------------

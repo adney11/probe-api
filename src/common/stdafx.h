@@ -12,6 +12,7 @@
 #include "compiler.h"
 
 #include <stdint.h>
+#include <assert.h>
 
 #include <iostream>
 #include <iomanip>
