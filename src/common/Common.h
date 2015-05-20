@@ -10,6 +10,8 @@
 
 //------------------------------------------------------
 
+#define DEFAULT_PING_TIMEOUT				5000
+#define DEFAULT_PING_COUNT					4
 #define DEFAULT_PING_TTL					128
 #define DEFAULT_PING_PACKET_SIZE			32
 

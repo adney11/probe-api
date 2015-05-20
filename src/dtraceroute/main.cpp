@@ -2,7 +2,6 @@
 
 #include "stdafx.h"
 
-#include "options.h"
 #include "dtraceroute.h"
 
 #include "common/Common.h"
@@ -51,11 +50,6 @@ string decode_signal(const int signal)
 void signal_handler(const int signal)
 {
 	cout << flush;
-
-	if (g_pPingStats)
-	{
-		g_pPingStats->Print();
-	}
 
 	cout << endl << "Caught signal " << decode_signal(signal) << ". Program terminated." << endl;
 
