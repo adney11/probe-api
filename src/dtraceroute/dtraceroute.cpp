@@ -16,6 +16,30 @@ using namespace std;
 
 //------------------------------------------------------
 
+PingingStats*	g_pPingStats = nullptr;
+
+//------------------------------------------------------
+
+PingingStats::PingingStats(const string& sTarget_) : sTarget(sTarget_)
+{
+	g_pPingStats = this;
+}
+
+//------------------------------------------------------
+
+PingingStats::~PingingStats()
+{
+	g_pPingStats = nullptr;
+}
+
+//------------------------------------------------------
+
+void PingingStats::Print()
+{
+}
+
+//------------------------------------------------------
+
 string GetDefaultSourceCountry(ProbeApiRequester& requester, const ProgramOptions& options)
 {
 	ProbeApiRequester::Request request("GetCountries");
@@ -63,7 +87,7 @@ string GetDefaultSourceCountry(ProbeApiRequester& requester, const ProgramOption
 }
 
 //------------------------------------------------------
-#if 0
+
 int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, const ProgramOptions& options, ProbeApiRequester& requester, PingingStats& stats)
 {
 	const auto nRestPings = options.nPacketCount - stats.nSent;
@@ -118,9 +142,6 @@ int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, 
 		else
 		{
 			++stats.nReceived;
-			stats.nPingMin = (min)(stats.nPingMin, info.nTimeMs);
-			stats.nPingMax = (max)(stats.nPingMax, info.nTimeMs);
-			stats.nPingSum += info.nTimeMs;
 			cout << "Reply from " << sTarget << ": bytes=" << options.nPacketSize << " time=" << info.nTimeMs << "ms TTL=" << options.nTTL;
 		}
 
@@ -134,7 +155,7 @@ int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, 
 
 	return eRetCode::OK;
 }
-#endif
+
 //------------------------------------------------------
 
 int DoByCountry(const ProgramOptions& options)
@@ -158,7 +179,8 @@ int DoByCountry(const ProgramOptions& options)
 	cout << "over a maximum of " << options.nTTL << " hops:" << endl;
 	cout << flush;
 
-#if 0
+	PingingStats stats(sTarget);
+
 	while (stats.nSent < options.nPacketCount)
 	{
 		const auto nPreviousSend = stats.nSent;
@@ -175,7 +197,9 @@ int DoByCountry(const ProgramOptions& options)
 			break;
 		}
 	}
-#endif
+
+	stats.Print();
+
 	return res;
 }
 
@@ -322,7 +346,7 @@ int ListCountries(const ProgramOptions& options)
 
 	using namespace ProbeAPI;
 	vector<CountryInfo> items;
-		
+
 	try
 	{
 		items = ParseCountries(reply.sBody);

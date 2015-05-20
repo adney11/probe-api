@@ -10,6 +10,22 @@
 
 //------------------------------------------------------
 
+struct PingingStats
+{
+	int64_t		nSent = 0;
+	int64_t		nReceived = 0;
+
+	std::string	sTarget;
+
+	PingingStats(const std::string& sTarget);
+	~PingingStats();
+	void Print();
+};
+
+extern PingingStats*	g_pPingStats;
+
+//------------------------------------------------------
+
 int Application(const ProgramOptions& options);
 
 //------------------------------------------------------
