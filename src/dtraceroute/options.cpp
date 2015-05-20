@@ -17,11 +17,11 @@ using namespace std;
 ApplicationOptions::ApplicationOptions()
 	: bVerbose(false)
 	, bDebug(false)
-	, nMaxTimeoutMs(DEFAULT_PING_TIMEOUT)
-	, nPacketCount(DEFAULT_PING_COUNT)
+	, nMaxTimeoutMs(DEFAULT_TRACERT_TIMEOUT)
+	, nCount(DEFAULT_TRACERT_COUNT)
+	, nTTL(DEFAULT_TRACERT_TTL)
+	, nPacketSize(DEFAULT_TRACERT_PACKET_SIZE)
 	, mode(MODE_UNKNOWN)
-	, nTTL(DEFAULT_PING_TTL)
-	, nPacketSize(DEFAULT_PING_PACKET_SIZE)
 {
 
 }
@@ -266,7 +266,7 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 			{
 				const string sNextArg = argv[++i];
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nPacketCount = stoul(sNextArg);
+				nCount = stoul(sNextArg);
 			}
 			else if (sArg == "-w" && !bLastArg)
 			{

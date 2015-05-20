@@ -90,13 +90,14 @@ string GetDefaultSourceCountry(ProbeApiRequester& requester, const ApplicationOp
 
 int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, const ApplicationOptions& options, ProbeApiRequester& requester, ApplicationStats& stats)
 {
-	const auto nRestPings = options.nPacketCount - stats.nSent;
+	const auto nRestPings = options.nCount - stats.nSent;
 	const auto nDesiredProbeCount = nRestPings * 4;
 	const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
 
-	const string sUrl = OSSFMT("StartPingTestByCountry?countrycode=" << sCountryCode
+	const string sUrl = OSSFMT("StartTracertTestByCountry?countrycode=" << sCountryCode
 		<< "&destination=" << sTarget
 		<< "&probeslimit=" << nRequestedProbeCount
+		<< "&ttl=" << options.nTTL
 		<< "&timeout=" << options.nMaxTimeoutMs);
 
 	ProbeApiRequester::Request request(sUrl);
@@ -114,7 +115,7 @@ int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, c
 
 	try
 	{
-		items = ParsePingTestByCountryResult(reply.sBody);
+		items = ParseTracertTestByCountryResult(reply.sBody);
 	}
 	catch (exception& e)
 	{
@@ -130,19 +131,19 @@ int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, c
 		{
 			cout << flush;
 			const int nMaxDelay = 500;
-			const int nDelayMs = info.bTimeout ? 500 : info.nTimeMs;
+			const int nDelayMs = info.ping.bTimeout ? 500 : info.ping.nTimeMs;
 			this_thread::sleep_for(chrono::milliseconds((min)(nDelayMs, nMaxDelay)));
 		}
 
 		++stats.nSent;
-		if (info.bTimeout)
+		if (info.ping.bTimeout)
 		{
 			cout << "Request timed out.";
 		}
 		else
 		{
 			++stats.nReceived;
-			cout << "Reply from " << sTarget << ": bytes=" << options.nPacketSize << " time=" << info.nTimeMs << "ms TTL=" << options.nTTL;
+			cout << "Reply from " << sTarget << ": bytes=" << options.nPacketSize << " time=" << info.ping.nTimeMs << "ms TTL=" << options.nTTL;
 		}
 
 		if (options.bVerbose)
@@ -152,6 +153,9 @@ int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, c
 
 		cout << endl;
 	}
+
+	// hack to have only one call to this function:
+	stats.nSent = options.nCount;
 
 	return eRetCode::OK;
 }
@@ -181,7 +185,7 @@ int DoByCountry(const ApplicationOptions& options)
 
 	ApplicationStats stats(sTarget);
 
-	while (stats.nSent < options.nPacketCount)
+	while (stats.nSent < options.nCount)
 	{
 		const auto nPreviousSend = stats.nSent;
 

@@ -14,19 +14,16 @@ using namespace std;
 
 //#define ALLOW_PINGING_BY_DEFAULT
 
-#define PROBEAPI_PING_TTL					128
-#define PROBEAPI_PING_PACKET_SIZE			32
-
 //------------------------------------------------------
 
 ApplicationOptions::ApplicationOptions()
 	: bVerbose(false)
 	, bDebug(false)
 	, nMaxTimeoutMs(DEFAULT_PING_TIMEOUT)
-	, nPacketCount(DEFAULT_PING_COUNT)
-	, mode(MODE_UNKNOWN)
+	, nCount(DEFAULT_PING_COUNT)
 	, nTTL(DEFAULT_PING_TTL)
 	, nPacketSize(DEFAULT_PING_PACKET_SIZE)
+	, mode(MODE_UNKNOWN)
 {
 }
 
@@ -269,7 +266,7 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 			{
 				const string sNextArg = argv[++i];
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nPacketCount = stoul(sNextArg);
+				nCount = stoul(sNextArg);
 			}
 			else if (sArg == "-w" && !bLastArg)
 			{
@@ -339,9 +336,6 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 		{
 			throw exception("Target host is not specified!");
 		}
-
-		nTTL = PROBEAPI_PING_TTL;
-		nPacketSize = PROBEAPI_PING_PACKET_SIZE;
 	}
 	catch (exception& e)
 	{

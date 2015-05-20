@@ -15,6 +15,11 @@
 #define DEFAULT_PING_TTL					128
 #define DEFAULT_PING_PACKET_SIZE			32
 
+#define DEFAULT_TRACERT_TIMEOUT				5000
+#define DEFAULT_TRACERT_COUNT				4
+#define DEFAULT_TRACERT_TTL					128
+#define DEFAULT_TRACERT_PACKET_SIZE			32
+
 //------------------------------------------------------
 
 class ProbeApiRequester: protected HttpRequester

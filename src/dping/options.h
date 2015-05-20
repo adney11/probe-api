@@ -24,7 +24,7 @@ public:
 	bool		bVerbose;
 	bool		bDebug;
 	uint32_t	nMaxTimeoutMs;
-	uint32_t	nPacketCount;
+	uint32_t	nCount;
 	uint16_t	nPacketSize;
 	uint32_t	nTTL;
 

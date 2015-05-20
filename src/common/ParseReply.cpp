@@ -58,6 +58,91 @@ ProbeAPI::NetworkInfo::NetworkInfo(const Json::Value& v)
 
 //------------------------------------------------------
 
+ProbeAPI::PingResult::PingResult(const Json::Value& v)
+{
+	// "Ping2":"1",
+	// "PingTime": 35,
+	// "PingTime": null,
+	const int nDefaultVal = 9999;
+
+	bTimeout = v.isNull();
+	if (!bTimeout)
+	{
+		nTimeMs = v.asInt();
+	}
+	else
+	{
+		nTimeMs = nDefaultVal;
+	}
+}
+
+//------------------------------------------------------
+
+ProbeAPI::TracertHopResults::TracertHopResults(const Json::Value& v)
+{
+	// {"Ping1":"26","Ping2":"34","Ping3":"29","Url":"78.254.249.170"},
+	sReplyHost = v.get("Url", "").asString();
+
+	for (int i = 0;; ++i)
+	{
+		const string sName = OSSFMT("Ping" << (i+1));
+		if (!v.isMember(sName))
+		{
+			break;
+		}
+		if (vectResults.empty())
+		{
+			vectResults.reserve(3);
+		}
+		vectResults.emplace_back(v.get(sName, Json::Value::null));
+	}
+}
+
+//------------------------------------------------------
+
+ProbeAPI::TracerouteInfo::TracerouteInfo(const Json::Value& v)
+{
+	// [
+	// 	{
+	// 		"Destination": "www.onet.pl",
+	// 		"Tracert" :
+	// 		[
+	// 			{
+	// 				"Ping1": "12",
+	// 					"Ping2" : "2",
+	// 					"Ping3" : "3",
+	// 					"Url" : "192.168.0.254"
+	// 			},
+	// 			{
+	// 				"Ping1": "123",
+	// 				"Ping2" : "59",
+	// 				"Ping3" : "50",
+	// 				"Url" : "82.245.112.254"
+	// 			},
+	// 			.............
+	// 			{
+	// 				"Ping1": "100",
+	// 					"Ping2" : "99",
+	// 					"Ping3" : "103",
+	// 					"Url" : "213.180.141.140"
+	// 			}
+	// 		]
+	// 	}
+	// ]
+	if (!v.isArray() || v.size() < 1)		return;	const Json::Value v2 = v[0];	sTarget = v2.get("Destination", "").asString();
+	const Json::Value v3 = v2.get("Tracert", "");
+
+	const size_t n = v3.size();
+	vectHops.reserve(n);
+
+	for (size_t i = 0; i < n; ++i)
+	{
+		vectHops.emplace_back(v3[i]);
+	}
+}
+
+//------------------------------------------------------
+
 ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 {
 	//     {
@@ -92,18 +177,7 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 		return;
 	}
 
-	const int nDefaultVal = 9999;
-	const Json::Value valPingTime = v.get("PingTime", nDefaultVal);
-
-	bTimeout = valPingTime.isNull();
-	if (!bTimeout)
-	{
-		nTimeMs = valPingTime.asInt();
-	}
-	else
-	{
-		nTimeMs = nDefaultVal;
-	}
+	ping = PingResult(v.get("PingTime", Json::Value::null));
 
 	nId = v.get("ID", 0).asInt64();
 	sUniqueId = v.get("UniqueID", 0).asString();
@@ -111,6 +185,7 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 	country = CountryInfo(v.get("Country", ""));
 	asn = AsnInfo(v.get("ASN", ""));
 	network = NetworkInfo(v.get("Network", ""));
+	tracert = TracerouteInfo(v.get("TRACERoute", ""));
 }
 
 //------------------------------------------------------
@@ -243,6 +318,13 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParsePingTestByAsnResult(const std::s
 std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseGetProbesByCountryResult_AsnOnly(const std::string& sJson)
 {
 	return ParseProbeList(sJson, "GetProbesByCountryResult", ProbeList_AsnOnly);
+}
+
+//------------------------------------------------------
+
+std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseTracertTestByCountryResult(const std::string& sJson)
+{
+	return ParseProbeList(sJson, "StartTracertTestByCountryResult", ProbeList_All);
 }
 
 //------------------------------------------------------
