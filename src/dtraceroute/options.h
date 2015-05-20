@@ -24,7 +24,7 @@ public:
 	bool		bVerbose;
 	bool		bDebug;
 	uint32_t	nMaxTimeoutMs;
-	uint32_t	nPingCount;
+	uint32_t	nPacketCount;
 	uint16_t	nPacketSize;
 	uint32_t	nTTL;
 
@@ -33,8 +33,8 @@ public:
 		MODE_UNKNOWN,
 		MODE_GET_COUNTRIES,
 		MODE_GET_ASNS,
-		MODE_PING_BY_COUNTRY,
-		MODE_PING_BY_ASN,
+		MODE_DO_BY_COUNTRY,
+		MODE_DO_BY_ASN,
 	};
 
 	eMode		mode;

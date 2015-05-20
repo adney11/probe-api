@@ -100,7 +100,7 @@ string GetDefaultCountryToPing(ProbeApiRequester& requester, const ProgramOption
 
 int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, const ProgramOptions& options, ProbeApiRequester& requester, PingingStats& stats)
 {
-	const auto nRestPings = options.nPingCount - stats.nSent;
+	const auto nRestPings = options.nPacketCount - stats.nSent;
 	const auto nDesiredProbeCount = nRestPings * 4;
 	const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
 
@@ -193,7 +193,7 @@ int PingByCountry(const ProgramOptions& options)
 
 	PingingStats stats(sTarget);
 
-	while (stats.nSent < options.nPingCount)
+	while (stats.nSent < options.nPacketCount)
 	{
 		const auto nPreviousSend = stats.nSent;
 
@@ -219,7 +219,7 @@ int PingByCountry(const ProgramOptions& options)
 
 int MakePackOfPingsByAsn(const string& sAsnId, const string& sTarget, const ProgramOptions& options, ProbeApiRequester& requester, PingingStats& stats)
 {
-	const auto nRestPings = options.nPingCount - stats.nSent;
+	const auto nRestPings = options.nPacketCount - stats.nSent;
 	const auto nDesiredProbeCount = nRestPings * 4;
 	const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
 
@@ -306,7 +306,7 @@ int PingByAsn(const ProgramOptions& options)
 
 	PingingStats stats(sTarget);
 
-	while (stats.nSent < options.nPingCount)
+	while (stats.nSent < options.nPacketCount)
 	{
 		const auto nPreviousSend = stats.nSent;
 
@@ -478,9 +478,9 @@ int Application(const ProgramOptions& options)
 {
 	switch (options.mode)
 	{
-	case ProgramOptions::MODE_PING_BY_COUNTRY:
+	case ProgramOptions::MODE_DO_BY_COUNTRY:
 		return PingByCountry(options);
-	case ProgramOptions::MODE_PING_BY_ASN:
+	case ProgramOptions::MODE_DO_BY_ASN:
 		return PingByAsn(options);
 	case ProgramOptions::MODE_GET_COUNTRIES:
 		return ListCountries(options);

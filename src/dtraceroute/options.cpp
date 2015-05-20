@@ -18,7 +18,7 @@ ProgramOptions::ProgramOptions()
 	: bVerbose(false)
 	, bDebug(false)
 	, nMaxTimeoutMs(DEFAULT_PING_TIMEOUT)
-	, nPingCount(DEFAULT_PING_COUNT)
+	, nPacketCount(DEFAULT_PING_COUNT)
 	, mode(MODE_UNKNOWN)
 	, nTTL(DEFAULT_PING_TTL)
 	, nPacketSize(DEFAULT_PING_PACKET_SIZE)
@@ -44,35 +44,36 @@ string GetPrintHelpSuggest()
 
 string GetPrintHelp()
 {
-	const string sHelpInfo = R"zzz(
-Usage: dping [--help]
+	const string sHelpInfo = R"(
+Usage: )" FILE_INTERNAL_NAME R"( [--help]
              [--version]
              --list-country [-v] [--debug]
              --list-asn code [-v] [--debug]
-             --country code [-n count] [-w timeout] [-v] [--debug] {target_name}
-             --asn id [-n count] [-w timeout] [-v] [--debug] {target_name}
+             --country code [-n count] [-w timeout] [-h maximum_hops] [-v] [--debug] {target_name}
+             --asn id [-n count] [-w timeout] [-h maximum_hops] [-v] [--debug] {target_name}
 
 Options:
     {target_name}  Destination host IP or domain name.
 
     --help          Display this help.
     --version       Display detailed program version, copyright notices.
-    --country code  Ping from specified 2 letter country code (ISO 3166-1 alpha-2).)zzz"
+    --country code  Specify source addresses 2 letter country code (ISO 3166-1 alpha-2).)"
 #ifdef ALLOW_PINGING_BY_DEFAULT
-R"zzz(
-                    Pinging by country with most probes available is a default setting.)zzz"
+R"(
+                    Using source addresses from country with most of hosts available is a default setting.)"
 #endif
-R"zzz(
-    --asn id        Ping from specified ASN (autonomous system number) network.
+R"(
+    --asn id        Use source addresses from specified ASN (autonomous system number) network.
     -n count        Number of echo requests to send.
     -w timeout      Timeout in milliseconds to wait for each reply.
+    -h maximum_hops Maximum number of hops to search for target.
     --list-country  List available countries.
     --list-asn code List ASNs for specified 2 letter country code.
     -v              Verbose output
     --debug         Additional debug output
 
 Return Codes:
-)zzz"
+)"
 #define HELP_RET_CODE(id)	+ OSSFMT(setw(5) << id << " - " #id  << endl)
 HELP_RET_CODE(eRetCode::OK)
 HELP_RET_CODE(eRetCode::BadArguments)
@@ -81,14 +82,14 @@ HELP_RET_CODE(eRetCode::Cancelled)
 HELP_RET_CODE(eRetCode::ApiFailure)
 HELP_RET_CODE(eRetCode::OtherError)
 HELP_RET_CODE(eRetCode::HardFailure)
-+ R"zzz(
++ R"(
 Examples:
-dping --list-country
-dping --list-asn ES
-dping --country US 8.8.8.8
-dping --asn AS3352 8.8.8.8
+)" FILE_INTERNAL_NAME R"( --list-country
+)" FILE_INTERNAL_NAME R"( --list-asn ES
+)" FILE_INTERNAL_NAME R"( --country US 8.8.8.8
+)" FILE_INTERNAL_NAME R"( --asn AS3352 8.8.8.8
 
-)zzz";
+)";
 
 	return sHelpInfo;
 }
@@ -158,7 +159,7 @@ string GetPrintCredits()
 		<< implode(vector < string > {"Sergey Kolomenkin"}, ", ")
 		<< endl;
 
-	buf << R"zzz(
+	buf << R"(
 ===============================================================================
 
 The MIT License (MIT)
@@ -184,7 +185,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ===============================================================================
-)zzz";
+)";
 
 	buf << endl;
 
@@ -265,7 +266,7 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 			{
 				const string sNextArg = argv[++i];
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nPingCount = stoul(sNextArg);
+				nPacketCount = stoul(sNextArg);
 			}
 			else if (sArg == "-w" && !bLastArg)
 			{
@@ -277,14 +278,14 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 			{
 				const string sNextArg = argv[++i];
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				mode = MODE_PING_BY_COUNTRY;
+				mode = MODE_DO_BY_COUNTRY;
 				sModeArgument = sNextArg;
 			}
 			else if (sArg == "--asn" && !bLastArg)
 			{
 				const string sNextArg = argv[++i];
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				mode = MODE_PING_BY_ASN;
+				mode = MODE_DO_BY_ASN;
 				sModeArgument = sNextArg;
 			}
 			else if (sArg == "--list-country")
@@ -303,7 +304,7 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 #ifdef ALLOW_PINGING_BY_DEFAULT
 				MODE_UNKNOWN == mode ||
 #endif
-				MODE_PING_BY_COUNTRY == mode || MODE_PING_BY_ASN == mode) && bLastArg)
+				MODE_DO_BY_COUNTRY == mode || MODE_DO_BY_ASN == mode) && bLastArg)
 			{
 				CheckArgumentParameterNotEmpty("{target}", sArg);
 				sTarget = sArg;
@@ -318,16 +319,16 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 		if (MODE_UNKNOWN == mode)
 		{
 #ifdef ALLOW_PINGING_BY_DEFAULT
-			mode = MODE_PING_BY_COUNTRY;
+			mode = MODE_DO_BY_COUNTRY;
 			sModeArgument = DEFAULT_PING_COUNTRY_META;
 #else
 			throw exception("Program mode is not specified.");
 #endif
 		}
 
-		if ((MODE_PING_BY_COUNTRY == mode || MODE_PING_BY_ASN == mode) && !bTargetSet)
+		if ((MODE_DO_BY_COUNTRY == mode || MODE_DO_BY_ASN == mode) && !bTargetSet)
 		{
-			throw exception("Ping target is not specified!");
+			throw exception("Target host is not specified!");
 		}
 	}
 	catch (exception& e)
