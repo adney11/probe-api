@@ -25,6 +25,8 @@ public:
 	bool		bDebug;
 	uint32_t	nMaxTimeoutMs;
 	uint32_t	nPingCount;
+	uint16_t	nPacketSize;
+	uint32_t	nTTL;
 
 	enum eMode
 	{

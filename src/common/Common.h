@@ -10,6 +10,11 @@
 
 //------------------------------------------------------
 
+#define DEFAULT_PING_TTL					128
+#define DEFAULT_PING_PACKET_SIZE			32
+
+//------------------------------------------------------
+
 class ProbeApiRequester: protected HttpRequester
 {
 public:

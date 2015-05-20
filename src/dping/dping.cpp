@@ -2,7 +2,6 @@
 #include "stdafx.h"
 #include "dping.h"
 
-#include "common/config.h"					// for PROBEAPI_PING_PACKET_SIZE, PROBEAPI_PING_TTL
 #include "common/Common.h"
 #include "common/ParseReply.h"
 
@@ -156,7 +155,7 @@ int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, 
 			stats.nPingMin = (min)(stats.nPingMin, info.nTimeMs);
 			stats.nPingMax = (max)(stats.nPingMax, info.nTimeMs);
 			stats.nPingSum += info.nTimeMs;
-			cout << "Reply from " << sTarget << ": bytes=" << PROBEAPI_PING_PACKET_SIZE << " time=" << info.nTimeMs << "ms TTL=" << PROBEAPI_PING_TTL;
+			cout << "Reply from " << sTarget << ": bytes=" << options.nPacketSize << " time=" << info.nTimeMs << "ms TTL=" << options.nTTL;
 		}
 
 		if (options.bVerbose)
@@ -178,7 +177,7 @@ int PingByCountry(const ProgramOptions& options)
 
 	const string& sTarget = options.sTarget;
 
-	cout << endl << "Pinging " << sTarget << " with " << PROBEAPI_PING_PACKET_SIZE << " bytes of data";
+	cout << endl << "Pinging " << sTarget << " with " << options.nPacketSize << " bytes of data";
 	cout << flush;
 
 	ProbeApiRequester requester;
@@ -276,7 +275,7 @@ int MakePackOfPingsByAsn(const string& sAsnId, const string& sTarget, const Prog
 			stats.nPingMin = (min)(stats.nPingMin, info.nTimeMs);
 			stats.nPingMax = (max)(stats.nPingMax, info.nTimeMs);
 			stats.nPingSum += info.nTimeMs;
-			cout << "Reply from " << sTarget << ": bytes=" << PROBEAPI_PING_PACKET_SIZE << " time=" << info.nTimeMs << "ms TTL=" << PROBEAPI_PING_TTL;
+			cout << "Reply from " << sTarget << ": bytes=" << options.nPacketSize << " time=" << info.nTimeMs << "ms TTL=" << options.nTTL;
 		}
 
 		if (options.bVerbose)
@@ -299,7 +298,7 @@ int PingByAsn(const ProgramOptions& options)
 	const string& sTarget = options.sTarget;
 	const string& sAsnId = options.sModeArgument;
 
-	cout << endl << "Pinging " << sTarget << " with " << PROBEAPI_PING_PACKET_SIZE << " bytes of data";
+	cout << endl << "Pinging " << sTarget << " with " << options.nPacketSize << " bytes of data";
 	cout << " from " << sAsnId << ":" << endl;
 	cout << flush;
 

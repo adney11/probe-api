@@ -20,6 +20,8 @@ ProgramOptions::ProgramOptions()
 	, nMaxTimeoutMs(5000)
 	, nPingCount(4)
 	, mode(MODE_UNKNOWN)
+	, nTTL(DEFAULT_PING_TTL)
+	, nPacketSize(DEFAULT_PING_PACKET_SIZE)
 {
 
 }

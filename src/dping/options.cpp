@@ -10,7 +10,12 @@
 
 using namespace std;
 
+//------------------------------------------------------
+
 //#define ALLOW_PINGING_BY_DEFAULT
+
+#define PROBEAPI_PING_TTL					128
+#define PROBEAPI_PING_PACKET_SIZE			32
 
 //------------------------------------------------------
 
@@ -20,8 +25,9 @@ ProgramOptions::ProgramOptions()
 	, nMaxTimeoutMs(5000)
 	, nPingCount(4)
 	, mode(MODE_UNKNOWN)
+	, nTTL(DEFAULT_PING_TTL)
+	, nPacketSize(DEFAULT_PING_PACKET_SIZE)
 {
-
 }
 
 //------------------------------------------------------
@@ -327,6 +333,9 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 		{
 			throw exception("Ping target is not specified!");
 		}
+
+		nTTL = PROBEAPI_PING_TTL;
+		nPacketSize = PROBEAPI_PING_PACKET_SIZE;
 	}
 	catch (exception& e)
 	{
