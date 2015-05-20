@@ -6,6 +6,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "compiler.h"
+
 //------------------------------------------------------
 
 #define VERSION_PRODUCT_NAME			"ProbeAPI Tools"
