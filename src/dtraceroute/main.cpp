@@ -3,7 +3,7 @@
 #include "stdafx.h"
 
 #include "options.h"
-#include "dping.h"
+#include "dtraceroute.h"
 
 #include "common/Common.h"
 

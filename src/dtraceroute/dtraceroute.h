@@ -1,6 +1,6 @@
 //------------------------------------------------------
-#ifndef _DPING_H_UID000003A64AF9C20F
-#define _DPING_H_UID000003A64AF9C20F
+#ifndef _DTRACEROUTE_H_UID0000092WH823AKEN
+#define _DTRACEROUTE_H_UID0000092WH823AKEN
 
 #if _MSC_VER > 1000
 #pragma once
@@ -32,4 +32,4 @@ extern PingingStats*	g_pPingStats;
 int Application(const ProgramOptions& options);
 
 //------------------------------------------------------
-#endif //ifndef _DPING_H_UID000003A64AF9C20F
+#endif //ifndef _DTRACEROUTE_H_UID0000092WH823AKEN

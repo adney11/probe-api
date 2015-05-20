@@ -1,6 +1,6 @@
 //------------------------------------------------------
 #include "stdafx.h"
-#include "dping.h"
+#include "dtraceroute.h"
 
 #include "common/config.h"					// for PROBEAPI_PING_PACKET_SIZE, PROBEAPI_PING_TTL
 #include "common/Common.h"

@@ -37,6 +37,16 @@
 #define MODRELEASE						0
 #endif
 
+#ifdef DTRACEROUTE_PRJ
+#define LOG_PREFIX						""
+#define FILE_DESCRIPTION				VERSION_PRODUCT_NAME ": Distributed Traceroute"
+#define FILE_INTERNAL_NAME				"dtraceroute"
+#define MODVERSION						0
+#define MODREVISION						1
+#define MODSUBREVISION					PRODUCT_BUILD_VER
+#define MODRELEASE						0
+#endif
+
 //------------------------------------------------------
 
 // Product version defines
