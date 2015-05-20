@@ -10,7 +10,7 @@
 
 //------------------------------------------------------
 
-struct PingingStats
+struct ApplicationStats
 {
 	int64_t		nSent = 0;
 	int64_t		nReceived = 0;
@@ -20,16 +20,16 @@ struct PingingStats
 
 	std::string	sTarget;
 
-	PingingStats(const std::string& sTarget);
-	~PingingStats();
+	ApplicationStats(const std::string& sTarget);
+	~ApplicationStats();
 	void Print();
 };
 
-extern PingingStats*	g_pPingStats;
+extern ApplicationStats*	g_pApplicationStats;
 
 //------------------------------------------------------
 
-int Application(const ProgramOptions& options);
+int Application(const ApplicationOptions& options);
 
 //------------------------------------------------------
 #endif //ifndef _DPING_H_UID000003A64AF9C20F

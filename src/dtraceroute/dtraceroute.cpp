@@ -16,31 +16,31 @@ using namespace std;
 
 //------------------------------------------------------
 
-PingingStats*	g_pPingStats = nullptr;
+ApplicationStats*	g_pApplicationStats = nullptr;
 
 //------------------------------------------------------
 
-PingingStats::PingingStats(const string& sTarget_) : sTarget(sTarget_)
+ApplicationStats::ApplicationStats(const string& sTarget_) : sTarget(sTarget_)
 {
-	g_pPingStats = this;
+	g_pApplicationStats = this;
 }
 
 //------------------------------------------------------
 
-PingingStats::~PingingStats()
+ApplicationStats::~ApplicationStats()
 {
-	g_pPingStats = nullptr;
+	g_pApplicationStats = nullptr;
 }
 
 //------------------------------------------------------
 
-void PingingStats::Print()
+void ApplicationStats::Print()
 {
 }
 
 //------------------------------------------------------
 
-string GetDefaultSourceCountry(ProbeApiRequester& requester, const ProgramOptions& options)
+string GetDefaultSourceCountry(ProbeApiRequester& requester, const ApplicationOptions& options)
 {
 	ProbeApiRequester::Request request("GetCountries");
 
@@ -88,7 +88,7 @@ string GetDefaultSourceCountry(ProbeApiRequester& requester, const ProgramOption
 
 //------------------------------------------------------
 
-int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, const ProgramOptions& options, ProbeApiRequester& requester, PingingStats& stats)
+int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, const ApplicationOptions& options, ProbeApiRequester& requester, ApplicationStats& stats)
 {
 	const auto nRestPings = options.nPacketCount - stats.nSent;
 	const auto nDesiredProbeCount = nRestPings * 4;
@@ -158,7 +158,7 @@ int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, 
 
 //------------------------------------------------------
 
-int DoByCountry(const ProgramOptions& options)
+int DoByCountry(const ApplicationOptions& options)
 {
 	int res = eRetCode::OK;
 
@@ -179,13 +179,13 @@ int DoByCountry(const ProgramOptions& options)
 	cout << "over a maximum of " << options.nTTL << " hops:" << endl;
 	cout << flush;
 
-	PingingStats stats(sTarget);
+	ApplicationStats stats(sTarget);
 
 	while (stats.nSent < options.nPacketCount)
 	{
 		const auto nPreviousSend = stats.nSent;
 
-		const int nRes = MakePackOfPingsByCountry(sCountryCode, sTarget, options, requester, stats);
+		const int nRes = MakePackOfJobsByCountry(sCountryCode, sTarget, options, requester, stats);
 		if (eRetCode::OK != nRes)
 		{
 			res = nRes;
@@ -205,7 +205,7 @@ int DoByCountry(const ProgramOptions& options)
 
 //------------------------------------------------------
 #if 0
-int MakePackOfPingsByAsn(const string& sAsnId, const string& sTarget, const ProgramOptions& options, ProbeApiRequester& requester, PingingStats& stats)
+int MakePackOfJobsByAsn(const string& sAsnId, const string& sTarget, const ProgramOptions& options, ProbeApiRequester& requester, PingingStats& stats)
 {
 	const auto nRestPings = options.nPacketCount - stats.nSent;
 	const auto nDesiredProbeCount = nRestPings * 4;
@@ -279,7 +279,7 @@ int MakePackOfPingsByAsn(const string& sAsnId, const string& sTarget, const Prog
 #endif
 //------------------------------------------------------
 
-int DoByAsn(const ProgramOptions& options)
+int DoByAsn(const ApplicationOptions& options)
 {
 	cerr << "ERROR! This function is not implemented!" << endl;
 	return eRetCode::NotSupported;
@@ -301,7 +301,7 @@ int DoByAsn(const ProgramOptions& options)
 	{
 		const auto nPreviousSend = stats.nSent;
 
-		const int nRes = MakePackOfPingsByAsn(sAsnId, sTarget, options, requester, stats);
+		const int nRes = MakePackOfJobsByAsn(sAsnId, sTarget, options, requester, stats);
 		if (eRetCode::OK != nRes)
 		{
 			res = nRes;
@@ -322,7 +322,7 @@ int DoByAsn(const ProgramOptions& options)
 
 //------------------------------------------------------
 
-int ListCountries(const ProgramOptions& options)
+int ListCountries(const ApplicationOptions& options)
 {
 	const int nWidth1 = 2;
 	const int nWidth2 = 40;
@@ -398,7 +398,7 @@ struct MyAsnInfo
 
 //------------------------------------------------------
 
-int ListAsns(const ProgramOptions& options)
+int ListAsns(const ApplicationOptions& options)
 {
 	const string sCountryCode = options.sModeArgument;
 
@@ -504,17 +504,17 @@ int ListAsns(const ProgramOptions& options)
 
 //------------------------------------------------------
 
-int Application(const ProgramOptions& options)
+int Application(const ApplicationOptions& options)
 {
 	switch (options.mode)
 	{
-	case ProgramOptions::MODE_DO_BY_COUNTRY:
+	case ApplicationOptions::MODE_DO_BY_COUNTRY:
 		return DoByCountry(options);
-	case ProgramOptions::MODE_DO_BY_ASN:
+	case ApplicationOptions::MODE_DO_BY_ASN:
 		return DoByAsn(options);
-	case ProgramOptions::MODE_GET_COUNTRIES:
+	case ApplicationOptions::MODE_GET_COUNTRIES:
 		return ListCountries(options);
-	case ProgramOptions::MODE_GET_ASNS:
+	case ApplicationOptions::MODE_GET_ASNS:
 		return ListAsns(options);
 	default:
 		cerr << "ERROR! Unknown program mode " << options.mode << endl;

@@ -51,9 +51,9 @@ void signal_handler(const int signal)
 {
 	cout << flush;
 
-	if (g_pPingStats)
+	if (g_pApplicationStats)
 	{
-		g_pPingStats->Print();
+		g_pApplicationStats->Print();
 	}
 
 	cout << endl << "Caught signal " << decode_signal(signal) << ". Program terminated." << endl;
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
 	signal(SIGBREAK, signal_handler);
 	signal(SIGABRT, signal_handler);
 
-	ProgramOptions options;
+	ApplicationOptions options;
 
 	const int nCmdLineRes = options.ProcessCommandLine(argc, argv);
 	if (nCmdLineRes != eRetCode::NoValue)

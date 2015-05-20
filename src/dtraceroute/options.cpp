@@ -14,7 +14,7 @@ using namespace std;
 
 //------------------------------------------------------
 
-ProgramOptions::ProgramOptions()
+ApplicationOptions::ApplicationOptions()
 	: bVerbose(false)
 	, bDebug(false)
 	, nMaxTimeoutMs(DEFAULT_PING_TIMEOUT)
@@ -216,7 +216,7 @@ void CheckArgumentParameterNotEmpty(const string& sArg, const string& sParam)
 
 //------------------------------------------------------
 
-int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])	// returns non-zero result if process exit required
+int ApplicationOptions::ProcessCommandLine(const int argc, const char* const argv[])	// returns non-zero result if process exit required
 {
 	try
 	{

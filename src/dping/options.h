@@ -13,10 +13,10 @@
 
 //------------------------------------------------------
 
-class ProgramOptions
+class ApplicationOptions
 {
 public:
-	ProgramOptions();
+	ApplicationOptions();
 
 	int ProcessCommandLine(const int argc, const char* const argv[]);	// returns non-zero result if process exit required
 

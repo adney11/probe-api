@@ -10,23 +10,23 @@
 
 //------------------------------------------------------
 
-struct PingingStats
+struct ApplicationStats
 {
 	int64_t		nSent = 0;
 	int64_t		nReceived = 0;
 
 	std::string	sTarget;
 
-	PingingStats(const std::string& sTarget);
-	~PingingStats();
+	ApplicationStats(const std::string& sTarget);
+	~ApplicationStats();
 	void Print();
 };
 
-extern PingingStats*	g_pPingStats;
+extern ApplicationStats*	g_pApplicationStats;
 
 //------------------------------------------------------
 
-int Application(const ProgramOptions& options);
+int Application(const ApplicationOptions& options);
 
 //------------------------------------------------------
 #endif //ifndef _DTRACEROUTE_H_UID0000092WH823AKEN
