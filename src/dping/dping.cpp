@@ -171,7 +171,7 @@ int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, 
 
 //------------------------------------------------------
 
-int PingByCountry(const ProgramOptions& options)
+int DoByCountry(const ProgramOptions& options)
 {
 	int res = eRetCode::OK;
 
@@ -291,7 +291,7 @@ int MakePackOfPingsByAsn(const string& sAsnId, const string& sTarget, const Prog
 
 //------------------------------------------------------
 
-int PingByAsn(const ProgramOptions& options)
+int DoByAsn(const ProgramOptions& options)
 {
 	int res = eRetCode::OK;
 
@@ -479,9 +479,9 @@ int Application(const ProgramOptions& options)
 	switch (options.mode)
 	{
 	case ProgramOptions::MODE_DO_BY_COUNTRY:
-		return PingByCountry(options);
+		return DoByCountry(options);
 	case ProgramOptions::MODE_DO_BY_ASN:
-		return PingByAsn(options);
+		return DoByAsn(options);
 	case ProgramOptions::MODE_GET_COUNTRIES:
 		return ListCountries(options);
 	case ProgramOptions::MODE_GET_ASNS:

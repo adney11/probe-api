@@ -16,40 +16,6 @@ using namespace std;
 
 //------------------------------------------------------
 
-PingingStats*	g_pPingStats = nullptr;
-
-//------------------------------------------------------
-
-PingingStats::PingingStats(const string& sTarget_) : sTarget(sTarget_)
-{
-	g_pPingStats = this;
-}
-
-//------------------------------------------------------
-
-PingingStats::~PingingStats()
-{
-	g_pPingStats = nullptr;
-}
-
-//------------------------------------------------------
-
-void PingingStats::Print()
-{
-	cout << endl << "Ping statistics for " << sTarget << endl;
-	cout << "    Packets : Sent = " << nSent << ", Received = " << nReceived << ", Lost = " << (nSent - nReceived)
-		<< " (" << ((nSent - nReceived) * 100 / (nSent ? nSent : 1)) << " % loss)," << endl;
-
-	if (nReceived > 0)
-	{
-		cout << "Approximate round trip times in milli-seconds:" << endl;
-		cout << "    Minimum = " << nPingMin << "ms, Maximum = " << nPingMax << "ms, Average = " << (nPingSum / nReceived) << "ms" << endl;
-	}
-	cout << flush;
-}
-
-//------------------------------------------------------
-
 string GetDefaultCountryToPing(ProbeApiRequester& requester, const ProgramOptions& options)
 {
 	ProbeApiRequester::Request request("GetCountries");
@@ -97,7 +63,7 @@ string GetDefaultCountryToPing(ProbeApiRequester& requester, const ProgramOption
 }
 
 //------------------------------------------------------
-
+#if 0
 int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, const ProgramOptions& options, ProbeApiRequester& requester, PingingStats& stats)
 {
 	const auto nRestPings = options.nPacketCount - stats.nSent;
@@ -168,11 +134,14 @@ int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, 
 
 	return eRetCode::OK;
 }
-
+#endif
 //------------------------------------------------------
 
-int PingByCountry(const ProgramOptions& options)
+int DoByCountry(const ProgramOptions& options)
 {
+	cerr << "ERROR! This function is not implemented!" << endl;
+	return eRetCode::NotSupported;
+#if 0
 	int res = eRetCode::OK;
 
 	const string& sTarget = options.sTarget;
@@ -213,10 +182,11 @@ int PingByCountry(const ProgramOptions& options)
 	stats.Print();
 
 	return res;
+#endif
 }
 
 //------------------------------------------------------
-
+#if 0
 int MakePackOfPingsByAsn(const string& sAsnId, const string& sTarget, const ProgramOptions& options, ProbeApiRequester& requester, PingingStats& stats)
 {
 	const auto nRestPings = options.nPacketCount - stats.nSent;
@@ -288,11 +258,14 @@ int MakePackOfPingsByAsn(const string& sAsnId, const string& sTarget, const Prog
 
 	return eRetCode::OK;
 }
-
+#endif
 //------------------------------------------------------
 
-int PingByAsn(const ProgramOptions& options)
+int DoByAsn(const ProgramOptions& options)
 {
+	cerr << "ERROR! This function is not implemented!" << endl;
+	return eRetCode::NotSupported;
+#if 0
 	int res = eRetCode::OK;
 
 	const string& sTarget = options.sTarget;
@@ -326,6 +299,7 @@ int PingByAsn(const ProgramOptions& options)
 	stats.Print();
 
 	return res;
+#endif
 }
 
 //------------------------------------------------------
@@ -479,9 +453,9 @@ int Application(const ProgramOptions& options)
 	switch (options.mode)
 	{
 	case ProgramOptions::MODE_DO_BY_COUNTRY:
-		return PingByCountry(options);
+		return DoByCountry(options);
 	case ProgramOptions::MODE_DO_BY_ASN:
-		return PingByAsn(options);
+		return DoByAsn(options);
 	case ProgramOptions::MODE_GET_COUNTRIES:
 		return ListCountries(options);
 	case ProgramOptions::MODE_GET_ASNS:
