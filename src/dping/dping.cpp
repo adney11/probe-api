@@ -50,7 +50,7 @@ void PingingStats::Print()
 
 //------------------------------------------------------
 
-string GetDefaultCountryToPing(ProbeApiRequester& requester, const ProgramOptions& options)
+string GetDefaultSourceCountry(ProbeApiRequester& requester, const ProgramOptions& options)
 {
 	ProbeApiRequester::Request request("GetCountries");
 
@@ -62,7 +62,7 @@ string GetDefaultCountryToPing(ProbeApiRequester& requester, const ProgramOption
 	}
 
 	using namespace ProbeAPI;
-	std::vector<CountryInfo> countries;
+	vector<CountryInfo> countries;
 
 	try
 	{
@@ -74,7 +74,7 @@ string GetDefaultCountryToPing(ProbeApiRequester& requester, const ProgramOption
 		return string();
 	}
 
-	std::sort(countries.begin(), countries.end(), [](const CountryInfo& a, const CountryInfo& b)
+	sort(countries.begin(), countries.end(), [](const CountryInfo& a, const CountryInfo& b)
 	{
 		// nProbes DESC
 		if (a.nProbes != b.nProbes)
@@ -120,7 +120,7 @@ int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, 
 	}
 
 	using namespace ProbeAPI;
-	std::vector<ProbeInfo> items;
+	vector<ProbeInfo> items;
 
 	try
 	{
@@ -141,7 +141,7 @@ int MakePackOfPingsByCountry(const string& sCountryCode, const string& sTarget, 
 			cout << flush;
 			const int nMaxDelay = 500;
 			const int nDelayMs = info.bTimeout ? 500 : info.nTimeMs;
-			std::this_thread::sleep_for(std::chrono::milliseconds((min)(nDelayMs, nMaxDelay)));
+			this_thread::sleep_for(chrono::milliseconds((min)(nDelayMs, nMaxDelay)));
 		}
 
 		++stats.nSent;
@@ -183,9 +183,9 @@ int DoByCountry(const ProgramOptions& options)
 	ProbeApiRequester requester;
 
 	string sCountryCode = options.sModeArgument;
-	if (DEFAULT_PING_COUNTRY_META == sCountryCode)
+	if (DEFAULT_COUNTRY_META == sCountryCode)
 	{
-		sCountryCode = GetDefaultCountryToPing(requester, options);
+		sCountryCode = GetDefaultSourceCountry(requester, options);
 	}
 
 	cout << " from country code " << sCountryCode << ":" << endl;
@@ -240,7 +240,7 @@ int MakePackOfPingsByAsn(const string& sAsnId, const string& sTarget, const Prog
 	}
 
 	using namespace ProbeAPI;
-	std::vector<ProbeInfo> items;
+	vector<ProbeInfo> items;
 
 	try
 	{
@@ -261,7 +261,7 @@ int MakePackOfPingsByAsn(const string& sAsnId, const string& sTarget, const Prog
 			cout << flush;
 			const int nMaxDelay = 500;
 			const int nDelayMs = info.bTimeout ? 500 : info.nTimeMs;
-			std::this_thread::sleep_for(std::chrono::milliseconds((min)(nDelayMs, nMaxDelay)));
+			this_thread::sleep_for(chrono::milliseconds((min)(nDelayMs, nMaxDelay)));
 		}
 
 		++stats.nSent;
@@ -353,8 +353,8 @@ int ListCountries(const ProgramOptions& options)
 	cout << flush;
 
 	using namespace ProbeAPI;
-	std::vector<CountryInfo> items;
-		
+	vector<CountryInfo> items;
+
 	try
 	{
 		items = ParseCountries(reply.sBody);
@@ -365,7 +365,8 @@ int ListCountries(const ProgramOptions& options)
 		return eRetCode::ApiFailure;
 	}
 
-	std::sort(items.begin(), items.end(), [](const CountryInfo& a, const CountryInfo& b)
+	// Sort data:
+	sort(items.begin(), items.end(), [](const CountryInfo& a, const CountryInfo& b)
 	{
 		// nProbes DESC
 		if (a.nProbes != b.nProbes)
@@ -380,6 +381,7 @@ int ListCountries(const ProgramOptions& options)
 		return false;
 	});
 
+	// Print:
 	for (const auto& info : items)
 	{
 		if (0 == info.nProbes)
@@ -398,7 +400,8 @@ int ListCountries(const ProgramOptions& options)
 struct MyAsnInfo
 {
 	ProbeAPI::ProbeInfo		probe;
-	int						nCount = 0;
+	uint32_t				nAsnId = 0;
+	int						nProbes = 0;
 };
 
 //------------------------------------------------------
@@ -409,7 +412,7 @@ int ListAsns(const ProgramOptions& options)
 
 	const int nWidth1 = 8;
 	const int nWidth2 = 6;
-	cout << setw(nWidth1) << left << "ASN id" << right << " " << setw(nWidth2) << "Probes" << " " << "ASN name" << endl;
+	cout << setw(nWidth1) << left << "ASN id" << right << " " << setw(nWidth2) << "Hosts" << " " << "ASN name" << endl;
 	cout << flush;
 
 	ProbeApiRequester requester;
@@ -429,7 +432,7 @@ int ListAsns(const ProgramOptions& options)
 	cout << flush;
 
 	using namespace ProbeAPI;
-	std::vector<ProbeInfo> items;
+	vector<ProbeInfo> items;
 
 	try
 	{
@@ -441,7 +444,8 @@ int ListAsns(const ProgramOptions& options)
 		return eRetCode::ApiFailure;
 	}
 
-	typedef int32_t AsnId;
+	// Deduplicate data:
+	typedef decltype(MyAsnInfo().nAsnId) AsnId;
 	map<AsnId, MyAsnInfo> items2;
 
 	for (const auto& info : items)
@@ -450,7 +454,7 @@ int ListAsns(const ProgramOptions& options)
 		// Usually ASN id has a form "AS202732" where constant prefix "AS" is followed by integer:
 		if (begins(info.asn.sId, "AS"))
 		{
-			id = std::stoul(info.asn.sId.substr(2));
+			id = stoul(info.asn.sId.substr(2));
 		}
 		else
 		{
@@ -460,13 +464,47 @@ int ListAsns(const ProgramOptions& options)
 
 		auto& item = items2[id];
 		item.probe = info;
-		++item.nCount;
+		item.nAsnId = id;
+		++item.nProbes;
 	}
+
+	// Sort data:
+	items = vector<ProbeInfo>();	// free memory
+
+	vector<MyAsnInfo> items3;
+	items3.reserve(items2.size());
 
 	for (const auto& p : items2)
 	{
-		const auto& info = p.second;
-		cout << setw(nWidth1) << left << info.probe.asn.sId << right << " " << setw(nWidth2) << info.nCount << " " << info.probe.asn.sName << endl;
+		items3.push_back(p.second);
+	}
+
+	items2.clear();	// free memory
+
+	sort(items3.begin(), items3.end(), [](const MyAsnInfo& a, const MyAsnInfo& b)
+	{
+		// nProbes DESC
+		if (a.nProbes != b.nProbes)
+		{
+			return a.nProbes > b.nProbes;
+		}
+		// nAsnId ASC
+		if (a.nAsnId != b.nAsnId)
+		{
+			return a.nAsnId < b.nAsnId;
+		}
+		return false;
+	});
+
+	// Print:
+	for (const auto& info : items3)
+	{
+		if (0 == info.nProbes)
+		{
+			//continue;
+		}
+
+		cout << setw(nWidth1) << left << info.probe.asn.sId << right << " " << setw(nWidth2) << info.nProbes << " " << info.probe.asn.sName << endl;
 	}
 
 	return eRetCode::OK;

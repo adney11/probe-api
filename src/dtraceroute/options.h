@@ -8,7 +8,7 @@
 
 //------------------------------------------------------
 
-#define DEFAULT_PING_COUNTRY_META		"<biggest>"
+#define DEFAULT_COUNTRY_META		"<biggest>"
 #define DEFAULT_PING_COUNTRY_CODE		"CZ"
 
 //------------------------------------------------------

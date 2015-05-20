@@ -49,12 +49,12 @@ string GetPrintHelpSuggest()
 string GetPrintHelp()
 {
 	const string sHelpInfo = R"(
-Usage: )" FILE_INTERNAL_NAME R"([--help]
-             [--version]
-             --list-country [-v] [--debug]
-             --list-asn code [-v] [--debug]
-             --country code [-n count] [-w timeout] [-v] [--debug] {target_name}
-             --asn id [-n count] [-w timeout] [-v] [--debug] {target_name}
+Usage: )" FILE_INTERNAL_NAME R"( --help
+    --version
+    --list-country [-v] [--debug]
+    --list-asn code [-v] [--debug]
+    --country code [-n count] [-w timeout] [-v] [--debug] {target_name}
+    --asn id [-n count] [-w timeout] [-v] [--debug] {target_name}
 
 Options:
     {target_name}  Destination host IP or domain name.
@@ -329,7 +329,7 @@ int ProgramOptions::ProcessCommandLine(const int argc, const char* const argv[])
 		{
 #ifdef ALLOW_PINGING_BY_DEFAULT
 			mode = MODE_DO_BY_COUNTRY;
-			sModeArgument = DEFAULT_PING_COUNTRY_META;
+			sModeArgument = DEFAULT_COUNTRY_META;
 #else
 			throw exception("Program mode is not specified.");
 #endif
