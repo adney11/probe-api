@@ -40,8 +40,8 @@ void ApplicationStats::Print()
 
 int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, const ApplicationOptions& options, ProbeApiRequester& requester, ApplicationStats& stats)
 {
-	const auto nRestPings = options.nCount - stats.nSent;
-	const auto nDesiredProbeCount = nRestPings * 4;
+	const auto nRestJobs = options.nCount - stats.nSent;
+	const auto nDesiredProbeCount = nRestJobs;
 	const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
 
 	const string sUrl = OSSFMT("StartTracertTestByCountry?countrycode=" << sCountryCode
@@ -76,24 +76,38 @@ int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, c
 	bool bFirstIteration = true;
 	for (const auto& info : items)
 	{
-		DoSleep(info.ping, bFirstIteration);
-
-		++stats.nSent;
-		if (info.ping.bTimeout)
+		size_t iHop = 0;
+		for (const auto& hop : info.tracert.vectHops)
 		{
-			cout << "Request timed out.";
-		}
-		else
-		{
-			++stats.nReceived;
-			cout << "Reply from " << sTarget << ": bytes=" << options.nPacketSize << " time=" << info.ping.nTimeMs << "ms TTL=" << options.nTTL;
+			// Tracing route to google-public-dns-a.google.com [8.8.8.8]
+			// over a maximum of 30 hops:
+			//   1    <1 ms    <1 ms    <1 ms  10.10.0.1
+			//   2     3 ms     3 ms     4 ms  124.47.118.1
+			//   3     *        *        *     124.47.118.100
+			cout << setw(3) << ++iHop;
+			for (const auto& ping : hop.vectResults)
+			{
+				const int nWidth = 5;
+				DoSleep(ping, bFirstIteration);
+
+				if (ping.bTimeout)
+				{
+					cout << " " << setw(nWidth - 1) << " " << "*" << "   ";
+				}
+				else if (ping.nTimeMs < 1)
+				{
+					cout << " " << setw(nWidth - 2) << " " << "<1" << " ms";
+				}
+				else
+				{
+					cout << " " << setw(nWidth) << ping.nTimeMs << " ms";
+				}
+			}
+			cout << "  " << hop.sReplyHost << endl;
 		}
 
-		if (options.bVerbose)
-		{
-			cout << " to " << info.sUniqueId << " (" << info.network.sName << ")";
-		}
-
+		cout << endl;
+		cout << "Trace complete." << endl;
 		cout << endl;
 	}
 
@@ -111,7 +125,8 @@ int DoByCountry(const ApplicationOptions& options)
 
 	const string& sTarget = options.sTarget;
 
-	cout << endl << "Tracing route to [" << sTarget << "]";
+	cout << endl;
+	cout << "Tracing route to [" << sTarget << "]";
 	cout << flush;
 
 	ProbeApiRequester requester;
@@ -125,6 +140,7 @@ int DoByCountry(const ApplicationOptions& options)
 
 	cout << " from country code " << sCountryCode << ":" << endl;
 	cout << "over a maximum of " << options.nTTL << " hops:" << endl;
+	cout << endl;
 	cout << flush;
 
 	ApplicationStats stats(sTarget);
@@ -155,8 +171,8 @@ int DoByCountry(const ApplicationOptions& options)
 #if 0
 int MakePackOfJobsByAsn(const string& sAsnId, const string& sTarget, const ProgramOptions& options, ProbeApiRequester& requester, PingingStats& stats)
 {
-	const auto nRestPings = options.nPacketCount - stats.nSent;
-	const auto nDesiredProbeCount = nRestPings * 4;
+	const auto nRestJobs = options.nPacketCount - stats.nSent;
+	const auto nDesiredProbeCount = nRestJobs * 4;
 	const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
 
 	// Note! Currently StartPingTestByAsn does not support timeout argument, but I kept it here just in case.
@@ -191,6 +207,8 @@ int MakePackOfJobsByAsn(const string& sAsnId, const string& sTarget, const Progr
 	bool bFirstIteration = true;
 	for (const auto& info : items)
 	{
+		// Pinging 8.8.8.8 with 32 bytes of data:
+		// Reply from 8.8.8.8: bytes=32 time=13ms TTL=55
 		DoSleep(info.ping, bFirstIteration);
 
 		++stats.nSent;
@@ -230,7 +248,8 @@ int DoByAsn(const ApplicationOptions& options)
 	const string& sTarget = options.sTarget;
 	const string& sAsnId = options.sModeArgument;
 
-	cout << endl << "Pinging " << sTarget << " with " << options.nPacketSize << " bytes of data";
+	cout << endl;
+	cout << "Pinging " << sTarget << " with " << options.nPacketSize << " bytes of data";
 	cout << " from " << sAsnId << ":" << endl;
 	cout << flush;
 
