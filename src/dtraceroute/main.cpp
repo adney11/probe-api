@@ -2,8 +2,6 @@
 
 #include "stdafx.h"
 
-#include "dtraceroute.h"
-
 #include "common/Common.h"
 
 #include <signal.h>

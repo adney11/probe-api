@@ -11,6 +11,8 @@
 
 #include "common/stdafx.h"
 
+#include "dtraceroute.h"
+
 //------------------------------------------------------
 
 // TODO: reference additional headers your program requires here

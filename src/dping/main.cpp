@@ -2,8 +2,6 @@
 
 #include "stdafx.h"
 
-#include "dping.h"
-
 #include "common/Common.h"
 
 #include <signal.h>
