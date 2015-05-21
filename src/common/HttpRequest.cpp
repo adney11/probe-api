@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include "HttpRequest.h"
 
+#include "Common.h"
+
 #include <curlpp/cURLpp.hpp>
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
@@ -146,7 +148,12 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 #if 1
 		req.setOpt(DebugFunction([](const curl_infotype type, const char *data, const size_t size) -> int
 		{
-			cout << GetDebugPrefix(type) << string(data, size);
+			string sData(data, size);
+#ifdef DEST_OS_WINDOWS
+			// Replace "\r\n" to "\n" because "\n" is replaced into "\r\n" in Windows automatically:
+			findandreplace(sData, "\r\n", "\n");
+#endif
+			cout << GetDebugPrefix(type) << sData;
 			return size;
 		}));
 #endif

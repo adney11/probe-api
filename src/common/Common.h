@@ -15,9 +15,9 @@
 #define DEFAULT_PING_TTL					128
 #define DEFAULT_PING_PACKET_SIZE			32
 
-#define DEFAULT_TRACERT_TIMEOUT				5000
-#define DEFAULT_TRACERT_COUNT				4
-#define DEFAULT_TRACERT_TTL					128
+#define DEFAULT_TRACERT_TIMEOUT				30000
+#define DEFAULT_TRACERT_COUNT				10
+#define DEFAULT_TRACERT_TTL					30
 #define DEFAULT_TRACERT_PACKET_SIZE			32
 
 //------------------------------------------------------
@@ -80,6 +80,8 @@ inline bool ends(const std::string& s, const std::string& end)
 
 	return 0 == memcmp(s.c_str() + s.length() - len, end.c_str(), len);
 }
+
+//------------------------------------------------------
 
 inline void explode(std::vector<std::string>& vect, const std::string& sText, const std::string& sDelim)
 {
@@ -156,6 +158,11 @@ inline std::string implode(const std::vector<std::string>& vect, const std::stri
 	}
 	return std::string(buffer.get(), nChars);
 }
+
+//------------------------------------------------------
+
+std::string findandreplaceConst(const std::string& source, const std::string& find, const std::string& replace);
+void findandreplace(std::string& source, const std::string& find, const std::string& replace);
 
 //------------------------------------------------------
 #endif //ifndef _COMMON_H_UID000003467CD53C58

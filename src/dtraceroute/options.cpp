@@ -196,7 +196,7 @@ SOFTWARE.
 		"MIT", "http://www.curlpp.org/#license");
 	buf << FormatLibraryInfo("jsoncpp", JSONCPP_VERSION_STRING, "https://github.com/open-source-parsers/jsoncpp", "https://github.com/open-source-parsers/jsoncpp",
 		"Public Domain, MIT", "https://github.com/open-source-parsers/jsoncpp/blob/master/LICENSE");
-#ifndef OS_WINDOWS
+#ifndef DEST_OS_WINDOWS
 	buf << FormatLibraryInfo("OpenSSL", "????", "https://www.openssl.org/", "https://github.com/openssl/openssl",
 		"BSD-based", "http://www.openssl.org/source/license.html");
 #endif
@@ -240,7 +240,7 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 				cout << GetPrintHelp();
 				return eRetCode::OK;
 			}
-#ifdef OS_WINDOWS
+#ifdef DEST_OS_WINDOWS
 			if (bFirstArg && sArg == "/?")
 			{
 				cout << GetPrintVersion();

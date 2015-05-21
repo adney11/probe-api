@@ -34,7 +34,8 @@ ApplicationStats::~ApplicationStats()
 
 void ApplicationStats::Print()
 {
-	cout << endl << "Ping statistics for " << sTarget << endl;
+	cout << endl;
+	cout << "Ping statistics for " << sTarget << endl;
 	cout << "    Packets : Sent = " << nSent << ", Received = " << nReceived << ", Lost = " << (nSent - nReceived)
 		<< " (" << ((nSent - nReceived) * 100 / (nSent ? nSent : 1)) << " % loss)," << endl;
 
@@ -50,8 +51,8 @@ void ApplicationStats::Print()
 
 int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, const ApplicationOptions& options, ProbeApiRequester& requester, ApplicationStats& stats)
 {
-	const auto nRestPings = options.nCount - stats.nSent;
-	const auto nDesiredProbeCount = nRestPings * 4;
+	const auto nRestJobs = options.nCount - stats.nSent;
+	const auto nDesiredProbeCount = nRestJobs * 4;
 	const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
 
 	const string sUrl = OSSFMT("StartPingTestByCountry?countrycode=" << sCountryCode
@@ -85,6 +86,8 @@ int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, c
 	bool bFirstIteration = true;
 	for (const auto& info : items)
 	{
+		// Pinging 8.8.8.8 with 32 bytes of data:
+		// Reply from 8.8.8.8: bytes=32 time=13ms TTL=55
 		DoSleep(info.ping, bFirstIteration);
 
 		++stats.nSent;
@@ -120,7 +123,8 @@ int DoByCountry(const ApplicationOptions& options)
 
 	const string& sTarget = options.sTarget;
 
-	cout << endl << "Pinging " << sTarget << " with " << options.nPacketSize << " bytes of data";
+	cout << endl;
+	cout << "Pinging " << sTarget << " with " << options.nPacketSize << " bytes of data";
 	cout << flush;
 
 	ProbeApiRequester requester;
@@ -163,8 +167,8 @@ int DoByCountry(const ApplicationOptions& options)
 
 int MakePackOfJobsByAsn(const string& sAsnId, const string& sTarget, const ApplicationOptions& options, ProbeApiRequester& requester, ApplicationStats& stats)
 {
-	const auto nRestPings = options.nCount - stats.nSent;
-	const auto nDesiredProbeCount = nRestPings * 4;
+	const auto nRestJobs = options.nCount - stats.nSent;
+	const auto nDesiredProbeCount = nRestJobs * 4;
 	const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
 
 	// Note! Currently StartPingTestByAsn does not support timeout argument, but I kept it here just in case.
@@ -199,6 +203,8 @@ int MakePackOfJobsByAsn(const string& sAsnId, const string& sTarget, const Appli
 	bool bFirstIteration = true;
 	for (const auto& info : items)
 	{
+		// Pinging 8.8.8.8 with 32 bytes of data:
+		// Reply from 8.8.8.8: bytes=32 time=13ms TTL=55
 		DoSleep(info.ping, bFirstIteration);
 
 		++stats.nSent;
@@ -235,7 +241,8 @@ int DoByAsn(const ApplicationOptions& options)
 	const string& sTarget = options.sTarget;
 	const string& sAsnId = options.sModeArgument;
 
-	cout << endl << "Pinging " << sTarget << " with " << options.nPacketSize << " bytes of data";
+	cout << endl;
+	cout << "Pinging " << sTarget << " with " << options.nPacketSize << " bytes of data";
 	cout << " from " << sAsnId << ":" << endl;
 	cout << flush;
 

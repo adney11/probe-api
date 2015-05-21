@@ -56,7 +56,8 @@ void signal_handler(const int signal)
 		g_pApplicationStats->Print();
 	}
 
-	cout << endl << "Caught signal " << decode_signal(signal) << ". Program terminated." << endl;
+	cout << endl;
+	cout << "Caught signal " << decode_signal(signal) << ". Program terminated." << endl;
 
 	cout << flush;
 

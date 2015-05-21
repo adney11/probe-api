@@ -60,19 +60,46 @@ ProbeAPI::NetworkInfo::NetworkInfo(const Json::Value& v)
 
 ProbeAPI::PingResult::PingResult(const Json::Value& v)
 {
-	// "Ping2":"1",
+	// Ping results:
 	// "PingTime": 35,
 	// "PingTime": null,
+	// Tracert results:
+	// "Ping2":"1",
+	// "Ping3":"-",
 	const int nDefaultVal = 9999;
 
-	bTimeout = v.isNull();
-	if (!bTimeout)
+	bTimeout = false;
+	nTimeMs = nDefaultVal;
+
+	if (v.isNull())
+	{
+		bTimeout = true;
+		nTimeMs = nDefaultVal;
+	}
+	else if(v.isNumeric())
 	{
 		nTimeMs = v.asInt();
 	}
+	else if (v.isString())
+	{
+		const string sVal = v.asString();
+		if (sVal == "-")
+		{
+			bTimeout = true;
+			nTimeMs = nDefaultVal;
+		}
+		else if (!sVal.empty() && sVal[0] >= '0' && sVal[0] <= '9')
+		{
+			nTimeMs = stoi(sVal);
+		}
+		else
+		{
+			throw exception(OSSFMT("Failed parsing ping result: type = " << v.type() << "; value = " << v).c_str());
+		}
+	}
 	else
 	{
-		nTimeMs = nDefaultVal;
+		throw exception(OSSFMT("Failed parsing ping result: type = " << v.type() << "; value = " << v).c_str());
 	}
 }
 
