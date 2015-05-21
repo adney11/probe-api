@@ -1,35 +1,40 @@
 //------------------------------------------------------
-#ifndef _DPING_H_UID000003A64AF9C20F
-#define _DPING_H_UID000003A64AF9C20F
+#ifndef _LIST_ITEMS_H_UID00000928173JQMW81
+#define _LIST_ITEMS_H_UID00000928173JQMW81
 
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "options.h"
+#include <string>
 
 //------------------------------------------------------
 
-struct ApplicationStats
+#define DEFAULT_COUNTRY_META			"<biggest>"
+#define DEFAULT_PING_COUNTRY_CODE		"CZ"
+
+//------------------------------------------------------
+
+class ProbeApiRequester;
+
+struct CommonOptions
 {
-	int64_t		nSent = 0;
-	int64_t		nReceived = 0;
-	int			nPingMin = INT_MAX;
-	int			nPingMax = 0;
-	int64_t		nPingSum = 0;
+	bool		bDebug = false;
+	std::string	sModeArgument;	// Country code in --list-asn mode
 
-	std::string	sTarget;
-
-	ApplicationStats(const std::string& sTarget);
-	~ApplicationStats();
-	void Print();
+	CommonOptions()
+	{}
+	CommonOptions(const bool bDebug_, const std::string& sModeArgument_):
+		bDebug(bDebug_), sModeArgument(sModeArgument_)
+	{}
 };
 
-extern ApplicationStats*	g_pApplicationStats;
-
 //------------------------------------------------------
 
-int Application(const ApplicationOptions& options);
+std::string GetDefaultSourceCountry(ProbeApiRequester& requester, const CommonOptions& options);
+
+int ListCountries(const CommonOptions& options);
+int ListAsns(const CommonOptions& options);
 
 //------------------------------------------------------
-#endif //ifndef _DPING_H_UID000003A64AF9C20F
+#endif //ifndef _LIST_ITEMS_H_UID00000928173JQMW81
