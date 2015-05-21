@@ -225,6 +225,9 @@ int DoJob(const ApplicationOptions& options)
 				// don't try again if no results are returned!
 				break;
 			}
+
+			if (g_bTerminateProgram)
+				throw PException("DoJob: Terminate Program");
 		}
 	}
 	catch (...)

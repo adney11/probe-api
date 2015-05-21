@@ -128,7 +128,7 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 		if (argc <= 1)
 		{
 			cerr << GetPrintVersion();
-			throw PException("The syntax of the command is incorrect.");
+			throw PException("The syntax of the command is incorrect.", eRetCode::BadArguments);
 		}
 
 		bool bTargetSet = false;
@@ -223,7 +223,7 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 			}
 			else
 			{
-				throw PException() << "Unknown command line argument \"" << sArg << "\" or command line is missing required parameter.";
+				throw PException(eRetCode::BadArguments) << "Unknown command line argument \"" << sArg << "\" or command line is missing required parameter.";
 			}
 		}
 
@@ -233,13 +233,13 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 			mode = MODE_DO_BY_COUNTRY;
 			sModeArgument = DEFAULT_COUNTRY_META;
 #else
-			throw PException("Program mode is not specified.");
+			throw PException("Program mode is not specified.", eRetCode::BadArguments);
 #endif
 		}
 
 		if ((MODE_DO_BY_COUNTRY == mode || MODE_DO_BY_ASN == mode) && !bTargetSet)
 		{
-			throw PException("Target host is not specified!");
+			throw PException("Target host is not specified!", eRetCode::BadArguments);
 		}
 	}
 	catch (PException& e)

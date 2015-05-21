@@ -94,12 +94,12 @@ ProbeAPI::PingResult::PingResult(const Json::Value& v)
 		}
 		else
 		{
-			throw PException() << "Failed parsing ping result: type = " << v.type() << "; value = " << v;
+			throw PException(eRetCode::ApiParsingFail) << "Failed parsing ping result: type = " << v.type() << "; value = " << v;
 		}
 	}
 	else
 	{
-		throw PException() << "Failed parsing ping result: type = " << v.type() << "; value = " << v;
+		throw PException(eRetCode::ApiParsingFail) << "Failed parsing ping result: type = " << v.type() << "; value = " << v;
 	}
 }
 
@@ -243,7 +243,7 @@ std::vector<ProbeAPI::CountryInfo> ProbeAPI::ParseCountries(const std::string& s
 	const bool parsedOK = reader.parse(sJson, root);
 	if (!parsedOK)
 	{
-		throw PException() << "Failed parsing json: " << reader.getFormattedErrorMessages();
+		throw PException(eRetCode::ApiParsingFail) << "Failed parsing json: " << reader.getFormattedErrorMessages();
 	}
 
 	// {
@@ -294,7 +294,7 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseProbeList(const std::string& sJs
 	const bool parsedOK = reader.parse(sJson, root);
 	if (!parsedOK)
 	{
-		throw PException() << "Failed parsing json: " << reader.getFormattedErrorMessages();
+		throw PException(eRetCode::ApiParsingFail) << "Failed parsing json: " << reader.getFormattedErrorMessages();
 	}
 
 	// {
