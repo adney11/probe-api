@@ -20,6 +20,7 @@ namespace ProbeAPI
 	enum eParseMode
 	{
 		ProbeList_All,
+		ProbeList_All_Tracert,
 		ProbeList_AsnOnly,
 	};
 
@@ -53,28 +54,59 @@ namespace ProbeAPI
 		NetworkInfo(const Json::Value& v);
 	};
 
-	struct ProbeInfo
+	struct PingResult
 	{
 		bool			bTimeout = false;
 		int				nTimeMs = 0;
+
+		PingResult()
+		{}
+		PingResult(const Json::Value& v);
+	};
+
+	struct TracertHopResults
+	{
+		std::string		sReplyHost;
+		std::vector<PingResult>	vectResults;
+
+		TracertHopResults()
+		{}
+		TracertHopResults(const Json::Value& v);
+	};
+
+	struct TracerouteInfo
+	{
+		std::string		sTarget;
+		std::vector<TracertHopResults>	vectHops;
+
+		TracerouteInfo()
+		{}
+		TracerouteInfo(const Json::Value& v);
+	};
+
+	struct ProbeInfo
+	{
+		PingResult		ping;
 		int64_t			nId = 0;
 		std::string		sUniqueId;
 
 		CountryInfo		country;
 		AsnInfo			asn;
 		NetworkInfo		network;
+		TracerouteInfo	tracert;
 
 		ProbeInfo()
 		{}
 		ProbeInfo(const Json::Value& v, const eParseMode mode);
+
+		std::string GetPeerInfo(const bool bAsnIsKnown) const;
 	};
 
 	std::vector<ProbeAPI::CountryInfo> ParseCountries(const std::string& sJson);
-
-	std::vector<ProbeAPI::ProbeInfo> ParsePingTestByCountryResult(const std::string& sJson);
-	std::vector<ProbeAPI::ProbeInfo> ParsePingTestByAsnResult(const std::string& sJson);
-
 	std::vector<ProbeAPI::ProbeInfo> ParseGetProbesByCountryResult_AsnOnly(const std::string& sJson);
+
+	std::vector<ProbeAPI::ProbeInfo> ParsePingResults(const std::string& sJson, const std::string& sJsonRootItemName);
+	std::vector<ProbeAPI::ProbeInfo> ParseTracertResults(const std::string& sJson, const std::string& sJsonRootItemName);
 }
 
 //------------------------------------------------------

@@ -17,10 +17,10 @@ using namespace std;
 ApplicationOptions::ApplicationOptions()
 	: bVerbose(false)
 	, bDebug(false)
-	, nMaxTimeoutMs(DEFAULT_PING_TIMEOUT)
-	, nCount(DEFAULT_PING_COUNT)
-	, nTTL(DEFAULT_PING_TTL)
-	, nPacketSize(DEFAULT_PING_PACKET_SIZE)
+	, nMaxTimeoutMs(DEFAULT_TRACERT_TIMEOUT)
+	, nCount(DEFAULT_TRACERT_COUNT)
+	, nTTL(DEFAULT_TRACERT_TTL)
+	, nPacketSize(DEFAULT_TRACERT_PACKET_SIZE)
 	, mode(MODE_UNKNOWN)
 {
 }
@@ -41,8 +41,8 @@ Usage: )" FILE_INTERNAL_NAME R"( --help
     --version
     --list-country [-v] [--debug]
     --list-asn code [-v] [--debug]
-    --country code [-n count] [-w timeout] [-v] [--debug] {target_name}
-    --asn id [-n count] [-w timeout] [-v] [--debug] {target_name}
+    --country code [-n count] [-w timeout] [-h maximum_hops] [-v] [--debug] {target_name}
+    --asn id [-n count] [-w timeout] [-h maximum_hops] [-v] [--debug] {target_name}
 
 Options:
     {target_name}  Destination host IP or domain name.
@@ -58,6 +58,7 @@ R"(
     --asn id        Use source addresses from specified ASN (autonomous system number) network.
     -n count        Number of echo requests to send.
     -w timeout      Timeout in milliseconds to wait for each reply.
+    -h maximum_hops Maximum number of hops to search for target.
     --list-country  List available countries.
     --list-asn code List ASNs for specified 2 letter country code.
     -v              Verbose output
@@ -183,12 +184,6 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 				const string sNextArg = argv[++i];
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
 				nMaxTimeoutMs = stoul(sNextArg);
-			}
-			else if (sArg == "-h" && !bLastArg)
-			{
-				const string sNextArg = argv[++i];
-				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nTTL = stoul(sNextArg);
 			}
 			else if (sArg == "--country" && !bLastArg)
 			{

@@ -58,6 +58,119 @@ ProbeAPI::NetworkInfo::NetworkInfo(const Json::Value& v)
 
 //------------------------------------------------------
 
+ProbeAPI::PingResult::PingResult(const Json::Value& v)
+{
+	// Ping results:
+	// "PingTime": 35,
+	// "PingTime": null,
+	// Tracert results:
+	// "Ping2":"1",
+	// "Ping3":"-",
+	const int nDefaultVal = 9999;
+
+	bTimeout = false;
+	nTimeMs = nDefaultVal;
+
+	if (v.isNull())
+	{
+		bTimeout = true;
+		nTimeMs = nDefaultVal;
+	}
+	else if(v.isNumeric())
+	{
+		nTimeMs = v.asInt();
+	}
+	else if (v.isString())
+	{
+		const string sVal = v.asString();
+		if (sVal == "-")
+		{
+			bTimeout = true;
+			nTimeMs = nDefaultVal;
+		}
+		else if (!sVal.empty() && sVal[0] >= '0' && sVal[0] <= '9')
+		{
+			nTimeMs = stoi(sVal);
+		}
+		else
+		{
+			throw PException(eRetCode::ApiParsingFail) << "Failed parsing ping result: type = " << v.type() << "; value = " << v;
+		}
+	}
+	else
+	{
+		throw PException(eRetCode::ApiParsingFail) << "Failed parsing ping result: type = " << v.type() << "; value = " << v;
+	}
+}
+
+//------------------------------------------------------
+
+ProbeAPI::TracertHopResults::TracertHopResults(const Json::Value& v)
+{
+	// {"Ping1":"26","Ping2":"34","Ping3":"29","Url":"78.254.249.170"},
+	sReplyHost = v.get("Url", "").asString();
+
+	for (int i = 0;; ++i)
+	{
+		const string sName = OSSFMT("Ping" << (i+1));
+		if (!v.isMember(sName))
+		{
+			break;
+		}
+		if (vectResults.empty())
+		{
+			vectResults.reserve(3);
+		}
+		vectResults.emplace_back(v.get(sName, Json::Value::null));
+	}
+}
+
+//------------------------------------------------------
+
+ProbeAPI::TracerouteInfo::TracerouteInfo(const Json::Value& v)
+{
+	// [
+	// 	{
+	// 		"Destination": "www.onet.pl",
+	// 		"Tracert" :
+	// 		[
+	// 			{
+	// 				"Ping1": "12",
+	// 					"Ping2" : "2",
+	// 					"Ping3" : "3",
+	// 					"Url" : "192.168.0.254"
+	// 			},
+	// 			{
+	// 				"Ping1": "123",
+	// 				"Ping2" : "59",
+	// 				"Ping3" : "50",
+	// 				"Url" : "82.245.112.254"
+	// 			},
+	// 			.............
+	// 			{
+	// 				"Ping1": "100",
+	// 					"Ping2" : "99",
+	// 					"Ping3" : "103",
+	// 					"Url" : "213.180.141.140"
+	// 			}
+	// 		]
+	// 	}
+	// ]
+	if (!v.isArray() || v.size() < 1)		return;	const Json::Value v2 = v[0];	sTarget = v2.get("Destination", "").asString();
+	const Json::Value v3 = v2.get("Tracert", "");
+
+	const size_t n = v3.size();
+	assert(v3.isArray());
+	vectHops.reserve(n);
+
+	for (size_t i = 0; i < n; ++i)
+	{
+		vectHops.emplace_back(v3[i]);
+	}
+}
+
+//------------------------------------------------------
+
 ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 {
 	//     {
@@ -92,40 +205,45 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 		return;
 	}
 
-	const int nDefaultVal = 9999;
-	const Json::Value valPingTime = v.get("PingTime", nDefaultVal);
-
-	bTimeout = valPingTime.isNull();
-	if (!bTimeout)
-	{
-		nTimeMs = valPingTime.asInt();
-	}
-	else
-	{
-		nTimeMs = nDefaultVal;
-	}
+	ping = PingResult(v.get("PingTime", Json::Value::null));
 
 	nId = v.get("ID", 0).asInt64();
-	sUniqueId = v.get("UniqueID", 0).asString();
+	sUniqueId = v.get("UniqueID", "<unknown_guid>").asString();
 
 	country = CountryInfo(v.get("Country", ""));
 	asn = AsnInfo(v.get("ASN", ""));
 	network = NetworkInfo(v.get("Network", ""));
+	if (ProbeList_All_Tracert == mode)
+	{
+		tracert = TracerouteInfo(v.get("TRACERoute", ""));
+	}
+}
+
+//------------------------------------------------------
+
+std::string ProbeAPI::ProbeInfo::GetPeerInfo(const bool bAsnIsKnown) const
+{
+	//return sUniqueId + " (" + network.sName + ")";
+	if (bAsnIsKnown)
+	{
+		return "net \"" + network.sName + "\" (" + country.sName + ")";
+	}
+	else
+	{
+		return asn.sId + " \"" + asn.sName + "\" (" + country.sCode + ")";
+	}
 }
 
 //------------------------------------------------------
 
 std::vector<ProbeAPI::CountryInfo> ProbeAPI::ParseCountries(const std::string& sJson)
 {
-	std::vector<CountryInfo> res;
-
 	Json::Reader reader;
 	Json::Value root;
 	const bool parsedOK = reader.parse(sJson, root);
 	if (!parsedOK)
 	{
-		throw exception(OSSFMT("Failed parsing json: " << reader.getFormattedErrorMessages()).c_str());
-		return res;
+		throw PException(eRetCode::ApiParsingFail) << "Failed parsing json: " << reader.getFormattedErrorMessages();
 	}
 
 	// {
@@ -145,6 +263,8 @@ std::vector<ProbeAPI::CountryInfo> ProbeAPI::ParseCountries(const std::string& s
 
 	const Json::Value items = root["GetCountriesResult"];
 
+	assert(items.isArray());
+	std::vector<CountryInfo> res;
 	res.reserve(items.size());
 
 	for (size_t index = 0; index < items.size(); ++index)
@@ -174,8 +294,7 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseProbeList(const std::string& sJs
 	const bool parsedOK = reader.parse(sJson, root);
 	if (!parsedOK)
 	{
-		throw exception(OSSFMT("Failed parsing json: " << reader.getFormattedErrorMessages()).c_str());
-		return res;
+		throw PException(eRetCode::ApiParsingFail) << "Failed parsing json: " << reader.getFormattedErrorMessages();
 	}
 
 	// {
@@ -211,31 +330,23 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseProbeList(const std::string& sJs
 	//         "AsnName": "Liberty Global Operations B.V."
 	//       },
 
+	assert(root.isMember(sJsonRootItemName));
 	const Json::Value items = root[sJsonRootItemName];
 
+	assert(items.isArray());
 	res.reserve(items.size());
 
 	for (size_t index = 0; index < items.size(); ++index)
 	{
 		const Json::Value item = items[index];
 		res.emplace_back(item, mode);
+		if (g_bTerminateProgram)
+		{
+			throw PException("ParseProbeList: Terminate program");
+		}
 	}
 
 	return res;
-}
-
-//------------------------------------------------------
-
-std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParsePingTestByCountryResult(const std::string& sJson)
-{
-	return ParseProbeList(sJson, "StartPingTestByCountryResult", ProbeList_All);
-}
-
-//------------------------------------------------------
-
-std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParsePingTestByAsnResult(const std::string& sJson)
-{
-	return ParseProbeList(sJson, "StartPingTestByASNResult", ProbeList_All);
 }
 
 //------------------------------------------------------
@@ -246,3 +357,18 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseGetProbesByCountryResult_AsnOnly
 }
 
 //------------------------------------------------------
+
+std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParsePingResults(const std::string& sJson, const std::string& sJsonRootItemName)
+{
+	return ParseProbeList(sJson, sJsonRootItemName, ProbeList_All);
+}
+
+//------------------------------------------------------
+
+std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseTracertResults(const std::string& sJson, const std::string& sJsonRootItemName)
+{
+	return ParseProbeList(sJson, sJsonRootItemName, ProbeList_All_Tracert);
+}
+
+//------------------------------------------------------
+

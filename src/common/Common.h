@@ -10,6 +10,22 @@
 
 //------------------------------------------------------
 
+#define DEFAULT_PING_TIMEOUT				5000
+#define DEFAULT_PING_COUNT					4
+#define DEFAULT_PING_TTL					128
+#define DEFAULT_PING_PACKET_SIZE			32
+
+#define DEFAULT_TRACERT_TIMEOUT				30000
+#define DEFAULT_TRACERT_COUNT				10
+#define DEFAULT_TRACERT_TTL					30
+#define DEFAULT_TRACERT_PACKET_SIZE			32
+
+//------------------------------------------------------
+
+extern volatile bool g_bTerminateProgram;
+
+//------------------------------------------------------
+
 class ProbeApiRequester: protected HttpRequester
 {
 public:
@@ -39,10 +55,69 @@ namespace eRetCode
 		NotSupported	= 20,
 		Cancelled		= 50,
 		ApiFailure		= 100,
+		ApiParsingFail	= 110,
 		OtherError		= 500,
 		HardFailure		= 1000,
 	};
 }
+
+//------------------------------------------------------
+
+class PException : public std::exception
+{
+	int					m_nRetCode = eRetCode::OtherError;
+	//std::ostringstream	m_buf;
+	std::string			m_str;
+
+public:
+	PException(const int retCode = eRetCode::OtherError) :
+		m_nRetCode(retCode)
+	{
+	}
+
+	PException(const std::string& s, const int retCode = eRetCode::OtherError) :
+		//m_buf(s),
+		m_str(s),
+		m_nRetCode(retCode)
+	{
+	}
+
+	PException(const PException& b) :
+		//m_buf(b.m_buf.str()),
+		m_str(b.m_str),
+		m_nRetCode(b.m_nRetCode)
+	{
+	}
+
+	int GetRetCode() const
+	{
+		return m_nRetCode;
+	}
+
+	virtual const char * what() const
+	{
+		//return m_buf.str().c_str();
+		return m_str.c_str();
+	}
+
+	std::string str() const
+	{
+		//return m_buf.str();
+		return m_str;
+	}
+
+	template<class T>
+	PException& operator <<(const T& v)
+	{
+		//m_buf << v;
+		m_str += OSSFMT(v);
+		return *this;
+	}
+};
+
+//------------------------------------------------------
+
+void MySleep(const uint32_t nSleepMs);
 
 //------------------------------------------------------
 
@@ -68,6 +143,8 @@ inline bool ends(const std::string& s, const std::string& end)
 
 	return 0 == memcmp(s.c_str() + s.length() - len, end.c_str(), len);
 }
+
+//------------------------------------------------------
 
 inline void explode(std::vector<std::string>& vect, const std::string& sText, const std::string& sDelim)
 {
@@ -144,6 +221,11 @@ inline std::string implode(const std::vector<std::string>& vect, const std::stri
 	}
 	return std::string(buffer.get(), nChars);
 }
+
+//------------------------------------------------------
+
+std::string findandreplaceConst(const std::string& source, const std::string& find, const std::string& replace);
+void findandreplace(std::string& source, const std::string& find, const std::string& replace);
 
 //------------------------------------------------------
 #endif //ifndef _COMMON_H_UID000003467CD53C58

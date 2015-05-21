@@ -7,6 +7,8 @@
 
 #include <json/json.h>
 
+#include <thread>
+
 //------------------------------------------------------
 
 #ifdef _MSC_VER
@@ -16,6 +18,10 @@
 //------------------------------------------------------
 
 using namespace std;
+
+//------------------------------------------------------
+
+volatile bool g_bTerminateProgram = false;
 
 //------------------------------------------------------
 
@@ -105,6 +111,103 @@ void ProbeApiRequester::HttpReplyDebugPrint(const ProbeApiRequester::Reply &repl
 	cout << "reply body length: " << reply.sBody.length() << endl;
 
 	cout << "REPLY BODY: [[[" << reply.sBody << "]]]" << endl;
+}
+
+//------------------------------------------------------
+
+void MySleep(const uint32_t nSleepMs)
+{
+	this_thread::sleep_for(chrono::milliseconds(nSleepMs));
+}
+
+//------------------------------------------------------
+
+template<class T>
+inline T findandreplaceConstT(const T& source, const T& find, const T& replace)
+{
+	if (find.empty() || source.empty())
+		return source;
+
+	ptrdiff_t nPredictReplaces = 0;
+	for (std::size_t pos = source.find(find); pos != source.npos; pos = source.find(find, pos))
+	{
+		++nPredictReplaces;
+		pos += find.length();
+	}
+
+	T res;
+	res.reserve(source.length() + nPredictReplaces * (replace.length() - find.length()));
+
+	T::size_type posPrev = 0;
+	for (std::size_t pos = source.find(find); pos != source.npos; pos = source.find(find, pos))
+	{
+		if (pos > posPrev)
+		{
+			res += source.substr(posPrev, pos - posPrev);
+		}
+		res += replace;
+		pos += find.length();
+		posPrev = pos;
+	}
+
+	if (posPrev != T::npos)
+	{
+		// Copy rest of the string:
+		res += source.substr(posPrev);
+	}
+
+	return res;
+}
+
+//------------------------------------------------------
+
+template<class T>
+inline void findandreplaceT(T& source, const T& find, const T& replace)
+{
+	if (find.empty() || source.empty())
+		return;
+
+	// Optimize performance if find and replace have different size.
+	// In this case we can't replace in-place without moving rest of string in memory.
+
+	if (find.length() != replace.length())
+	{
+		std::swap(source, findandreplaceConstT(source, find, replace));
+		return;
+	}
+
+	// Fast in-place string replacement:
+
+	T::size_type pos = 0;
+	while ((pos = source.find(find, pos)) != T::npos)
+	{
+		source.replace(pos, find.length(), replace);
+		pos += replace.length();
+	}
+}
+
+//------------------------------------------------------
+
+std::string findandreplaceConst(const std::string& source, const std::string& find, const std::string& replace)
+{
+	return findandreplaceConstT(source, find, replace);
+}
+
+std::wstring findandreplaceConst(const std::wstring& source, const std::wstring& find, const std::wstring& replace)
+{
+	return findandreplaceConstT(source, find, replace);
+}
+
+//------------------------------------------------------
+
+void findandreplace(std::string& source, const std::string& find, const std::string& replace)
+{
+	findandreplaceT(source, find, replace);
+}
+
+void findandreplace(std::wstring& source, const std::wstring& find, const std::wstring& replace)
+{
+	findandreplaceT(source, find, replace);
 }
 
 //------------------------------------------------------

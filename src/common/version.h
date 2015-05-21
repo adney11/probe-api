@@ -6,6 +6,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "compiler.h"
+
 //------------------------------------------------------
 
 #define VERSION_PRODUCT_NAME			"ProbeAPI Tools"
@@ -16,9 +18,9 @@
 
 // VERSION_PRODUCT_VER1 and VERSION_PRODUCT_VER2 are product version. They are incremented during official releases:
 #define VERSION_PRODUCT_VER1			1
-#define VERSION_PRODUCT_VER2			0
+#define VERSION_PRODUCT_VER2			1
 // This is a build version. It is incremented after any significant fix or feature added:
-#define VERSION_PRODUCT_VER3			16
+#define VERSION_PRODUCT_VER3			20
 #define VERSION_PRODUCT_VER4			0
 
 #define PRODUCT_BUILD_VER				VERSION_PRODUCT_VER3
@@ -31,6 +33,20 @@
 #define LOG_PREFIX						""
 #define FILE_DESCRIPTION				VERSION_PRODUCT_NAME ": Distributed Ping"
 #define FILE_INTERNAL_NAME				"dping"
+#define MODVERSION						1
+#define MODREVISION						4
+#define MODSUBREVISION					PRODUCT_BUILD_VER
+#define MODRELEASE						0
+#endif
+
+#ifdef DTRACEROUTE_PRJ
+#define LOG_PREFIX						""
+#define FILE_DESCRIPTION				VERSION_PRODUCT_NAME ": Distributed Traceroute"
+#ifdef DEST_OS_WINDOWS
+#define FILE_INTERNAL_NAME				"dtracert"
+#else
+#define FILE_INTERNAL_NAME				"dtraceroute"
+#endif
 #define MODVERSION						1
 #define MODREVISION						1
 #define MODSUBREVISION					PRODUCT_BUILD_VER

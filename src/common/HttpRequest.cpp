@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include "HttpRequest.h"
 
+#include "Common.h"
+
 #include <curlpp/cURLpp.hpp>
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
@@ -21,6 +23,11 @@
 //------------------------------------------------------
 
 using namespace std;
+
+//------------------------------------------------------
+
+volatile bool HttpRequester::bPauseAllRequests = false;
+volatile bool HttpRequester::bTerminateAllRequests = false;
 
 //------------------------------------------------------
 
@@ -142,12 +149,25 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 
 		using namespace curlpp::Options;
 
+		if (bVerbose)
+		{
+			cout << "HttpRequester verbose mode ON!" << endl;
+		}
+		else
+		{
+			//cout << "HttpRequester verbose mode OFF!" << endl;
+		}
 		req.setOpt(new Verbose(bVerbose));
 #if 1
 		req.setOpt(DebugFunction([](const curl_infotype type, const char *data, const size_t size) -> int
 		{
-			cout << GetDebugPrefix(type) << string(data, size);
-			return size;
+			string sData(data, size);
+#ifdef DEST_OS_WINDOWS
+			// Replace "\r\n" to "\n" because "\n" is replaced into "\r\n" in Windows automatically
+			findandreplace(sData, "\r\n", "\n");
+#endif
+			cout << GetDebugPrefix(type) << sData;
+			return 0;
 		}));
 #endif
 
@@ -160,7 +180,24 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 		}));
 #endif
 
+#if 1
+		req.setOpt(NoProgress(false));
+		req.setOpt(ProgressFunction([&reply](const double dltotal, const double dlnow, const double ultotal, const double ulnow) -> int
+		{
+			while (bPauseAllRequests)
+				MySleep(1);
+			if (bTerminateAllRequests)
+				return 1;
+			return 0;
+		}));
+#endif
+
 		PrepareHttpRequest(req, info);
+
+		while (bPauseAllRequests)
+			MySleep(1);
+		if (bTerminateAllRequests)
+			throw PException("DoRequest: Terminate all requests");
 
 		req.perform();
 
@@ -171,11 +208,11 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 	}
 	catch (curlpp::LogicError& e)
 	{
-		reply.sErrorDescription = string("LogicError: ") + e.what();
+		reply.sErrorDescription = string("cURL LogicError: ") + e.what();
 	}
 	catch (curlpp::RuntimeError& e)
 	{
-		reply.sErrorDescription = string("RuntimeError: ") + e.what();
+		reply.sErrorDescription = string("cURL RuntimeError: ") + e.what();
 	}
 
 	return reply;

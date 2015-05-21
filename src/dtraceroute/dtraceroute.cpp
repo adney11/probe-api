@@ -1,6 +1,6 @@
 //------------------------------------------------------
 #include "stdafx.h"
-#include "dping.h"
+#include "dtraceroute.h"
 
 #include "common/Common.h"
 #include "common/CommonOperations.h"
@@ -30,17 +30,6 @@ ApplicationStats::~ApplicationStats()
 
 void ApplicationStats::Print()
 {
-	cout << endl;
-	cout << "Ping statistics for " << sTarget << endl;
-	cout << "    Packets : Sent = " << nSent << ", Received = " << nReceived << ", Lost = " << (nSent - nReceived)
-		<< " (" << ((nSent - nReceived) * 100 / (nSent ? nSent : 1)) << " % loss)," << endl;
-
-	if (nReceived > 0)
-	{
-		cout << "Approximate round trip times in milli-seconds:" << endl;
-		cout << "    Minimum = " << nPingMin << "ms, Maximum = " << nPingMax << "ms, Average = " << (nPingSum / nReceived) << "ms" << endl;
-	}
-	cout << flush;
 }
 
 //------------------------------------------------------
@@ -53,15 +42,15 @@ public:
 		switch (options.mode)
 		{
 		case ApplicationOptions::MODE_DO_BY_COUNTRY:
-			sMethod = "StartPingTestByCountry";
+			sMethod = "StartTracertTestByCountry";
 			sSearchArgName = "countrycode";
-			sResultRoot = "StartPingTestByCountryResult";
+			sResultRoot = "StartTracertTestByCountryResult";
 			sSearchDetails = "country code {ARG}";
 			break;
 		case ApplicationOptions::MODE_DO_BY_ASN:
-			sMethod = "StartPingTestByAsn";
+			sMethod = "StartTracertTestByAsn";
 			sSearchArgName = "asnid";
-			sResultRoot = "StartPingTestByASNResult";
+			sResultRoot = "StartTracertTestByASNResult";
 			sSearchDetails = "{ARG}";
 			break;
 		default:
@@ -83,6 +72,7 @@ public:
 			<< "?" << sSearchArgName << "=" << sSearchArgument
 			<< "&destination=" << sTarget
 			<< "&probeslimit=" << nRequestedProbeCount
+			<< "&ttl=" << options.nTTL
 			<< "&timeout=" << options.nMaxTimeoutMs);
 
 		return sUrl;
@@ -125,31 +115,52 @@ void PrintPackOfResults(const string& sTarget, const ApplicationOptions& options
 	for (const auto& info : items)
 	{
 		if (g_bTerminateProgram)
-			throw PException("PrintPackOfResults: Terminate Program");
-
-		// Pinging 8.8.8.8 with 32 bytes of data:
-		// Reply from 8.8.8.8: bytes=32 time=13ms TTL=55
-		DoSleep(info.ping, bFirstIteration);
-
-		++stats.nSent;
-		if (info.ping.bTimeout)
-		{
-			cout << "Request timed out.";
-		}
-		else
-		{
-			++stats.nReceived;
-			stats.nPingMin = (min)(stats.nPingMin, info.ping.nTimeMs);
-			stats.nPingMax = (max)(stats.nPingMax, info.ping.nTimeMs);
-			stats.nPingSum += info.ping.nTimeMs;
-			cout << "Reply from " << sTarget << ": bytes=" << options.nPacketSize << " time=" << info.ping.nTimeMs << "ms TTL=" << options.nTTL;
-		}
+			throw PException("PrintPackOfResults: loop1: Terminate Program");
 
 		if (options.bVerbose)
 		{
-			cout << " to " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
+			cout << "Tracing route to [" << info.tracert.sTarget << "] from " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
+			cout << "over a maximum of " << options.nTTL << " hops:" << endl;
 		}
 
+		size_t iHop = 0;
+		for (const auto& hop : info.tracert.vectHops)
+		{
+			if (g_bTerminateProgram)
+				throw PException("PrintPackOfResults: loop2: Terminate Program");
+
+			// Tracing route to google-public-dns-a.google.com [8.8.8.8]
+			// over a maximum of 30 hops:
+			//   1    <1 ms    <1 ms    <1 ms  10.10.0.1
+			//   2     3 ms     3 ms     4 ms  124.47.118.1
+			//   3     *        *        *     124.47.118.100
+			cout << setw(3) << ++iHop;
+			for (const auto& ping : hop.vectResults)
+			{
+				if (g_bTerminateProgram)
+					throw PException("PrintPackOfResults: loop3: Terminate Program");
+
+				const int nWidth = 5;
+				DoSleep(ping, bFirstIteration);
+
+				if (ping.bTimeout)
+				{
+					cout << " " << setw(nWidth - 1) << " " << "*" << "   ";
+				}
+				else if (ping.nTimeMs < 1)
+				{
+					cout << " " << setw(nWidth - 2) << " " << "<1" << " ms";
+				}
+				else
+				{
+					cout << " " << setw(nWidth) << ping.nTimeMs << " ms";
+				}
+			}
+			cout << "  " << hop.sReplyHost << endl;
+		}
+
+		cout << endl;
+		cout << "Trace complete." << endl;
 		cout << endl;
 	}
 }
@@ -174,7 +185,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument, const stri
 
 	try
 	{
-		items = ProbeAPI::ParsePingResults(reply.sBody, job.GetResultRoot());
+		items = ProbeAPI::ParseTracertResults(reply.sBody, job.GetResultRoot());
 	}
 	catch (PException& e)
 	{
@@ -182,6 +193,9 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument, const stri
 	}
 
 	PrintPackOfResults(sTarget, options, items, stats);
+
+	// hack to have only one call to this function:
+	stats.nSent = options.nCount;
 
 	return eRetCode::OK;
 }
@@ -195,7 +209,7 @@ int DoJob(const ApplicationOptions& options)
 	const string& sTarget = options.sTarget;
 
 	cout << endl;
-	cout << "Pinging " << sTarget << " with " << options.nPacketSize << " bytes of data";
+	cout << "Tracing route to [" << sTarget << "]";
 	cout << flush;
 
 	const JobType job(options);
@@ -204,6 +218,8 @@ int DoJob(const ApplicationOptions& options)
 	const string sSearchArgument = job.CalculateSearchArgument(requester);
 
 	cout << " from " << job.FormatSearchDetails(sSearchArgument) << ":" << endl;
+	cout << "over a maximum of " << options.nTTL << " hops:" << endl;
+	cout << endl;
 	cout << flush;
 
 	ApplicationStats stats(sTarget);

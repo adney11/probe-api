@@ -1,6 +1,6 @@
 //------------------------------------------------------
-#ifndef _DPING_H_UID000003A64AF9C20F
-#define _DPING_H_UID000003A64AF9C20F
+#ifndef _DTRACEROUTE_H_UID0000092WH823AKEN
+#define _DTRACEROUTE_H_UID0000092WH823AKEN
 
 #if _MSC_VER > 1000
 #pragma once
@@ -14,9 +14,6 @@ struct ApplicationStats
 {
 	int64_t		nSent = 0;
 	int64_t		nReceived = 0;
-	int			nPingMin = INT_MAX;
-	int			nPingMax = 0;
-	int64_t		nPingSum = 0;
 
 	std::string	sTarget;
 
@@ -32,4 +29,4 @@ extern ApplicationStats*	g_pApplicationStats;
 int Application(const ApplicationOptions& options);
 
 //------------------------------------------------------
-#endif //ifndef _DPING_H_UID000003A64AF9C20F
+#endif //ifndef _DTRACEROUTE_H_UID0000092WH823AKEN
