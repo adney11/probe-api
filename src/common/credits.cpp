@@ -1,38 +1,14 @@
 //------------------------------------------------------
 #include "stdafx.h"
-#include "options.h"
+#include "credits.h"
 
-#include "common/Common.h"
-#include "common/version.h"			// for VERSION_PRODUCT_NAME, FILE_INTERNAL_NAME, MAIN_PRODUCT_VERSION_STR_A
+#include "Common.h"
+#include "version.h"					// for VERSION_COPYRIGHT_2
 
 #include <json/version.h>
 #include <curlpp/cURLpp.hpp>
 
 using namespace std;
-
-//------------------------------------------------------
-
-//#define DO_BY_COUNTRY_BY_DEFAULT
-
-//------------------------------------------------------
-
-ApplicationOptions::ApplicationOptions()
-	: bVerbose(false)
-	, bDebug(false)
-	, nMaxTimeoutMs(DEFAULT_TRACERT_TIMEOUT)
-	, nCount(DEFAULT_TRACERT_COUNT)
-	, nTTL(DEFAULT_TRACERT_TTL)
-	, nPacketSize(DEFAULT_TRACERT_PACKET_SIZE)
-	, mode(MODE_UNKNOWN)
-{
-}
-
-//------------------------------------------------------
-
-string GetPrintVersion()
-{
-	return OSSFMT(VERSION_PRODUCT_NAME ": " FILE_INTERNAL_NAME " v." MAIN_PRODUCT_VERSION_STR_A << endl);
-}
 
 //------------------------------------------------------
 
@@ -43,57 +19,39 @@ string GetPrintHelpSuggest()
 
 //------------------------------------------------------
 
-string GetPrintHelp()
+string FormatRetCode(const int nRetCode)
 {
-	const string sHelpInfo = R"(
-Usage: )" FILE_INTERNAL_NAME R"( --help
-    --version
-    --list-country [-v] [--debug]
-    --list-asn code [-v] [--debug]
-    --country code [-n count] [-w timeout] [-h maximum_hops] [-v] [--debug] {target_name}
-    --asn id [-n count] [-w timeout] [-h maximum_hops] [-v] [--debug] {target_name}
+	switch (nRetCode)
+	{
+#define DEF_RET_CODE(id)	case id: return #id
+		DEF_RET_CODE(eRetCode::OK);
+		DEF_RET_CODE(eRetCode::BadArguments);
+		DEF_RET_CODE(eRetCode::NotSupported);
+		DEF_RET_CODE(eRetCode::Cancelled);
+		DEF_RET_CODE(eRetCode::ApiFailure);
+		DEF_RET_CODE(eRetCode::ApiParsingFail);
+		DEF_RET_CODE(eRetCode::OtherError);
+		DEF_RET_CODE(eRetCode::HardFailure);
+	}
+	return to_string(nRetCode);
+}
 
-Options:
-    {target_name}  Destination host IP or domain name.
+//------------------------------------------------------
 
-    --help          Display this help.
-    --version       Display detailed program version, copyright notices.
-    --country code  Specify source addresses 2 letter country code (ISO 3166-1 alpha-2).)"
-#ifdef DO_BY_COUNTRY_BY_DEFAULT
-R"(
-                    Using source addresses from country with most of hosts available is a default setting.)"
-#endif
-R"(
-    --asn id        Use source addresses from specified ASN (autonomous system number) network.
-    -n count        Number of echo requests to send.
-    -w timeout      Timeout in milliseconds to wait for each reply.
-    -h maximum_hops Maximum number of hops to search for target.
-    --list-country  List available countries.
-    --list-asn code List ASNs for specified 2 letter country code.
-    -v              Verbose output
-    --debug         Additional debug output
-
-Return Codes:
-)"
-#define HELP_RET_CODE(id)	+ OSSFMT(setw(5) << id << " - " #id  << endl)
-HELP_RET_CODE(eRetCode::OK)
-HELP_RET_CODE(eRetCode::BadArguments)
-HELP_RET_CODE(eRetCode::NotSupported)
-HELP_RET_CODE(eRetCode::Cancelled)
-HELP_RET_CODE(eRetCode::ApiFailure)
-HELP_RET_CODE(eRetCode::ApiParsingFail)
-HELP_RET_CODE(eRetCode::OtherError)
-HELP_RET_CODE(eRetCode::HardFailure)
-+ R"(
-Examples:
-)" FILE_INTERNAL_NAME R"( --list-country
-)" FILE_INTERNAL_NAME R"( --list-asn ES
-)" FILE_INTERNAL_NAME R"( --country US 8.8.8.8
-)" FILE_INTERNAL_NAME R"( --asn AS3352 8.8.8.8
-
-)";
-
-	return sHelpInfo;
+string GetReturnCodeInfo()
+{
+	ostringstream buf;
+#undef DEF_RET_CODE
+#define DEF_RET_CODE(id)	buf << setw(5) << id << " - " <<  FormatRetCode(id)  << endl
+	DEF_RET_CODE(eRetCode::OK);
+	DEF_RET_CODE(eRetCode::BadArguments);
+	DEF_RET_CODE(eRetCode::NotSupported);
+	DEF_RET_CODE(eRetCode::Cancelled);
+	DEF_RET_CODE(eRetCode::ApiFailure);
+	DEF_RET_CODE(eRetCode::ApiParsingFail);
+	DEF_RET_CODE(eRetCode::OtherError);
+	DEF_RET_CODE(eRetCode::HardFailure);
+	return buf.str();
 }
 
 //------------------------------------------------------
@@ -146,7 +104,6 @@ string GetPrintCredits()
 {
 	ostringstream buf;
 
-	buf << GetPrintVersion();
 	buf << VERSION_COPYRIGHT_2 << endl;
 
 	buf << endl;
@@ -204,180 +161,6 @@ SOFTWARE.
 #endif
 
 	return buf.str();
-}
-
-//------------------------------------------------------
-
-void CheckArgumentParameterNotEmpty(const string& sArg, const string& sParam)
-{
-	if (sParam.empty())
-	{
-		throw PException() << "Empty value is not allowed for command line argument \"" << sArg << "\".";
-	}
-}
-
-//------------------------------------------------------
-
-template<class T>
-void PrintOption(const char* name, const T& v)
-{
-	cout << "options: " << setw(10) << left << name << right << " = " << v << endl;
-}
-
-//------------------------------------------------------
-
-void ApplicationOptions::Print() const
-{
-	if (!bVerbose && !bDebug)
-	{
-		return;
-	}
-
-	PrintOption("verbose", bVerbose);
-	PrintOption("debug", bDebug);
-	PrintOption("timeout", nMaxTimeoutMs);
-	PrintOption("count", nCount);
-	//PrintOption("packet size", nPacketSize);
-	PrintOption("ttl", nTTL);
-	PrintOption("mode", mode);
-	if (!sModeArgument.empty())
-		PrintOption("mode arg", sModeArgument);
-	if (!sTarget.empty())
-		PrintOption("target", sTarget);
-}
-
-//------------------------------------------------------
-
-int ApplicationOptions::ProcessCommandLine(const int argc, const char* const argv[])	// returns non-zero result if process exit required
-{
-	try
-	{
-		if (argc <= 1)
-		{
-			cerr << GetPrintVersion();
-			throw PException("The syntax of the command is incorrect.");
-		}
-
-		bool bTargetSet = false;
-
-		for (int i = 1; i < argc; ++i)
-		{
-			const string sArg = argv[i];
-			const bool bFirstArg = (1 == i);
-			const bool bLastArg = (i + 1 == argc);
-
-			if (g_bTerminateProgram)
-				throw PException("ProcessCommandLine: Terminate Program");
-
-			if (bFirstArg && sArg == "--help")
-			{
-				cout << GetPrintVersion();
-				cout << GetPrintHelp();
-				return eRetCode::OK;
-			}
-#ifdef DEST_OS_WINDOWS
-			if (bFirstArg && sArg == "/?")
-			{
-				cout << GetPrintVersion();
-				cout << GetPrintHelp();
-				return eRetCode::OK;
-			}
-#endif
-			if (bFirstArg && sArg == "--version")
-			{
-				cout << GetPrintCredits();
-				return eRetCode::OK;
-			}
-
-			if (sArg == "-v")
-			{
-				bVerbose = true;
-				cout << "Verbose mode ON" << endl;
-			}
-			else if (sArg == "--debug")
-			{
-				bDebug = true;
-				cout << "Debug mode ON" << endl;
-			}
-			else if (sArg == "-n" && !bLastArg)
-			{
-				const string sNextArg = argv[++i];
-				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nCount = stoul(sNextArg);
-			}
-			else if (sArg == "-w" && !bLastArg)
-			{
-				const string sNextArg = argv[++i];
-				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nMaxTimeoutMs = stoul(sNextArg);
-			}
-			else if (sArg == "--country" && !bLastArg)
-			{
-				const string sNextArg = argv[++i];
-				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				mode = MODE_DO_BY_COUNTRY;
-				sModeArgument = sNextArg;
-			}
-			else if (sArg == "--asn" && !bLastArg)
-			{
-				const string sNextArg = argv[++i];
-				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				mode = MODE_DO_BY_ASN;
-				sModeArgument = sNextArg;
-			}
-			else if (sArg == "--list-country")
-			{
-				mode = MODE_GET_COUNTRIES;
-				sModeArgument.clear();
-			}
-			else if (sArg == "--list-asn" && !bLastArg)
-			{
-				const string sNextArg = argv[++i];
-				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				mode = MODE_GET_ASNS;
-				sModeArgument = sNextArg;
-			}
-			else if ((
-#ifdef DO_BY_COUNTRY_BY_DEFAULT
-				MODE_UNKNOWN == mode ||
-#endif
-				MODE_DO_BY_COUNTRY == mode || MODE_DO_BY_ASN == mode) && bLastArg)
-			{
-				CheckArgumentParameterNotEmpty("{target}", sArg);
-				sTarget = sArg;
-				bTargetSet = true;
-			}
-			else
-			{
-				throw PException() << "Unknown command line argument \"" << sArg << "\" or command line is missing required parameter.";
-			}
-		}
-
-		if (MODE_UNKNOWN == mode)
-		{
-#ifdef DO_BY_COUNTRY_BY_DEFAULT
-			mode = MODE_DO_BY_COUNTRY;
-			sModeArgument = DEFAULT_COUNTRY_META;
-#else
-			throw PException("Program mode is not specified.");
-#endif
-		}
-
-		if ((MODE_DO_BY_COUNTRY == mode || MODE_DO_BY_ASN == mode) && !bTargetSet)
-		{
-			throw PException("Target host is not specified!");
-		}
-	}
-	catch (PException& e)
-	{
-		cerr << "ERROR! " << e.what() << endl;
-		cerr << GetPrintHelpSuggest();
-		return eRetCode::BadArguments;
-	}
-
-	//bVerbose = true;
-
-	return eRetCode::NoValue;
 }
 
 //------------------------------------------------------
