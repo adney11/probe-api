@@ -18,8 +18,8 @@ using namespace std;
 
 //------------------------------------------------------
 
-bool g_bSignalCatched = false;
-int g_nSignalRetCode = eRetCode::OK;
+volatile bool g_bSignalCatched = false;
+volatile int g_nSignalRetCode = eRetCode::OK;
 unique_ptr<string>  g_psSignalMessage = nullptr;
 
 //------------------------------------------------------
@@ -54,8 +54,11 @@ string decode_signal(const int signal)
 void signal_handler(const int signal)
 {
 #if 1
-	if(g_bSignalCatched)
+	if (g_bSignalCatched)
+	{
+		cerr << flush << endl << endl << "DUPLICATED SIGNAL " << decode_signal(signal) << endl << flush;
 		return;
+	}
 
 	ostringstream buf;
 	buf << endl;
@@ -79,12 +82,14 @@ void signal_handler(const int signal)
 	HttpRequester::bTerminateAllRequests = true;
 
 	MySleep(5000);
-	cout << flush  << endl << endl << "ABNORMAL PROGRAM ABANDON!" << endl << flush;
+	cerr << flush << endl << endl << "ABNORMAL PROGRAM ABANDON!" << endl << flush;
 	if (g_pApplicationStats)
 	{
 		g_pApplicationStats->Print();
 	}
-	cout << *g_psSignalMessage << flush;
+	cout << buf.str();
+	cerr << flush;
+	cout << flush;
 	exit(g_nSignalRetCode);
 #else
 	HttpRequester::bPauseAllRequests = true;
@@ -125,6 +130,7 @@ void signal_handler(const int signal)
 int main(int argc, char* argv[])
 {
 	int nProgramRes = eRetCode::OtherError;
+	bool bVerbose = false;
 
 	try
 	{
@@ -145,13 +151,14 @@ int main(int argc, char* argv[])
 			return nCmdLineRes;
 		}
 
+		bVerbose = options.bVerbose || options.bDebug;
 		options.Print();
 
 		nProgramRes = Application(options);
 	}
 	catch (PException& e)
 	{
-		if (!g_bSignalCatched)
+		if (!g_bSignalCatched || bVerbose)
 			cerr << "ERROR! " << e.what() << endl;
 		nProgramRes = eRetCode::HardFailure;
 	}
@@ -164,6 +171,7 @@ int main(int argc, char* argv[])
 	if (g_bSignalCatched)
 	{
 		cout << *g_psSignalMessage;
+		g_psSignalMessage = nullptr;
 		nProgramRes = g_nSignalRetCode;
 	}
 

@@ -66,7 +66,8 @@ namespace eRetCode
 class PException : public std::exception
 {
 	int					m_nRetCode = eRetCode::OtherError;
-	std::ostringstream	m_buf;
+	//std::ostringstream	m_buf;
+	std::string			m_str;
 
 public:
 	PException(const int retCode = eRetCode::OtherError) :
@@ -75,12 +76,16 @@ public:
 	}
 
 	PException(const std::string& s, const int retCode = eRetCode::OtherError) :
-		m_buf(s), m_nRetCode(retCode)
+		//m_buf(s),
+		m_str(s),
+		m_nRetCode(retCode)
 	{
 	}
 
 	PException(const PException& b) :
-		m_buf(b.m_buf.str()), m_nRetCode(b.m_nRetCode)
+		//m_buf(b.m_buf.str()),
+		m_str(b.m_str),
+		m_nRetCode(b.m_nRetCode)
 	{
 	}
 
@@ -91,18 +96,21 @@ public:
 
 	virtual const char * what() const
 	{
-		return m_buf.str().c_str();
+		//return m_buf.str().c_str();
+		return m_str.c_str();
 	}
 
 	std::string str() const
 	{
-		return m_buf.str();
+		//return m_buf.str();
+		return m_str;
 	}
 
 	template<class T>
 	PException& operator <<(const T& v)
 	{
-		m_buf << v;
+		//m_buf << v;
+		m_str += OSSFMT(v);
 		return *this;
 	}
 };
