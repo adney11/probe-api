@@ -336,20 +336,6 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseProbeList(const std::string& sJs
 
 //------------------------------------------------------
 
-std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParsePingTestByCountryResult(const std::string& sJson)
-{
-	return ParseProbeList(sJson, "StartPingTestByCountryResult", ProbeList_All);
-}
-
-//------------------------------------------------------
-
-std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParsePingTestByAsnResult(const std::string& sJson)
-{
-	return ParseProbeList(sJson, "StartPingTestByASNResult", ProbeList_All);
-}
-
-//------------------------------------------------------
-
 std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseGetProbesByCountryResult_AsnOnly(const std::string& sJson)
 {
 	return ParseProbeList(sJson, "GetProbesByCountryResult", ProbeList_AsnOnly);
@@ -357,16 +343,17 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseGetProbesByCountryResult_AsnOnly
 
 //------------------------------------------------------
 
-std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseTracertTestByCountryResult(const std::string& sJson)
+std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParsePingResults(const std::string& sJson, const std::string& sJsonRootItemName)
 {
-	return ParseProbeList(sJson, "StartTracertTestByCountryResult", ProbeList_All_Tracert);
+	return ParseProbeList(sJson, sJsonRootItemName, ProbeList_All);
 }
 
 //------------------------------------------------------
 
-std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseTracertTestByAsnResult(const std::string& sJson)
+std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseTracertResults(const std::string& sJson, const std::string& sJsonRootItemName)
 {
-	return ParseProbeList(sJson, "StartTracertTestByASNResult", ProbeList_All_Tracert);
+	return ParseProbeList(sJson, sJsonRootItemName, ProbeList_All_Tracert);
 }
 
 //------------------------------------------------------
+

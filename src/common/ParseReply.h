@@ -101,14 +101,10 @@ namespace ProbeAPI
 	};
 
 	std::vector<ProbeAPI::CountryInfo> ParseCountries(const std::string& sJson);
-
-	std::vector<ProbeAPI::ProbeInfo> ParsePingTestByCountryResult(const std::string& sJson);
-	std::vector<ProbeAPI::ProbeInfo> ParsePingTestByAsnResult(const std::string& sJson);
-
 	std::vector<ProbeAPI::ProbeInfo> ParseGetProbesByCountryResult_AsnOnly(const std::string& sJson);
 
-	std::vector<ProbeAPI::ProbeInfo> ParseTracertTestByCountryResult(const std::string& sJson);
-	std::vector<ProbeAPI::ProbeInfo> ParseTracertTestByAsnResult(const std::string& sJson);
+	std::vector<ProbeAPI::ProbeInfo> ParsePingResults(const std::string& sJson, const std::string& sJsonRootItemName);
+	std::vector<ProbeAPI::ProbeInfo> ParseTracertResults(const std::string& sJson, const std::string& sJsonRootItemName);
 }
 
 //------------------------------------------------------

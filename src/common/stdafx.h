@@ -17,6 +17,7 @@
 #include <iostream>
 #include <iomanip>
 #include <memory>
+#include <algorithm>
 
 #include <sstream>
 #define OSSFMT(expr)	(static_cast<std::ostringstream&>(std::ostringstream() << expr).str())

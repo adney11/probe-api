@@ -7,7 +7,6 @@
 
 #include <json/json.h>
 
-#include <algorithm>
 #include <thread>
 
 using namespace std;
