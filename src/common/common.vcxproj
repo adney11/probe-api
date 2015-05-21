@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="CommonOperations.cpp" />
     <ClCompile Include="HttpRequest.cpp" />
     <ClCompile Include="ParseReply.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -21,6 +22,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
+    <ClInclude Include="CommonOperations.h" />
     <ClInclude Include="compiler.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="HttpRequest.h" />

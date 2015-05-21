@@ -1,9 +1,9 @@
 //------------------------------------------------------
 #include "stdafx.h"
-#include "list-items.h"
+#include "CommonOperations.h"
 
-#include "common/Common.h"
-#include "common/ParseReply.h"
+#include "Common.h"
+#include "ParseReply.h"
 
 #include <json/json.h>
 
