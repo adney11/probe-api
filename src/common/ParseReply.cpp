@@ -94,12 +94,12 @@ ProbeAPI::PingResult::PingResult(const Json::Value& v)
 		}
 		else
 		{
-			throw exception(OSSFMT("Failed parsing ping result: type = " << v.type() << "; value = " << v).c_str());
+			throw PException() << "Failed parsing ping result: type = " << v.type() << "; value = " << v;
 		}
 	}
 	else
 	{
-		throw exception(OSSFMT("Failed parsing ping result: type = " << v.type() << "; value = " << v).c_str());
+		throw PException() << "Failed parsing ping result: type = " << v.type() << "; value = " << v;
 	}
 }
 
@@ -208,7 +208,7 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 	ping = PingResult(v.get("PingTime", Json::Value::null));
 
 	nId = v.get("ID", 0).asInt64();
-	sUniqueId = v.get("UniqueID", 0).asString();
+	sUniqueId = v.get("UniqueID", "<unknown_guid>").asString();
 
 	country = CountryInfo(v.get("Country", ""));
 	asn = AsnInfo(v.get("ASN", ""));
@@ -223,15 +223,12 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 
 std::vector<ProbeAPI::CountryInfo> ProbeAPI::ParseCountries(const std::string& sJson)
 {
-	std::vector<CountryInfo> res;
-
 	Json::Reader reader;
 	Json::Value root;
 	const bool parsedOK = reader.parse(sJson, root);
 	if (!parsedOK)
 	{
-		throw exception(OSSFMT("Failed parsing json: " << reader.getFormattedErrorMessages()).c_str());
-		return res;
+		throw PException() << "Failed parsing json: " << reader.getFormattedErrorMessages();
 	}
 
 	// {
@@ -252,6 +249,7 @@ std::vector<ProbeAPI::CountryInfo> ProbeAPI::ParseCountries(const std::string& s
 	const Json::Value items = root["GetCountriesResult"];
 
 	assert(items.isArray());
+	std::vector<CountryInfo> res;
 	res.reserve(items.size());
 
 	for (size_t index = 0; index < items.size(); ++index)
@@ -281,8 +279,7 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseProbeList(const std::string& sJs
 	const bool parsedOK = reader.parse(sJson, root);
 	if (!parsedOK)
 	{
-		throw exception(OSSFMT("Failed parsing json: " << reader.getFormattedErrorMessages()).c_str());
-		return res;
+		throw PException() << "Failed parsing json: " << reader.getFormattedErrorMessages();
 	}
 
 	// {
@@ -328,6 +325,10 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseProbeList(const std::string& sJs
 	{
 		const Json::Value item = items[index];
 		res.emplace_back(item, mode);
+		if (g_bTerminateProgram)
+		{
+			throw PException("ParseProbeList: Terminate program");
+		}
 	}
 
 	return res;
@@ -365,7 +366,7 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseTracertTestByCountryResult(const
 
 std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseTracertTestByAsnResult(const std::string& sJson)
 {
-	return ParseProbeList(sJson, "StartTracertTestByAsnResult", ProbeList_All_Tracert);
+	return ParseProbeList(sJson, "StartTracertTestByASNResult", ProbeList_All_Tracert);
 }
 
 //------------------------------------------------------

@@ -23,10 +23,10 @@ namespace ProbeAPI
 
 struct CommonOptions
 {
-	const bool&			bDebug;
-	const std::string&	sModeArgument;	// Country code in --list-asn mode
+	const bool			bDebug;
+	const std::string	sModeArgument;	// Country code in --list-asn mode
 
-	CommonOptions(const bool bDebug_, const std::string& sModeArgument_):
+	CommonOptions(const bool& bDebug_, const std::string& sModeArgument_):
 		bDebug(bDebug_), sModeArgument(sModeArgument_)
 	{}
 };

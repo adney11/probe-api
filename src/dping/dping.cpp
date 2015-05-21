@@ -66,8 +66,7 @@ int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, c
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
 	{
-		cerr << "ERROR! " << reply.sErrorDescription << endl;
-		return eRetCode::ApiFailure;
+		throw PException("MakePackOfJobsByCountry: " + reply.sErrorDescription, eRetCode::ApiFailure);
 	}
 
 	using namespace ProbeAPI;
@@ -77,15 +76,17 @@ int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, c
 	{
 		items = ParsePingTestByCountryResult(reply.sBody);
 	}
-	catch (exception& e)
+	catch (PException& e)
 	{
-		cerr << "ERROR! " << e.what() << endl;
-		return eRetCode::ApiFailure;
+		throw PException("MakePackOfJobsByCountry: " + e.str(), eRetCode::ApiParsingFail);
 	}
 
 	bool bFirstIteration = true;
 	for (const auto& info : items)
 	{
+		if (g_bTerminateProgram)
+			throw PException("MakePackOfJobsByCountry: Terminate Program");
+
 		// Pinging 8.8.8.8 with 32 bytes of data:
 		// Reply from 8.8.8.8: bytes=32 time=13ms TTL=55
 		DoSleep(info.ping, bFirstIteration);
@@ -141,24 +142,30 @@ int DoByCountry(const ApplicationOptions& options)
 
 	ApplicationStats stats(sTarget);
 
-	while (stats.nSent < options.nCount)
+	try
 	{
-		const auto nPreviousSend = stats.nSent;
+		while (stats.nSent < options.nCount)
+		{
+			const auto nPreviousSend = stats.nSent;
 
-		const int nRes = MakePackOfJobsByCountry(sCountryCode, sTarget, options, requester, stats);
-		if (eRetCode::OK != nRes)
-		{
-			res = nRes;
-			break;
-		}
-		if (nPreviousSend == stats.nSent)
-		{
-			// don't try again if no results are returned!
-			break;
+			const int nRes = MakePackOfJobsByCountry(sCountryCode, sTarget, options, requester, stats);
+			if (eRetCode::OK != nRes)
+			{
+				res = nRes;
+				break;
+			}
+			if (nPreviousSend == stats.nSent)
+			{
+				// don't try again if no results are returned!
+				break;
+			}
 		}
 	}
-
-	stats.Print();
+	catch (...)
+	{
+		stats.Print();
+		throw;
+	}
 
 	return res;
 }
@@ -171,7 +178,6 @@ int MakePackOfJobsByAsn(const string& sAsnId, const string& sTarget, const Appli
 	const auto nDesiredProbeCount = nRestJobs * 4;
 	const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
 
-	// Note! Currently StartPingTestByAsn does not support timeout argument, but I kept it here just in case.
 	const string sUrl = OSSFMT("StartPingTestByAsn?asnid=" << sAsnId
 		<< "&destination=" << sTarget
 		<< "&probeslimit=" << nRequestedProbeCount
@@ -183,8 +189,7 @@ int MakePackOfJobsByAsn(const string& sAsnId, const string& sTarget, const Appli
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
 	{
-		cerr << "ERROR! " << reply.sErrorDescription << endl;
-		return eRetCode::ApiFailure;
+		throw PException("MakePackOfJobsByAsn: " + reply.sErrorDescription, eRetCode::ApiFailure);
 	}
 
 	using namespace ProbeAPI;
@@ -194,15 +199,17 @@ int MakePackOfJobsByAsn(const string& sAsnId, const string& sTarget, const Appli
 	{
 		items = ParsePingTestByAsnResult(reply.sBody);
 	}
-	catch (exception& e)
+	catch (PException& e)
 	{
-		cerr << "ERROR! " << e.what() << endl;
-		return eRetCode::ApiFailure;
+		throw PException("MakePackOfJobsByAsn: " + e.str(), eRetCode::ApiParsingFail);
 	}
 
 	bool bFirstIteration = true;
 	for (const auto& info : items)
 	{
+		if (g_bTerminateProgram)
+			throw PException("MakePackOfJobsByAsn: Terminate Program");
+
 		// Pinging 8.8.8.8 with 32 bytes of data:
 		// Reply from 8.8.8.8: bytes=32 time=13ms TTL=55
 		DoSleep(info.ping, bFirstIteration);
@@ -250,24 +257,30 @@ int DoByAsn(const ApplicationOptions& options)
 
 	ApplicationStats stats(sTarget);
 
-	while (stats.nSent < options.nCount)
+	try
 	{
-		const auto nPreviousSend = stats.nSent;
+		while (stats.nSent < options.nCount)
+		{
+			const auto nPreviousSend = stats.nSent;
 
-		const int nRes = MakePackOfJobsByAsn(sAsnId, sTarget, options, requester, stats);
-		if (eRetCode::OK != nRes)
-		{
-			res = nRes;
-			break;
-		}
-		if (nPreviousSend == stats.nSent)
-		{
-			// don't try again if no results are returned!
-			break;
+			const int nRes = MakePackOfJobsByAsn(sAsnId, sTarget, options, requester, stats);
+			if (eRetCode::OK != nRes)
+			{
+				res = nRes;
+				break;
+			}
+			if (nPreviousSend == stats.nSent)
+			{
+				// don't try again if no results are returned!
+				break;
+			}
 		}
 	}
-
-	stats.Print();
+	catch (...)
+	{
+		stats.Print();
+		throw;
+	}
 
 	return res;
 }

@@ -48,6 +48,10 @@ public:
 
 public:
 	Reply DoRequest(const Request& requestInfo, const bool bVerbose);
+
+public:
+	static volatile bool	bPauseAllRequests;
+	static volatile bool	bTerminateAllRequests;
 };
 
 //------------------------------------------------------

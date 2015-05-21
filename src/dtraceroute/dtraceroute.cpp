@@ -56,8 +56,7 @@ int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, c
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
 	{
-		cerr << "ERROR! " << reply.sErrorDescription << endl;
-		return eRetCode::ApiFailure;
+		throw PException("MakePackOfJobsByCountry: " + reply.sErrorDescription, eRetCode::ApiFailure);
 	}
 
 	using namespace ProbeAPI;
@@ -67,18 +66,29 @@ int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, c
 	{
 		items = ParseTracertTestByCountryResult(reply.sBody);
 	}
-	catch (exception& e)
+	catch (PException& e)
 	{
-		cerr << "ERROR! " << e.what() << endl;
-		return eRetCode::ApiFailure;
+		throw PException("MakePackOfJobsByCountry: " + e.str(), eRetCode::ApiParsingFail);
 	}
 
 	bool bFirstIteration = true;
 	for (const auto& info : items)
 	{
+		if (g_bTerminateProgram)
+			throw PException("MakePackOfJobsByCountry: loop1: Terminate Program");
+
+		if (options.bVerbose)
+		{
+			cout << "Tracing route to [" << info.tracert.sTarget << "] from host " << info.sUniqueId << " (" << info.network.sName << ")" << endl;
+			cout << "over a maximum of " << options.nTTL << " hops:" << endl;
+		}
+
 		size_t iHop = 0;
 		for (const auto& hop : info.tracert.vectHops)
 		{
+			if (g_bTerminateProgram)
+				throw PException("MakePackOfJobsByCountry: loop2: Terminate Program");
+
 			// Tracing route to google-public-dns-a.google.com [8.8.8.8]
 			// over a maximum of 30 hops:
 			//   1    <1 ms    <1 ms    <1 ms  10.10.0.1
@@ -87,6 +97,9 @@ int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, c
 			cout << setw(3) << ++iHop;
 			for (const auto& ping : hop.vectResults)
 			{
+				if (g_bTerminateProgram)
+					throw PException("MakePackOfJobsByCountry: loop3: Terminate Program");
+
 				const int nWidth = 5;
 				DoSleep(ping, bFirstIteration);
 
@@ -145,40 +158,46 @@ int DoByCountry(const ApplicationOptions& options)
 
 	ApplicationStats stats(sTarget);
 
-	while (stats.nSent < options.nCount)
+	try
 	{
-		const auto nPreviousSend = stats.nSent;
+		while (stats.nSent < options.nCount)
+		{
+			const auto nPreviousSend = stats.nSent;
 
-		const int nRes = MakePackOfJobsByCountry(sCountryCode, sTarget, options, requester, stats);
-		if (eRetCode::OK != nRes)
-		{
-			res = nRes;
-			break;
-		}
-		if (nPreviousSend == stats.nSent)
-		{
-			// don't try again if no results are returned!
-			break;
+			const int nRes = MakePackOfJobsByCountry(sCountryCode, sTarget, options, requester, stats);
+			if (eRetCode::OK != nRes)
+			{
+				res = nRes;
+				break;
+			}
+			if (nPreviousSend == stats.nSent)
+			{
+				// don't try again if no results are returned!
+				break;
+			}
 		}
 	}
-
-	stats.Print();
+	catch (...)
+	{
+		stats.Print();
+		throw;
+	}
 
 	return res;
 }
 
 //------------------------------------------------------
-#if 0
-int MakePackOfJobsByAsn(const string& sAsnId, const string& sTarget, const ProgramOptions& options, ProbeApiRequester& requester, PingingStats& stats)
+
+int MakePackOfJobsByAsn(const string& sAsnId, const string& sTarget, const ApplicationOptions& options, ProbeApiRequester& requester, ApplicationStats& stats)
 {
-	const auto nRestJobs = options.nPacketCount - stats.nSent;
-	const auto nDesiredProbeCount = nRestJobs * 4;
+	const auto nRestJobs = options.nCount - stats.nSent;
+	const auto nDesiredProbeCount = nRestJobs;
 	const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
 
-	// Note! Currently StartPingTestByAsn does not support timeout argument, but I kept it here just in case.
-	const string sUrl = OSSFMT("StartPingTestByAsn?asnid=" << sAsnId
+	const string sUrl = OSSFMT("StartTracertTestByAsn?asnid=" << sAsnId
 		<< "&destination=" << sTarget
 		<< "&probeslimit=" << nRequestedProbeCount
+		<< "&ttl=" << options.nTTL
 		<< "&timeout=" << options.nMaxTimeoutMs);
 
 	ProbeApiRequester::Request request(sUrl);
@@ -187,8 +206,7 @@ int MakePackOfJobsByAsn(const string& sAsnId, const string& sTarget, const Progr
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
 	{
-		cerr << "ERROR! " << reply.sErrorDescription << endl;
-		return eRetCode::ApiFailure;
+		throw PException("MakePackOfJobsByAsn: " + reply.sErrorDescription, eRetCode::ApiFailure);
 	}
 
 	using namespace ProbeAPI;
@@ -196,88 +214,118 @@ int MakePackOfJobsByAsn(const string& sAsnId, const string& sTarget, const Progr
 
 	try
 	{
-		items = ParsePingTestByAsnResult(reply.sBody);
+		items = ParseTracertTestByAsnResult(reply.sBody);
 	}
-	catch (exception& e)
+	catch (PException& e)
 	{
-		cerr << "ERROR! " << e.what() << endl;
-		return eRetCode::ApiFailure;
+		throw PException("MakePackOfJobsByAsn: " + e.str(), eRetCode::ApiParsingFail);
 	}
 
 	bool bFirstIteration = true;
 	for (const auto& info : items)
 	{
-		// Pinging 8.8.8.8 with 32 bytes of data:
-		// Reply from 8.8.8.8: bytes=32 time=13ms TTL=55
-		DoSleep(info.ping, bFirstIteration);
-
-		++stats.nSent;
-		if (info.bTimeout)
-		{
-			cout << "Request timed out.";
-		}
-		else
-		{
-			++stats.nReceived;
-			stats.nPingMin = (min)(stats.nPingMin, info.nTimeMs);
-			stats.nPingMax = (max)(stats.nPingMax, info.nTimeMs);
-			stats.nPingSum += info.nTimeMs;
-			cout << "Reply from " << sTarget << ": bytes=" << options.nPacketSize << " time=" << info.nTimeMs << "ms TTL=" << options.nTTL;
-		}
+		if (g_bTerminateProgram)
+			throw PException("MakePackOfJobsByAsn: loop1: Terminate Program");
 
 		if (options.bVerbose)
 		{
-			cout << " to " << info.sUniqueId << " (" << info.network.sName << ")";
+			cout << "Tracing route to [" << info.tracert.sTarget << "] from host " << info.sUniqueId << " (" << info.network.sName << ")" << endl;
+			cout << "over a maximum of " << options.nTTL << " hops:" << endl;
+		}
+
+		size_t iHop = 0;
+		for (const auto& hop : info.tracert.vectHops)
+		{
+			if (g_bTerminateProgram)
+				throw PException("MakePackOfJobsByAsn: loop2: Terminate Program");
+
+			// Tracing route to google-public-dns-a.google.com [8.8.8.8]
+			// over a maximum of 30 hops:
+			//   1    <1 ms    <1 ms    <1 ms  10.10.0.1
+			//   2     3 ms     3 ms     4 ms  124.47.118.1
+			//   3     *        *        *     124.47.118.100
+			cout << setw(3) << ++iHop;
+			for (const auto& ping : hop.vectResults)
+			{
+				if (g_bTerminateProgram)
+					throw PException("MakePackOfJobsByAsn: loop3: Terminate Program");
+
+				const int nWidth = 5;
+				DoSleep(ping, bFirstIteration);
+
+				if (ping.bTimeout)
+				{
+					cout << " " << setw(nWidth - 1) << " " << "*" << "   ";
+				}
+				else if (ping.nTimeMs < 1)
+				{
+					cout << " " << setw(nWidth - 2) << " " << "<1" << " ms";
+				}
+				else
+				{
+					cout << " " << setw(nWidth) << ping.nTimeMs << " ms";
+				}
+			}
+			cout << "  " << hop.sReplyHost << endl;
 		}
 
 		cout << endl;
+		cout << "Trace complete." << endl;
+		cout << endl;
 	}
+
+	// hack to have only one call to this function:
+	stats.nSent = options.nCount;
 
 	return eRetCode::OK;
 }
-#endif
+
 //------------------------------------------------------
 
 int DoByAsn(const ApplicationOptions& options)
 {
-	cerr << "ERROR! This function is not implemented!" << endl;
-	return eRetCode::NotSupported;
-#if 0
 	int res = eRetCode::OK;
 
 	const string& sTarget = options.sTarget;
 	const string& sAsnId = options.sModeArgument;
 
 	cout << endl;
-	cout << "Pinging " << sTarget << " with " << options.nPacketSize << " bytes of data";
+	cout << "Tracing route to [" << sTarget << "]";
 	cout << " from " << sAsnId << ":" << endl;
+	cout << "over a maximum of " << options.nTTL << " hops:" << endl;
+	cout << endl;
 	cout << flush;
 
 	ProbeApiRequester requester;
 
-	PingingStats stats(sTarget);
+	ApplicationStats stats(sTarget);
 
-	while (stats.nSent < options.nPacketCount)
+	try
 	{
-		const auto nPreviousSend = stats.nSent;
+		while (stats.nSent < options.nCount)
+		{
+			const auto nPreviousSend = stats.nSent;
 
-		const int nRes = MakePackOfJobsByAsn(sAsnId, sTarget, options, requester, stats);
-		if (eRetCode::OK != nRes)
-		{
-			res = nRes;
-			break;
-		}
-		if (nPreviousSend == stats.nSent)
-		{
-			// don't try again if no results are returned!
-			break;
+			const int nRes = MakePackOfJobsByAsn(sAsnId, sTarget, options, requester, stats);
+			if (eRetCode::OK != nRes)
+			{
+				res = nRes;
+				break;
+			}
+			if (nPreviousSend == stats.nSent)
+			{
+				// don't try again if no results are returned!
+				break;
+			}
 		}
 	}
-
-	stats.Print();
+	catch (...)
+	{
+		stats.Print();
+		throw;
+	}
 
 	return res;
-#endif
 }
 
 //------------------------------------------------------
@@ -297,8 +345,7 @@ int Application(const ApplicationOptions& options)
 	case ApplicationOptions::MODE_GET_ASNS:
 		return ListAsns(options2);
 	default:
-		cerr << "ERROR! Unknown program mode " << options.mode << endl;
-		return eRetCode::NotSupported;
+		throw PException() << "Unknown program mode " << options.mode;
 	}
 }
 

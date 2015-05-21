@@ -22,6 +22,10 @@
 
 //------------------------------------------------------
 
+extern volatile bool g_bTerminateProgram;
+
+//------------------------------------------------------
+
 class ProbeApiRequester: protected HttpRequester
 {
 public:
@@ -51,10 +55,61 @@ namespace eRetCode
 		NotSupported	= 20,
 		Cancelled		= 50,
 		ApiFailure		= 100,
+		ApiParsingFail	= 110,
 		OtherError		= 500,
 		HardFailure		= 1000,
 	};
 }
+
+//------------------------------------------------------
+
+class PException : public std::exception
+{
+	int					m_nRetCode = eRetCode::OtherError;
+	std::ostringstream	m_buf;
+
+public:
+	PException(const int retCode = eRetCode::OtherError) :
+		m_nRetCode(retCode)
+	{
+	}
+
+	PException(const std::string& s, const int retCode = eRetCode::OtherError) :
+		m_buf(s), m_nRetCode(retCode)
+	{
+	}
+
+	PException(const PException& b) :
+		m_buf(b.m_buf.str()), m_nRetCode(b.m_nRetCode)
+	{
+	}
+
+	int GetRetCode() const
+	{
+		return m_nRetCode;
+	}
+
+	virtual const char * what() const
+	{
+		return m_buf.str().c_str();
+	}
+
+	std::string str() const
+	{
+		return m_buf.str();
+	}
+
+	template<class T>
+	PException& operator <<(const T& v)
+	{
+		m_buf << v;
+		return *this;
+	}
+};
+
+//------------------------------------------------------
+
+void MySleep(const uint32_t nSleepMs);
 
 //------------------------------------------------------
 

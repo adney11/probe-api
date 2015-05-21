@@ -26,6 +26,11 @@ using namespace std;
 
 //------------------------------------------------------
 
+volatile bool HttpRequester::bPauseAllRequests = false;
+volatile bool HttpRequester::bTerminateAllRequests = false;
+
+//------------------------------------------------------
+
 HttpRequester::HttpRequester()
 {
 	// Note! curlpp documentation gives wrong info about how this function is implemented:
@@ -144,13 +149,26 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 
 		using namespace curlpp::Options;
 
+		if (bVerbose)
+		{
+			cout << "HttpRequester verbose mode ON!" << endl;
+		}
+		else
+		{
+			//cout << "HttpRequester verbose mode OFF!" << endl;
+		}
 		req.setOpt(new Verbose(bVerbose));
 #if 1
 		req.setOpt(DebugFunction([](const curl_infotype type, const char *data, const size_t size) -> int
 		{
+			while (bPauseAllRequests)
+				MySleep(1);
+			if (bTerminateAllRequests)
+				return 0;
+
 			string sData(data, size);
 #ifdef DEST_OS_WINDOWS
-			// Replace "\r\n" to "\n" because "\n" is replaced into "\r\n" in Windows automatically:
+			// Replace "\r\n" to "\n" because "\n" is replaced into "\r\n" in Windows automatically
 			findandreplace(sData, "\r\n", "\n");
 #endif
 			cout << GetDebugPrefix(type) << sData;
@@ -161,13 +179,34 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 #if 1
 		req.setOpt(WriteFunction([&reply](const char* ptr, const size_t size, const size_t nmemb) -> int
 		{
+			while (bPauseAllRequests)
+				MySleep(1);
+			if (bTerminateAllRequests)
+				return 0;
+
 			const size_t realsize = size * nmemb;
 			reply.sBody.append(ptr, realsize);
 			return realsize;
 		}));
 #endif
 
+#if 1
+		req.setOpt(ProgressFunction([&reply](const double dltotal, const double dlnow, const double ultotal, const double ulnow) -> int
+		{
+			while (bPauseAllRequests)
+				MySleep(1);
+			if (bTerminateAllRequests)
+				return 1;
+			return 0;
+		}));
+#endif
+
 		PrepareHttpRequest(req, info);
+
+		while (bPauseAllRequests)
+			MySleep(1);
+		if (bTerminateAllRequests)
+			throw PException("DoRequest: Terminate all requests");
 
 		req.perform();
 

@@ -7,6 +7,8 @@
 
 #include <json/json.h>
 
+#include <thread>
+
 //------------------------------------------------------
 
 #ifdef _MSC_VER
@@ -16,6 +18,10 @@
 //------------------------------------------------------
 
 using namespace std;
+
+//------------------------------------------------------
+
+volatile bool g_bTerminateProgram = false;
 
 //------------------------------------------------------
 
@@ -105,6 +111,13 @@ void ProbeApiRequester::HttpReplyDebugPrint(const ProbeApiRequester::Reply &repl
 	cout << "reply body length: " << reply.sBody.length() << endl;
 
 	cout << "REPLY BODY: [[[" << reply.sBody << "]]]" << endl;
+}
+
+//------------------------------------------------------
+
+void MySleep(const uint32_t nSleepMs)
+{
+	this_thread::sleep_for(chrono::milliseconds(nSleepMs));
 }
 
 //------------------------------------------------------

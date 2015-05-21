@@ -25,7 +25,7 @@ void DoSleep(const ProbeAPI::PingResult& ping, bool& bFirstSleep)
 	cout << flush;
 	const int nMaxDelay = 500;
 	const int nDelayMs = ping.bTimeout ? 500 : ping.nTimeMs;
-	this_thread::sleep_for(chrono::milliseconds((min)(nDelayMs, nMaxDelay)));
+	MySleep((min)(nDelayMs, nMaxDelay));
 }
 
 //------------------------------------------------------
@@ -37,8 +37,7 @@ string GetDefaultSourceCountry(ProbeApiRequester& requester, const CommonOptions
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
 	{
-		throw exception(("GetDefaultCountryToPing: " + reply.sErrorDescription).c_str());
-		return string();
+		throw PException("GetDefaultCountryToPing: " + reply.sErrorDescription);
 	}
 
 	using namespace ProbeAPI;
@@ -48,10 +47,9 @@ string GetDefaultSourceCountry(ProbeApiRequester& requester, const CommonOptions
 	{
 		countries = ParseCountries(reply.sBody);
 	}
-	catch (exception& e)
+	catch (PException& e)
 	{
-		throw exception((string("GetDefaultCountryToPing: ") + e.what()).c_str());
-		return string();
+		throw PException("GetDefaultCountryToPing: " + e.str());
 	}
 
 	sort(countries.begin(), countries.end(), [](const CountryInfo& a, const CountryInfo& b)
@@ -93,8 +91,7 @@ int ListCountries(const CommonOptions& options)
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
 	{
-		cerr << "ERROR! " << reply.sErrorDescription << endl;
-		return eRetCode::ApiFailure;
+		throw PException("ListCountries: " + reply.sErrorDescription, eRetCode::ApiFailure);
 	}
 
 	cout << setfill('-') << setw(nWidth1 + 1 + nWidth2 + 1 + nWidth3 + 10) << "-" << setfill(' ') << endl;
@@ -107,10 +104,9 @@ int ListCountries(const CommonOptions& options)
 	{
 		items = ParseCountries(reply.sBody);
 	}
-	catch (exception& e)
+	catch (PException& e)
 	{
-		cerr << "ERROR! " << e.what() << endl;
-		return eRetCode::ApiFailure;
+		throw PException("ListCountries: " + e.str(), eRetCode::ApiParsingFail);
 	}
 
 	// Sort data:
@@ -138,6 +134,9 @@ int ListCountries(const CommonOptions& options)
 		}
 
 		cout << setw(nWidth1) << info.sCode << " " << setw(nWidth2) << left << info.sName << right << " " << setw(nWidth3) << info.nProbes << endl;
+
+		if (g_bTerminateProgram)
+			throw PException("ListCountries: Terminate Program");
 	}
 
 	return eRetCode::OK;
@@ -172,8 +171,7 @@ int ListAsns(const CommonOptions& options)
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
 	{
-		cerr << "ERROR! " << reply.sErrorDescription << endl;
-		return eRetCode::ApiFailure;
+		throw PException("ListAsns: " + reply.sErrorDescription, eRetCode::ApiFailure);
 	}
 
 	cout << setfill('-') << setw(nWidth1 + 1 + nWidth2 + 1 + 40) << "-" << setfill(' ') << endl;
@@ -186,10 +184,9 @@ int ListAsns(const CommonOptions& options)
 	{
 		items = ParseGetProbesByCountryResult_AsnOnly(reply.sBody);
 	}
-	catch (exception& e)
+	catch (PException& e)
 	{
-		cerr << "ERROR! " << e.what() << endl;
-		return eRetCode::ApiFailure;
+		throw PException("ListAsns: " + e.str(), eRetCode::ApiParsingFail);
 	}
 
 	// Deduplicate data:
@@ -214,6 +211,9 @@ int ListAsns(const CommonOptions& options)
 		item.probe = info;
 		item.nAsnId = id;
 		++item.nProbes;
+
+		if (g_bTerminateProgram)
+			throw PException("ListAsns: loop1: Terminate Program");
 	}
 
 	// Sort data:
@@ -225,6 +225,9 @@ int ListAsns(const CommonOptions& options)
 	for (const auto& p : items2)
 	{
 		items3.push_back(p.second);
+
+		if (g_bTerminateProgram)
+			throw PException("ListAsns: loop2: Terminate Program");
 	}
 
 	items2.clear();	// free memory
@@ -253,6 +256,9 @@ int ListAsns(const CommonOptions& options)
 		}
 
 		cout << setw(nWidth1) << left << info.probe.asn.sId << right << " " << setw(nWidth2) << info.nProbes << " " << info.probe.asn.sName << endl;
+
+		if (g_bTerminateProgram)
+			throw PException("ListAsns: loop3: Terminate Program");
 	}
 
 	return eRetCode::OK;
