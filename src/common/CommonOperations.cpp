@@ -97,12 +97,11 @@ int ListCountries(const CommonOptions& options)
 	cout << setfill('-') << setw(nWidth1 + 1 + nWidth2 + 1 + nWidth3 + 10) << "-" << setfill(' ') << endl;
 	cout << flush;
 
-	using namespace ProbeAPI;
-	vector<CountryInfo> items;
+	vector<ProbeAPI::CountryInfo> items;
 
 	try
 	{
-		items = ParseCountries(reply.sBody);
+		items = ProbeAPI::ParseCountries(reply.sBody);
 	}
 	catch (PException& e)
 	{
@@ -110,7 +109,7 @@ int ListCountries(const CommonOptions& options)
 	}
 
 	// Sort data:
-	sort(items.begin(), items.end(), [](const CountryInfo& a, const CountryInfo& b)
+	sort(items.begin(), items.end(), [](const ProbeAPI::CountryInfo& a, const ProbeAPI::CountryInfo& b)
 	{
 		// nProbes DESC
 		if (a.nProbes != b.nProbes)
@@ -177,12 +176,11 @@ int ListAsns(const CommonOptions& options)
 	cout << setfill('-') << setw(nWidth1 + 1 + nWidth2 + 1 + 40) << "-" << setfill(' ') << endl;
 	cout << flush;
 
-	using namespace ProbeAPI;
-	vector<ProbeInfo> items;
+	vector<ProbeAPI::ProbeInfo> items;
 
 	try
 	{
-		items = ParseGetProbesByCountryResult_AsnOnly(reply.sBody);
+		items = ProbeAPI::ParseGetProbesByCountryResult_AsnOnly(reply.sBody);
 	}
 	catch (PException& e)
 	{
@@ -217,7 +215,7 @@ int ListAsns(const CommonOptions& options)
 	}
 
 	// Sort data:
-	items = vector<ProbeInfo>();	// free memory
+	items = vector<ProbeAPI::ProbeInfo>();	// free memory
 
 	vector<MyAsnInfo> items3;
 	items3.reserve(items2.size());

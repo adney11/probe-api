@@ -49,43 +49,13 @@ void ApplicationStats::Print()
 
 //------------------------------------------------------
 
-int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, const ApplicationOptions& options, ProbeApiRequester& requester, ApplicationStats& stats)
+void PrintPackOfResults(const string& sTarget, const ApplicationOptions& options, const vector<ProbeAPI::ProbeInfo>& items, ApplicationStats& stats)
 {
-	const auto nRestJobs = options.nCount - stats.nSent;
-	const auto nDesiredProbeCount = nRestJobs * 4;
-	const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
-
-	const string sUrl = OSSFMT("StartPingTestByCountry?countrycode=" << sCountryCode
-		<< "&destination=" << sTarget
-		<< "&probeslimit=" << nRequestedProbeCount
-		<< "&timeout=" << options.nMaxTimeoutMs);
-
-	ProbeApiRequester::Request request(sUrl);
-	request.nHttpTimeoutSec += options.nMaxTimeoutMs / 1000;
-
-	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
-	if (!reply.bSucceeded)
-	{
-		throw PException("MakePackOfJobsByCountry: " + reply.sErrorDescription, eRetCode::ApiFailure);
-	}
-
-	using namespace ProbeAPI;
-	vector<ProbeInfo> items;
-
-	try
-	{
-		items = ParsePingTestByCountryResult(reply.sBody);
-	}
-	catch (PException& e)
-	{
-		throw PException("MakePackOfJobsByCountry: " + e.str(), eRetCode::ApiParsingFail);
-	}
-
-	bool bFirstIteration = true;
+	bool bFirstIteration = (0 == stats.nSent);
 	for (const auto& info : items)
 	{
 		if (g_bTerminateProgram)
-			throw PException("MakePackOfJobsByCountry: Terminate Program");
+			throw PException("PrintPackOfResults: Terminate Program");
 
 		// Pinging 8.8.8.8 with 32 bytes of data:
 		// Reply from 8.8.8.8: bytes=32 time=13ms TTL=55
@@ -112,6 +82,42 @@ int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, c
 
 		cout << endl;
 	}
+}
+
+//------------------------------------------------------
+
+int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, const ApplicationOptions& options, ProbeApiRequester& requester, ApplicationStats& stats)
+{
+	const auto nRestJobs = options.nCount - stats.nSent;
+	const auto nDesiredProbeCount = nRestJobs * 4;
+	const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
+
+	const string sUrl = OSSFMT("StartPingTestByCountry?countrycode=" << sCountryCode
+		<< "&destination=" << sTarget
+		<< "&probeslimit=" << nRequestedProbeCount
+		<< "&timeout=" << options.nMaxTimeoutMs);
+
+	ProbeApiRequester::Request request(sUrl);
+	request.nHttpTimeoutSec += options.nMaxTimeoutMs / 1000;
+
+	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
+	if (!reply.bSucceeded)
+	{
+		throw PException("MakePackOfJobsByCountry: " + reply.sErrorDescription, eRetCode::ApiFailure);
+	}
+
+	vector<ProbeAPI::ProbeInfo> items;
+
+	try
+	{
+		items = ProbeAPI::ParsePingTestByCountryResult(reply.sBody);
+	}
+	catch (PException& e)
+	{
+		throw PException("MakePackOfJobsByCountry: " + e.str(), eRetCode::ApiParsingFail);
+	}
+
+	PrintPackOfResults(sTarget, options, items, stats);
 
 	return eRetCode::OK;
 }
@@ -192,49 +198,18 @@ int MakePackOfJobsByAsn(const string& sAsnId, const string& sTarget, const Appli
 		throw PException("MakePackOfJobsByAsn: " + reply.sErrorDescription, eRetCode::ApiFailure);
 	}
 
-	using namespace ProbeAPI;
-	vector<ProbeInfo> items;
+	vector<ProbeAPI::ProbeInfo> items;
 
 	try
 	{
-		items = ParsePingTestByAsnResult(reply.sBody);
+		items = ProbeAPI::ParsePingTestByAsnResult(reply.sBody);
 	}
 	catch (PException& e)
 	{
 		throw PException("MakePackOfJobsByAsn: " + e.str(), eRetCode::ApiParsingFail);
 	}
 
-	bool bFirstIteration = true;
-	for (const auto& info : items)
-	{
-		if (g_bTerminateProgram)
-			throw PException("MakePackOfJobsByAsn: Terminate Program");
-
-		// Pinging 8.8.8.8 with 32 bytes of data:
-		// Reply from 8.8.8.8: bytes=32 time=13ms TTL=55
-		DoSleep(info.ping, bFirstIteration);
-
-		++stats.nSent;
-		if (info.ping.bTimeout)
-		{
-			cout << "Request timed out.";
-		}
-		else
-		{
-			++stats.nReceived;
-			stats.nPingMin = (min)(stats.nPingMin, info.ping.nTimeMs);
-			stats.nPingMax = (max)(stats.nPingMax, info.ping.nTimeMs);
-			stats.nPingSum += info.ping.nTimeMs;
-			cout << "Reply from " << sTarget << ": bytes=" << options.nPacketSize << " time=" << info.ping.nTimeMs << "ms TTL=" << options.nTTL;
-		}
-
-		if (options.bVerbose)
-		{
-			cout << " to " << info.sUniqueId << " (" << info.network.sName << ")";
-		}
-
-		cout << endl;
-	}
+	PrintPackOfResults(sTarget, options, items, stats);
 
 	return eRetCode::OK;
 }

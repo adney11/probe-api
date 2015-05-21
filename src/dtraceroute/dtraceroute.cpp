@@ -38,44 +38,13 @@ void ApplicationStats::Print()
 
 //------------------------------------------------------
 
-int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, const ApplicationOptions& options, ProbeApiRequester& requester, ApplicationStats& stats)
+void PrintPackOfResults(const string& sTarget, const ApplicationOptions& options, const vector<ProbeAPI::ProbeInfo>& items, ApplicationStats& stats)
 {
-	const auto nRestJobs = options.nCount - stats.nSent;
-	const auto nDesiredProbeCount = nRestJobs;
-	const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
-
-	const string sUrl = OSSFMT("StartTracertTestByCountry?countrycode=" << sCountryCode
-		<< "&destination=" << sTarget
-		<< "&probeslimit=" << nRequestedProbeCount
-		<< "&ttl=" << options.nTTL
-		<< "&timeout=" << options.nMaxTimeoutMs);
-
-	ProbeApiRequester::Request request(sUrl);
-	request.nHttpTimeoutSec += options.nMaxTimeoutMs / 1000;
-
-	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
-	if (!reply.bSucceeded)
-	{
-		throw PException("MakePackOfJobsByCountry: " + reply.sErrorDescription, eRetCode::ApiFailure);
-	}
-
-	using namespace ProbeAPI;
-	vector<ProbeInfo> items;
-
-	try
-	{
-		items = ParseTracertTestByCountryResult(reply.sBody);
-	}
-	catch (PException& e)
-	{
-		throw PException("MakePackOfJobsByCountry: " + e.str(), eRetCode::ApiParsingFail);
-	}
-
-	bool bFirstIteration = true;
+	bool bFirstIteration = (0 == stats.nSent);
 	for (const auto& info : items)
 	{
 		if (g_bTerminateProgram)
-			throw PException("MakePackOfJobsByCountry: loop1: Terminate Program");
+			throw PException("PrintPackOfResults: loop1: Terminate Program");
 
 		if (options.bVerbose)
 		{
@@ -87,7 +56,7 @@ int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, c
 		for (const auto& hop : info.tracert.vectHops)
 		{
 			if (g_bTerminateProgram)
-				throw PException("MakePackOfJobsByCountry: loop2: Terminate Program");
+				throw PException("PrintPackOfResults: loop2: Terminate Program");
 
 			// Tracing route to google-public-dns-a.google.com [8.8.8.8]
 			// over a maximum of 30 hops:
@@ -98,7 +67,7 @@ int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, c
 			for (const auto& ping : hop.vectResults)
 			{
 				if (g_bTerminateProgram)
-					throw PException("MakePackOfJobsByCountry: loop3: Terminate Program");
+					throw PException("PrintPackOfResults: loop3: Terminate Program");
 
 				const int nWidth = 5;
 				DoSleep(ping, bFirstIteration);
@@ -123,6 +92,43 @@ int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, c
 		cout << "Trace complete." << endl;
 		cout << endl;
 	}
+}
+
+//------------------------------------------------------
+
+int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, const ApplicationOptions& options, ProbeApiRequester& requester, ApplicationStats& stats)
+{
+	const auto nRestJobs = options.nCount - stats.nSent;
+	const auto nDesiredProbeCount = nRestJobs;
+	const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
+
+	const string sUrl = OSSFMT("StartTracertTestByCountry?countrycode=" << sCountryCode
+		<< "&destination=" << sTarget
+		<< "&probeslimit=" << nRequestedProbeCount
+		<< "&ttl=" << options.nTTL
+		<< "&timeout=" << options.nMaxTimeoutMs);
+
+	ProbeApiRequester::Request request(sUrl);
+	request.nHttpTimeoutSec += options.nMaxTimeoutMs / 1000;
+
+	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
+	if (!reply.bSucceeded)
+	{
+		throw PException("MakePackOfJobsByCountry: " + reply.sErrorDescription, eRetCode::ApiFailure);
+	}
+
+	vector<ProbeAPI::ProbeInfo> items;
+
+	try
+	{
+		items = ProbeAPI::ParseTracertTestByCountryResult(reply.sBody);
+	}
+	catch (PException& e)
+	{
+		throw PException("MakePackOfJobsByCountry: " + e.str(), eRetCode::ApiParsingFail);
+	}
+
+	PrintPackOfResults(sTarget, options, items, stats);
 
 	// hack to have only one call to this function:
 	stats.nSent = options.nCount;
@@ -209,70 +215,18 @@ int MakePackOfJobsByAsn(const string& sAsnId, const string& sTarget, const Appli
 		throw PException("MakePackOfJobsByAsn: " + reply.sErrorDescription, eRetCode::ApiFailure);
 	}
 
-	using namespace ProbeAPI;
-	vector<ProbeInfo> items;
+	vector<ProbeAPI::ProbeInfo> items;
 
 	try
 	{
-		items = ParseTracertTestByAsnResult(reply.sBody);
+		items = ProbeAPI::ParseTracertTestByAsnResult(reply.sBody);
 	}
 	catch (PException& e)
 	{
 		throw PException("MakePackOfJobsByAsn: " + e.str(), eRetCode::ApiParsingFail);
 	}
 
-	bool bFirstIteration = true;
-	for (const auto& info : items)
-	{
-		if (g_bTerminateProgram)
-			throw PException("MakePackOfJobsByAsn: loop1: Terminate Program");
-
-		if (options.bVerbose)
-		{
-			cout << "Tracing route to [" << info.tracert.sTarget << "] from host " << info.sUniqueId << " (" << info.network.sName << ")" << endl;
-			cout << "over a maximum of " << options.nTTL << " hops:" << endl;
-		}
-
-		size_t iHop = 0;
-		for (const auto& hop : info.tracert.vectHops)
-		{
-			if (g_bTerminateProgram)
-				throw PException("MakePackOfJobsByAsn: loop2: Terminate Program");
-
-			// Tracing route to google-public-dns-a.google.com [8.8.8.8]
-			// over a maximum of 30 hops:
-			//   1    <1 ms    <1 ms    <1 ms  10.10.0.1
-			//   2     3 ms     3 ms     4 ms  124.47.118.1
-			//   3     *        *        *     124.47.118.100
-			cout << setw(3) << ++iHop;
-			for (const auto& ping : hop.vectResults)
-			{
-				if (g_bTerminateProgram)
-					throw PException("MakePackOfJobsByAsn: loop3: Terminate Program");
-
-				const int nWidth = 5;
-				DoSleep(ping, bFirstIteration);
-
-				if (ping.bTimeout)
-				{
-					cout << " " << setw(nWidth - 1) << " " << "*" << "   ";
-				}
-				else if (ping.nTimeMs < 1)
-				{
-					cout << " " << setw(nWidth - 2) << " " << "<1" << " ms";
-				}
-				else
-				{
-					cout << " " << setw(nWidth) << ping.nTimeMs << " ms";
-				}
-			}
-			cout << "  " << hop.sReplyHost << endl;
-		}
-
-		cout << endl;
-		cout << "Trace complete." << endl;
-		cout << endl;
-	}
+	PrintPackOfResults(sTarget, options, items, stats);
 
 	// hack to have only one call to this function:
 	stats.nSent = options.nCount;
