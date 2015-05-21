@@ -98,6 +98,8 @@ namespace ProbeAPI
 		ProbeInfo()
 		{}
 		ProbeInfo(const Json::Value& v, const eParseMode mode);
+
+		std::string GetPeerInfo(const bool bAsnIsKnown) const;
 	};
 
 	std::vector<ProbeAPI::CountryInfo> ParseCountries(const std::string& sJson);

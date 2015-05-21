@@ -147,7 +147,7 @@ void PrintPackOfResults(const string& sTarget, const ApplicationOptions& options
 
 		if (options.bVerbose)
 		{
-			cout << " to " << info.sUniqueId << " (" << info.network.sName << ")";
+			cout << " to " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
 		}
 
 		cout << endl;

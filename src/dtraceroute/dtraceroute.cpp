@@ -119,7 +119,7 @@ void PrintPackOfResults(const string& sTarget, const ApplicationOptions& options
 
 		if (options.bVerbose)
 		{
-			cout << "Tracing route to [" << info.tracert.sTarget << "] from host " << info.sUniqueId << " (" << info.network.sName << ")" << endl;
+			cout << "Tracing route to [" << info.tracert.sTarget << "] from " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
 			cout << "over a maximum of " << options.nTTL << " hops:" << endl;
 		}
 

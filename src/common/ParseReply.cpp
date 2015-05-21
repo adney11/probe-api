@@ -221,6 +221,21 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 
 //------------------------------------------------------
 
+std::string ProbeAPI::ProbeInfo::GetPeerInfo(const bool bAsnIsKnown) const
+{
+	//return sUniqueId + " (" + network.sName + ")";
+	if (bAsnIsKnown)
+	{
+		return "net \"" + network.sName + "\" (" + country.sName + ")";
+	}
+	else
+	{
+		return asn.sId + " \"" + asn.sName + "\" (" + country.sCode + ")";
+	}
+}
+
+//------------------------------------------------------
+
 std::vector<ProbeAPI::CountryInfo> ProbeAPI::ParseCountries(const std::string& sJson)
 {
 	Json::Reader reader;
