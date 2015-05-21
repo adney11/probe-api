@@ -14,16 +14,18 @@
 #define DEFAULT_PING_COUNTRY_CODE		"CZ"
 
 class ProbeApiRequester;
+namespace ProbeAPI
+{
+	struct PingResult;
+};
 
 //------------------------------------------------------
 
 struct CommonOptions
 {
-	bool		bDebug = false;
-	std::string	sModeArgument;	// Country code in --list-asn mode
+	const bool&			bDebug;
+	const std::string&	sModeArgument;	// Country code in --list-asn mode
 
-	CommonOptions()
-	{}
 	CommonOptions(const bool bDebug_, const std::string& sModeArgument_):
 		bDebug(bDebug_), sModeArgument(sModeArgument_)
 	{}
@@ -31,6 +33,7 @@ struct CommonOptions
 
 //------------------------------------------------------
 
+void DoSleep(const ProbeAPI::PingResult& ping, bool& bFirstSleep);
 std::string GetDefaultSourceCountry(ProbeApiRequester& requester, const CommonOptions& options);
 
 int ListCountries(const CommonOptions& options);

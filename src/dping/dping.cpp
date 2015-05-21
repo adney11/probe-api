@@ -9,7 +9,6 @@
 #include <json/json.h>
 
 #include <algorithm>
-#include <thread>
 
 using namespace std;
 
@@ -83,17 +82,10 @@ int MakePackOfJobsByCountry(const string& sCountryCode, const string& sTarget, c
 		return eRetCode::ApiFailure;
 	}
 
+	bool bFirstIteration = true;
 	for (const auto& info : items)
 	{
-		const bool bFirstIteration = (0 == stats.nSent);
-
-		if (!bFirstIteration)
-		{
-			cout << flush;
-			const int nMaxDelay = 500;
-			const int nDelayMs = info.ping.bTimeout ? 500 : info.ping.nTimeMs;
-			this_thread::sleep_for(chrono::milliseconds((min)(nDelayMs, nMaxDelay)));
-		}
+		DoSleep(info.ping, bFirstIteration);
 
 		++stats.nSent;
 		if (info.ping.bTimeout)
@@ -204,17 +196,10 @@ int MakePackOfJobsByAsn(const string& sAsnId, const string& sTarget, const Appli
 		return eRetCode::ApiFailure;
 	}
 
+	bool bFirstIteration = true;
 	for (const auto& info : items)
 	{
-		const bool bFirstIteration = (0 == stats.nSent);
-
-		if (!bFirstIteration)
-		{
-			cout << flush;
-			const int nMaxDelay = 500;
-			const int nDelayMs = info.ping.bTimeout ? 500 : info.ping.nTimeMs;
-			this_thread::sleep_for(chrono::milliseconds((min)(nDelayMs, nMaxDelay)));
-		}
+		DoSleep(info.ping, bFirstIteration);
 
 		++stats.nSent;
 		if (info.ping.bTimeout)

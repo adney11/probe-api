@@ -8,8 +8,25 @@
 #include <json/json.h>
 
 #include <algorithm>
+#include <thread>
 
 using namespace std;
+
+//------------------------------------------------------
+
+void DoSleep(const ProbeAPI::PingResult& ping, bool& bFirstSleep)
+{
+	if (bFirstSleep)
+	{
+		bFirstSleep = false;
+		return;
+	}
+
+	cout << flush;
+	const int nMaxDelay = 500;
+	const int nDelayMs = ping.bTimeout ? 500 : ping.nTimeMs;
+	this_thread::sleep_for(chrono::milliseconds((min)(nDelayMs, nMaxDelay)));
+}
 
 //------------------------------------------------------
 
