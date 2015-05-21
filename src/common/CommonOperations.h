@@ -1,6 +1,6 @@
 //------------------------------------------------------
-#ifndef _LIST_ITEMS_H_UID00000928173JQMW81
-#define _LIST_ITEMS_H_UID00000928173JQMW81
+#ifndef _COMMON_OPERATIONS_H_UID00000928MW81
+#define _COMMON_OPERATIONS_H_UID00000928MW81
 
 #if _MSC_VER > 1000
 #pragma once
@@ -13,9 +13,9 @@
 #define DEFAULT_COUNTRY_META			"<biggest>"
 #define DEFAULT_PING_COUNTRY_CODE		"CZ"
 
-//------------------------------------------------------
-
 class ProbeApiRequester;
+
+//------------------------------------------------------
 
 struct CommonOptions
 {
@@ -37,4 +37,4 @@ int ListCountries(const CommonOptions& options);
 int ListAsns(const CommonOptions& options);
 
 //------------------------------------------------------
-#endif //ifndef _LIST_ITEMS_H_UID00000928173JQMW81
+#endif //ifndef _COMMON_OPERATIONS_H_UID00000928MW81

@@ -20,7 +20,7 @@
 #define VERSION_PRODUCT_VER1			1
 #define VERSION_PRODUCT_VER2			0
 // This is a build version. It is incremented after any significant fix or feature added:
-#define VERSION_PRODUCT_VER3			17
+#define VERSION_PRODUCT_VER3			18
 #define VERSION_PRODUCT_VER4			0
 
 #define PRODUCT_BUILD_VER				VERSION_PRODUCT_VER3
