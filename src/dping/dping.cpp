@@ -119,7 +119,7 @@ protected:
 
 //------------------------------------------------------
 
-void PrintPackOfResults(const string& sTarget, const ApplicationOptions& options, const vector<ProbeAPI::ProbeInfo>& items, ApplicationStats& stats)
+void PrintPackOfResults(const ApplicationOptions& options, const vector<ProbeAPI::ProbeInfo>& items, ApplicationStats& stats)
 {
 	bool bFirstIteration = (0 == stats.nSent);
 	for (const auto& info : items)
@@ -142,7 +142,7 @@ void PrintPackOfResults(const string& sTarget, const ApplicationOptions& options
 			stats.nPingMin = (min)(stats.nPingMin, info.ping.nTimeMs);
 			stats.nPingMax = (max)(stats.nPingMax, info.ping.nTimeMs);
 			stats.nPingSum += info.ping.nTimeMs;
-			cout << "Reply from " << sTarget << ": bytes=" << options.nPacketSize << " time=" << info.ping.nTimeMs << "ms TTL=" << options.nTTL;
+			cout << "Reply from " << options.sTarget << ": bytes=" << options.nPacketSize << " time=" << info.ping.nTimeMs << "ms TTL=" << options.nTTL;
 		}
 
 		if (options.bVerbose)
@@ -156,10 +156,10 @@ void PrintPackOfResults(const string& sTarget, const ApplicationOptions& options
 
 //------------------------------------------------------
 
-int MakePackOfJobs(const JobType& job, const string& sSearchArgument, const string& sTarget,
+int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 	const ApplicationOptions& options, ProbeApiRequester& requester, ApplicationStats& stats)
 {
-	const string sUrl = job.GetUrl(stats, sSearchArgument, sTarget);
+	const string sUrl = job.GetUrl(stats, sSearchArgument, options.sTarget);
 
 	ProbeApiRequester::Request request(sUrl);
 	request.nHttpTimeoutSec += options.nMaxTimeoutMs / 1000;
@@ -181,7 +181,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument, const stri
 		throw PException("MakePackOfJobs: " + e.str(), eRetCode::ApiParsingFail);
 	}
 
-	PrintPackOfResults(sTarget, options, items, stats);
+	PrintPackOfResults(options, items, stats);
 
 	return eRetCode::OK;
 }
@@ -192,10 +192,8 @@ int DoJob(const ApplicationOptions& options)
 {
 	int res = eRetCode::OK;
 
-	const string& sTarget = options.sTarget;
-
 	cout << endl;
-	cout << "Pinging " << sTarget << " with " << options.nPacketSize << " bytes of data";
+	cout << "Pinging " << options.sTarget << " with " << options.nPacketSize << " bytes of data";
 	cout << flush;
 
 	const JobType job(options);
@@ -206,7 +204,7 @@ int DoJob(const ApplicationOptions& options)
 	cout << " from " << job.FormatSearchDetails(sSearchArgument) << ":" << endl;
 	cout << flush;
 
-	ApplicationStats stats(sTarget);
+	ApplicationStats stats(options.sTarget);
 
 	try
 	{
@@ -214,7 +212,7 @@ int DoJob(const ApplicationOptions& options)
 		{
 			const auto nPreviousSend = stats.nSent;
 
-			const int nRes = MakePackOfJobs(job, sSearchArgument, sTarget, options, requester, stats);
+			const int nRes = MakePackOfJobs(job, sSearchArgument, options, requester, stats);
 			if (eRetCode::OK != nRes)
 			{
 				res = nRes;

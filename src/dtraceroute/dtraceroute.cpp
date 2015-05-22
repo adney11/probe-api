@@ -109,7 +109,7 @@ protected:
 
 //------------------------------------------------------
 
-void PrintPackOfResults(const string& sTarget, const ApplicationOptions& options, const vector<ProbeAPI::ProbeInfo>& items, ApplicationStats& stats)
+void PrintPackOfResults(const ApplicationOptions& options, const vector<ProbeAPI::ProbeInfo>& items, ApplicationStats& stats)
 {
 	bool bFirstIteration = (0 == stats.nSent);
 	for (const auto& info : items)
@@ -167,10 +167,10 @@ void PrintPackOfResults(const string& sTarget, const ApplicationOptions& options
 
 //------------------------------------------------------
 
-int MakePackOfJobs(const JobType& job, const string& sSearchArgument, const string& sTarget,
+int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 	const ApplicationOptions& options, ProbeApiRequester& requester, ApplicationStats& stats)
 {
-	const string sUrl = job.GetUrl(stats, sSearchArgument, sTarget);
+	const string sUrl = job.GetUrl(stats, sSearchArgument, options.sTarget);
 
 	ProbeApiRequester::Request request(sUrl);
 	request.nHttpTimeoutSec += options.nMaxTimeoutMs / 1000;
@@ -192,7 +192,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument, const stri
 		throw PException("MakePackOfJobs: " + e.str(), eRetCode::ApiParsingFail);
 	}
 
-	PrintPackOfResults(sTarget, options, items, stats);
+	PrintPackOfResults(options, items, stats);
 
 	// hack to have only one call to this function:
 	stats.nSent = options.nCount;
@@ -206,10 +206,8 @@ int DoJob(const ApplicationOptions& options)
 {
 	int res = eRetCode::OK;
 
-	const string& sTarget = options.sTarget;
-
 	cout << endl;
-	cout << "Tracing route to [" << sTarget << "]";
+	cout << "Tracing route to [" << options.sTarget << "]";
 	cout << flush;
 
 	const JobType job(options);
@@ -222,7 +220,7 @@ int DoJob(const ApplicationOptions& options)
 	cout << endl;
 	cout << flush;
 
-	ApplicationStats stats(sTarget);
+	ApplicationStats stats(options.sTarget);
 
 	try
 	{
@@ -230,7 +228,7 @@ int DoJob(const ApplicationOptions& options)
 		{
 			const auto nPreviousSend = stats.nSent;
 
-			const int nRes = MakePackOfJobs(job, sSearchArgument, sTarget, options, requester, stats);
+			const int nRes = MakePackOfJobs(job, sSearchArgument, options, requester, stats);
 			if (eRetCode::OK != nRes)
 			{
 				res = nRes;
