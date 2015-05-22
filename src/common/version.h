@@ -20,7 +20,7 @@
 #define VERSION_PRODUCT_VER1			1
 #define VERSION_PRODUCT_VER2			1
 // This is a build version. It is incremented after any significant fix or feature added:
-#define VERSION_PRODUCT_VER3			20
+#define VERSION_PRODUCT_VER3			22
 #define VERSION_PRODUCT_VER4			0
 
 #define PRODUCT_BUILD_VER				VERSION_PRODUCT_VER3
@@ -34,7 +34,7 @@
 #define FILE_DESCRIPTION				VERSION_PRODUCT_NAME ": Distributed Ping"
 #define FILE_INTERNAL_NAME				"dping"
 #define MODVERSION						1
-#define MODREVISION						4
+#define MODREVISION						5
 #define MODSUBREVISION					PRODUCT_BUILD_VER
 #define MODRELEASE						0
 #endif
@@ -48,7 +48,7 @@
 #define FILE_INTERNAL_NAME				"dtraceroute"
 #endif
 #define MODVERSION						1
-#define MODREVISION						1
+#define MODREVISION						2
 #define MODSUBREVISION					PRODUCT_BUILD_VER
 #define MODRELEASE						0
 #endif

@@ -198,11 +198,13 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
 				mode = MODE_DO_BY_ASN;
 				sModeArgument = sNextArg;
+				nCount = UINT_MAX;
 			}
 			else if (sArg == "--list-country")
 			{
 				mode = MODE_GET_COUNTRIES;
 				sModeArgument.clear();
+				nCount = UINT_MAX;
 			}
 			else if (sArg == "--list-asn" && !bLastArg)
 			{

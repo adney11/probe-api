@@ -21,6 +21,7 @@ void DoSleep(const ProbeAPI::PingResult& ping, bool& bFirstSleep)
 		return;
 	}
 
+	cerr << flush;
 	cout << flush;
 	const int nMaxDelay = 500;
 	const int nDelayMs = ping.bTimeout ? 500 : ping.nTimeMs;
@@ -81,7 +82,6 @@ int ListCountries(const CommonOptions& options)
 	const int nWidth2 = 40;
 	const int nWidth3 = 5;
 	cout << setw(nWidth1) << "ID" << " " << setw(nWidth2) << left << "Country Name" << " " << setw(nWidth3) << "Number of hosts" << endl;
-	cout << flush;
 
 	ProbeApiRequester requester;
 
@@ -94,7 +94,6 @@ int ListCountries(const CommonOptions& options)
 	}
 
 	cout << setfill('-') << setw(nWidth1 + 1 + nWidth2 + 1 + nWidth3 + 10) << "-" << setfill(' ') << endl;
-	cout << flush;
 
 	vector<ProbeAPI::CountryInfo> items;
 
@@ -124,11 +123,18 @@ int ListCountries(const CommonOptions& options)
 	});
 
 	// Print:
+	uint32_t nCnt = 0;
+
 	for (const auto& info : items)
 	{
 		if (0 == info.nProbes)
 		{
 			//continue;
+		}
+
+		if (++nCnt > options.nCount)
+		{
+			break;
 		}
 
 		cout << setw(nWidth1) << info.sCode << " " << setw(nWidth2) << left << info.sName << right << " " << setw(nWidth3) << info.nProbes << endl;
@@ -158,7 +164,6 @@ int ListAsns(const CommonOptions& options)
 	const int nWidth1 = 8;
 	const int nWidth2 = 6;
 	cout << setw(nWidth1) << left << "ASN id" << right << " " << setw(nWidth2) << "Hosts" << " " << "ASN name" << endl;
-	cout << flush;
 
 	ProbeApiRequester requester;
 
@@ -173,7 +178,6 @@ int ListAsns(const CommonOptions& options)
 	}
 
 	cout << setfill('-') << setw(nWidth1 + 1 + nWidth2 + 1 + 40) << "-" << setfill(' ') << endl;
-	cout << flush;
 
 	vector<ProbeAPI::ProbeInfo> items;
 
@@ -245,11 +249,18 @@ int ListAsns(const CommonOptions& options)
 	});
 
 	// Print:
+	uint32_t nCnt = 0;
+
 	for (const auto& info : items3)
 	{
 		if (0 == info.nProbes)
 		{
 			//continue;
+		}
+
+		if (++nCnt > options.nCount)
+		{
+			break;
 		}
 
 		cout << setw(nWidth1) << left << info.probe.asn.sId << right << " " << setw(nWidth2) << info.nProbes << " " << info.probe.asn.sName << endl;

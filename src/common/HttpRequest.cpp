@@ -166,7 +166,7 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 			// Replace "\r\n" to "\n" because "\n" is replaced into "\r\n" in Windows automatically
 			findandreplace(sData, "\r\n", "\n");
 #endif
-			cout << GetDebugPrefix(type) << sData;
+			cout << GetDebugPrefix(type) << sData << flush;
 			return 0;
 		}));
 #endif
@@ -182,7 +182,7 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 
 #if 1
 		req.setOpt(NoProgress(false));
-		req.setOpt(ProgressFunction([&reply](const double dltotal, const double dlnow, const double ultotal, const double ulnow) -> int
+		req.setOpt(ProgressFunction([](const double dltotal, const double dlnow, const double ultotal, const double ulnow) -> int
 		{
 			while (bPauseAllRequests)
 				MySleep(1);
@@ -198,6 +198,9 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 			MySleep(1);
 		if (bTerminateAllRequests)
 			throw PException("DoRequest: Terminate all requests");
+
+		cerr << flush;
+		cout << flush;
 
 		req.perform();
 

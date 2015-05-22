@@ -33,7 +33,7 @@ ProbeApiRequester::Request::Request(const std::string& sRequestWithArgs)
 	headers.emplace_back("Accept", "application/json");
 
 	sUserAgent = VERSION_PRODUCT_NAME " HTTP client v." MAIN_PRODUCT_VERSION_STR_A;
-	nHttpTimeoutSec = 60;
+	nHttpTimeoutSec = 2 * 60;
 	bKnownBadSslCertificate = false;
 }
 

@@ -10,30 +10,6 @@ using namespace std;
 
 //------------------------------------------------------
 
-ApplicationStats*	g_pApplicationStats = nullptr;
-
-//------------------------------------------------------
-
-ApplicationStats::ApplicationStats(const string& sTarget_) : sTarget(sTarget_)
-{
-	g_pApplicationStats = this;
-}
-
-//------------------------------------------------------
-
-ApplicationStats::~ApplicationStats()
-{
-	g_pApplicationStats = nullptr;
-}
-
-//------------------------------------------------------
-
-void ApplicationStats::Print()
-{
-}
-
-//------------------------------------------------------
-
 class JobType
 {
 public:
@@ -93,10 +69,76 @@ public:
 		string sSearchArgument = options.sModeArgument;
 		if (ApplicationOptions::MODE_DO_BY_COUNTRY == options.mode && DEFAULT_COUNTRY_META == sSearchArgument)
 		{
-			const CommonOptions options2(options.bDebug, options.sModeArgument);
+			const CommonOptions options2(options.bDebug, options.bVerbose, options.sModeArgument, options.nCount);
 			sSearchArgument = GetDefaultSourceCountry(requester, options2);
 		}
 		return sSearchArgument;
+	}
+
+	void PrintHeaderBeforeSearchArg() const
+	{
+		// Tracing route to 1.1.1.2 over a maximum of 30 hops
+		cout << endl;
+		cout << "Tracing route to " << options.sTarget;
+	}
+
+	void PrintHeaderAfterSearchArg(const string& sSearchArgument) const
+	{
+		cout << " from " << FormatSearchDetails(sSearchArgument) << ":" << endl;
+		cout << "over a maximum of " << options.nTTL << " hops:" << endl;
+		cout << endl;
+	}
+
+	void PrintJobStart(const ProbeAPI::ProbeInfo& info) const
+	{
+		// Tracing route to google-public-dns-a.google.com [8.8.8.8]
+		// over a maximum of 30 hops:
+		if (options.bVerbose)
+		{
+			cout << "Tracing route to [" << info.tracert.sTarget << "] from " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
+			cout << "over a maximum of " << options.nTTL << " hops:" << endl;
+		}
+	}
+
+	void PrintHopStart(const int nHop) const
+	{
+		//   1    <1 ms    <1 ms    <1 ms  10.10.0.1
+		//   2     3 ms     3 ms     4 ms  124.47.118.1
+		//   3     *        *        *     124.47.118.100
+		cout << setw(3) << nHop;
+	}
+
+	void PrintHopTry(const ProbeAPI::PingResult& ping) const
+	{
+		const int nWidth = 5;
+		if (ping.bTimeout)
+		{
+			cout << " " << setw(nWidth - 1) << " " << "*" << "   ";
+		}
+		else if (ping.nTimeMs < 1)
+		{
+			cout << " " << setw(nWidth - 2) << " " << "<1" << " ms";
+		}
+		else
+		{
+			cout << " " << setw(nWidth) << ping.nTimeMs << " ms";
+		}
+	}
+
+	void PrintHopFinish(const ProbeAPI::TracertHopResults& hop) const
+	{
+		cout << "  " << hop.sReplyHost << endl;
+	}
+
+	void PrintJobFinish() const
+	{
+		cout << endl;
+		cout << "Trace complete." << endl;
+		cout << endl;
+	}
+
+	void PrintFooter(const ApplicationStats& stats) const
+	{
 	}
 
 protected:
@@ -109,7 +151,7 @@ protected:
 
 //------------------------------------------------------
 
-void PrintPackOfResults(const string& sTarget, const ApplicationOptions& options, const vector<ProbeAPI::ProbeInfo>& items, ApplicationStats& stats)
+void PrintPackOfResults(const JobType& job, const vector<ProbeAPI::ProbeInfo>& items, ApplicationStats& stats)
 {
 	bool bFirstIteration = (0 == stats.nSent);
 	for (const auto& info : items)
@@ -117,11 +159,7 @@ void PrintPackOfResults(const string& sTarget, const ApplicationOptions& options
 		if (g_bTerminateProgram)
 			throw PException("PrintPackOfResults: loop1: Terminate Program");
 
-		if (options.bVerbose)
-		{
-			cout << "Tracing route to [" << info.tracert.sTarget << "] from " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
-			cout << "over a maximum of " << options.nTTL << " hops:" << endl;
-		}
+		job.PrintJobStart(info);
 
 		size_t iHop = 0;
 		for (const auto& hop : info.tracert.vectHops)
@@ -129,48 +167,30 @@ void PrintPackOfResults(const string& sTarget, const ApplicationOptions& options
 			if (g_bTerminateProgram)
 				throw PException("PrintPackOfResults: loop2: Terminate Program");
 
-			// Tracing route to google-public-dns-a.google.com [8.8.8.8]
-			// over a maximum of 30 hops:
-			//   1    <1 ms    <1 ms    <1 ms  10.10.0.1
-			//   2     3 ms     3 ms     4 ms  124.47.118.1
-			//   3     *        *        *     124.47.118.100
-			cout << setw(3) << ++iHop;
+			job.PrintHopStart(++iHop);
+
 			for (const auto& ping : hop.vectResults)
 			{
 				if (g_bTerminateProgram)
 					throw PException("PrintPackOfResults: loop3: Terminate Program");
 
-				const int nWidth = 5;
 				DoSleep(ping, bFirstIteration);
-
-				if (ping.bTimeout)
-				{
-					cout << " " << setw(nWidth - 1) << " " << "*" << "   ";
-				}
-				else if (ping.nTimeMs < 1)
-				{
-					cout << " " << setw(nWidth - 2) << " " << "<1" << " ms";
-				}
-				else
-				{
-					cout << " " << setw(nWidth) << ping.nTimeMs << " ms";
-				}
+				job.PrintHopTry(ping);
 			}
-			cout << "  " << hop.sReplyHost << endl;
+
+			job.PrintHopFinish(hop);
 		}
 
-		cout << endl;
-		cout << "Trace complete." << endl;
-		cout << endl;
+		job.PrintJobFinish();
 	}
 }
 
 //------------------------------------------------------
 
-int MakePackOfJobs(const JobType& job, const string& sSearchArgument, const string& sTarget,
+int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 	const ApplicationOptions& options, ProbeApiRequester& requester, ApplicationStats& stats)
 {
-	const string sUrl = job.GetUrl(stats, sSearchArgument, sTarget);
+	const string sUrl = job.GetUrl(stats, sSearchArgument, options.sTarget);
 
 	ProbeApiRequester::Request request(sUrl);
 	request.nHttpTimeoutSec += options.nMaxTimeoutMs / 1000;
@@ -192,7 +212,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument, const stri
 		throw PException("MakePackOfJobs: " + e.str(), eRetCode::ApiParsingFail);
 	}
 
-	PrintPackOfResults(sTarget, options, items, stats);
+	PrintPackOfResults(job, items, stats);
 
 	// hack to have only one call to this function:
 	stats.nSent = options.nCount;
@@ -206,23 +226,15 @@ int DoJob(const ApplicationOptions& options)
 {
 	int res = eRetCode::OK;
 
-	const string& sTarget = options.sTarget;
-
-	cout << endl;
-	cout << "Tracing route to [" << sTarget << "]";
-	cout << flush;
-
 	const JobType job(options);
-	ProbeApiRequester requester;
+	job.PrintHeaderBeforeSearchArg();
 
+	ProbeApiRequester requester;
 	const string sSearchArgument = job.CalculateSearchArgument(requester);
 
-	cout << " from " << job.FormatSearchDetails(sSearchArgument) << ":" << endl;
-	cout << "over a maximum of " << options.nTTL << " hops:" << endl;
-	cout << endl;
-	cout << flush;
+	job.PrintHeaderAfterSearchArg(sSearchArgument);
 
-	ApplicationStats stats(sTarget);
+	ApplicationStats stats(options.sTarget);
 
 	try
 	{
@@ -230,7 +242,7 @@ int DoJob(const ApplicationOptions& options)
 		{
 			const auto nPreviousSend = stats.nSent;
 
-			const int nRes = MakePackOfJobs(job, sSearchArgument, sTarget, options, requester, stats);
+			const int nRes = MakePackOfJobs(job, sSearchArgument, options, requester, stats);
 			if (eRetCode::OK != nRes)
 			{
 				res = nRes;
@@ -248,9 +260,11 @@ int DoJob(const ApplicationOptions& options)
 	}
 	catch (...)
 	{
-		stats.Print();
+		job.PrintFooter(stats);
 		throw;
 	}
+
+	job.PrintFooter(stats);
 
 	return res;
 }
@@ -259,7 +273,7 @@ int DoJob(const ApplicationOptions& options)
 
 int Application(const ApplicationOptions& options)
 {
-	const CommonOptions options2(options.bDebug, options.sModeArgument);
+	const CommonOptions options2(options.bDebug, options.bVerbose, options.sModeArgument, options.nCount);
 
 	switch (options.mode)
 	{
