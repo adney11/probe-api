@@ -1,11 +1,13 @@
 # ProbeAPI Tools
 ## About
 `ProbeAPI Tools` is a set of cross platform console command line utilities which are using public API to make distributed pinging, tracerouting and etc.
+All these tools are working almost the same as Windows and Linux built-in tools, but all network operations are going from different hosts in internet.
+"d" prefix from the name of all tools comes from thw word **d**istributed.
 
 ## Particular Tools Documentation
 
-* [dping](dping.md)
-* [dtracert](dtracert.md)
+* [d**ping**](dping.md)
+* [d**traceroute** (d**tracert**)](dtraceroute.md)
 
 ## Compilation
 
