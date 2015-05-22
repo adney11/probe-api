@@ -68,7 +68,7 @@ public:
 		string sSearchArgument = options.sModeArgument;
 		if (ApplicationOptions::MODE_DO_BY_COUNTRY == options.mode && DEFAULT_COUNTRY_META == sSearchArgument)
 		{
-			const CommonOptions options2(options.bDebug, options.sModeArgument);
+			const CommonOptions options2(options.bDebug, options.bVerbose, options.sModeArgument, options.nCount);
 			sSearchArgument = GetDefaultSourceCountry(requester, options2);
 		}
 		return sSearchArgument;
@@ -237,7 +237,7 @@ int DoJob(const ApplicationOptions& options)
 
 int Application(const ApplicationOptions& options)
 {
-	const CommonOptions options2(options.bDebug, options.sModeArgument);
+	const CommonOptions options2(options.bDebug, options.bVerbose, options.sModeArgument, options.nCount);
 
 	switch (options.mode)
 	{

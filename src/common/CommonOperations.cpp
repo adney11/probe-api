@@ -123,11 +123,18 @@ int ListCountries(const CommonOptions& options)
 	});
 
 	// Print:
+	uint32_t nCnt = 0;
+
 	for (const auto& info : items)
 	{
 		if (0 == info.nProbes)
 		{
 			//continue;
+		}
+
+		if (++nCnt > options.nCount)
+		{
+			break;
 		}
 
 		cout << setw(nWidth1) << info.sCode << " " << setw(nWidth2) << left << info.sName << right << " " << setw(nWidth3) << info.nProbes << endl;
@@ -242,11 +249,18 @@ int ListAsns(const CommonOptions& options)
 	});
 
 	// Print:
+	uint32_t nCnt = 0;
+
 	for (const auto& info : items3)
 	{
 		if (0 == info.nProbes)
 		{
 			//continue;
+		}
+
+		if (++nCnt > options.nCount)
+		{
+			break;
 		}
 
 		cout << setw(nWidth1) << left << info.probe.asn.sId << right << " " << setw(nWidth2) << info.nProbes << " " << info.probe.asn.sName << endl;
