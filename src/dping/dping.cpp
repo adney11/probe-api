@@ -10,41 +10,6 @@ using namespace std;
 
 //------------------------------------------------------
 
-ApplicationStats*	g_pApplicationStats = nullptr;
-
-//------------------------------------------------------
-
-ApplicationStats::ApplicationStats(const string& sTarget_) : sTarget(sTarget_)
-{
-	g_pApplicationStats = this;
-}
-
-//------------------------------------------------------
-
-ApplicationStats::~ApplicationStats()
-{
-	g_pApplicationStats = nullptr;
-}
-
-//------------------------------------------------------
-
-void ApplicationStats::Print()
-{
-	cout << endl;
-	cout << "Ping statistics for " << sTarget << endl;
-	cout << "    Packets : Sent = " << nSent << ", Received = " << nReceived << ", Lost = " << (nSent - nReceived)
-		<< " (" << ((nSent - nReceived) * 100 / (nSent ? nSent : 1)) << " % loss)," << endl;
-
-	if (nReceived > 0)
-	{
-		cout << "Approximate round trip times in milli-seconds:" << endl;
-		cout << "    Minimum = " << nPingMin << "ms, Maximum = " << nPingMax << "ms, Average = " << (nPingSum / nReceived) << "ms" << endl;
-	}
-	cout << flush;
-}
-
-//------------------------------------------------------
-
 class JobType
 {
 public:
@@ -109,6 +74,55 @@ public:
 		return sSearchArgument;
 	}
 
+	void PrintHeaderBeforeSearchArg() const
+	{
+		// Pinging 8.8.8.8 with 32 bytes of data:
+		cout << endl;
+		cout << "Pinging " << options.sTarget << " with " << options.nPacketSize << " bytes of data";
+		cout << flush;
+	}
+
+	void PrintHeaderAfterSearchArg(const string& sSearchArgument) const
+	{
+		cout << " from " << FormatSearchDetails(sSearchArgument) << ":" << endl;
+		cout << flush;
+	}
+
+	void PrintJobResult(const ProbeAPI::ProbeInfo& info) const
+	{
+		// Reply from 8.8.8.8: bytes=32 time=13ms TTL=55
+		if (info.ping.bTimeout)
+		{
+			cout << "Request timed out.";
+		}
+		else
+		{
+			cout << "Reply from " << options.sTarget << ": bytes=" << options.nPacketSize << " time=" << info.ping.nTimeMs << "ms TTL=" << options.nTTL;
+		}
+
+		if (options.bVerbose)
+		{
+			cout << " to " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
+		}
+
+		cout << endl;
+	}
+
+	void PrintFooter(const ApplicationStats& stats) const
+	{
+		cout << endl;
+		cout << "Ping statistics for " << options.sTarget << endl;
+		cout << "    Packets : Sent = " << stats.nSent << ", Received = " << stats.nReceived << ", Lost = " << (stats.nSent - stats.nReceived)
+			<< " (" << ((stats.nSent - stats.nReceived) * 100 / (stats.nSent ? stats.nSent : 1)) << " % loss)," << endl;
+
+		if (stats.nReceived > 0)
+		{
+			cout << "Approximate round trip times in milli-seconds:" << endl;
+			cout << "    Minimum = " << stats.nPingMin << "ms, Maximum = " << stats.nPingMax << "ms, Average = " << (stats.nPingSum / stats.nReceived) << "ms" << endl;
+		}
+		cout << flush;
+	}
+
 protected:
 	const ApplicationOptions&	options;
 	string						sMethod;
@@ -119,7 +133,7 @@ protected:
 
 //------------------------------------------------------
 
-void PrintPackOfResults(const ApplicationOptions& options, const vector<ProbeAPI::ProbeInfo>& items, ApplicationStats& stats)
+void PrintPackOfResults(const JobType& job, const vector<ProbeAPI::ProbeInfo>& items, ApplicationStats& stats)
 {
 	bool bFirstIteration = (0 == stats.nSent);
 	for (const auto& info : items)
@@ -127,30 +141,17 @@ void PrintPackOfResults(const ApplicationOptions& options, const vector<ProbeAPI
 		if (g_bTerminateProgram)
 			throw PException("PrintPackOfResults: Terminate Program");
 
-		// Pinging 8.8.8.8 with 32 bytes of data:
-		// Reply from 8.8.8.8: bytes=32 time=13ms TTL=55
-		DoSleep(info.ping, bFirstIteration);
-
 		++stats.nSent;
-		if (info.ping.bTimeout)
-		{
-			cout << "Request timed out.";
-		}
-		else
+		if (!info.ping.bTimeout)
 		{
 			++stats.nReceived;
 			stats.nPingMin = (min)(stats.nPingMin, info.ping.nTimeMs);
 			stats.nPingMax = (max)(stats.nPingMax, info.ping.nTimeMs);
 			stats.nPingSum += info.ping.nTimeMs;
-			cout << "Reply from " << options.sTarget << ": bytes=" << options.nPacketSize << " time=" << info.ping.nTimeMs << "ms TTL=" << options.nTTL;
 		}
 
-		if (options.bVerbose)
-		{
-			cout << " to " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
-		}
-
-		cout << endl;
+		DoSleep(info.ping, bFirstIteration);
+		job.PrintJobResult(info);
 	}
 }
 
@@ -181,7 +182,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 		throw PException("MakePackOfJobs: " + e.str(), eRetCode::ApiParsingFail);
 	}
 
-	PrintPackOfResults(options, items, stats);
+	PrintPackOfResults(job, items, stats);
 
 	return eRetCode::OK;
 }
@@ -192,17 +193,13 @@ int DoJob(const ApplicationOptions& options)
 {
 	int res = eRetCode::OK;
 
-	cout << endl;
-	cout << "Pinging " << options.sTarget << " with " << options.nPacketSize << " bytes of data";
-	cout << flush;
-
 	const JobType job(options);
-	ProbeApiRequester requester;
+	job.PrintHeaderBeforeSearchArg();
 
+	ProbeApiRequester requester;
 	const string sSearchArgument = job.CalculateSearchArgument(requester);
 
-	cout << " from " << job.FormatSearchDetails(sSearchArgument) << ":" << endl;
-	cout << flush;
+	job.PrintHeaderAfterSearchArg(sSearchArgument);
 
 	ApplicationStats stats(options.sTarget);
 
@@ -230,9 +227,11 @@ int DoJob(const ApplicationOptions& options)
 	}
 	catch (...)
 	{
-		stats.Print();
+		job.PrintFooter(stats);
 		throw;
 	}
+
+	job.PrintFooter(stats);
 
 	return res;
 }

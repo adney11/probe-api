@@ -53,7 +53,6 @@ string decode_signal(const int signal)
 
 void signal_handler(const int signal)
 {
-#if 1
 	if (g_bSignalCatched)
 	{
 		cerr << flush << endl << endl << "DUPLICATED SIGNAL " << decode_signal(signal) << endl << flush;
@@ -83,46 +82,10 @@ void signal_handler(const int signal)
 
 	MySleep(5000);
 	cerr << flush << endl << endl << "ABNORMAL PROGRAM ABANDON!" << endl << flush;
-	if (g_pApplicationStats)
-	{
-		g_pApplicationStats->Print();
-	}
 	cout << buf.str();
 	cerr << flush;
 	cout << flush;
 	exit(g_nSignalRetCode);
-#else
-	HttpRequester::bPauseAllRequests = true;
-	MySleep(100);
-
-	cerr << flush;
-	cout << flush;
-
-	if (g_pApplicationStats)
-	{
-		g_pApplicationStats->Print();
-	}
-
-	ostringstream buf;
-	buf << endl;
-	buf << endl;
-	buf << "Caught signal " << decode_signal(signal) << ". Program terminated." << endl;
-	buf << endl;
-
-	cout << buf.str();
-	cout << flush;
-
-	switch (signal)
-	{
-	case SIGINT:
-	case SIGABRT_COMPAT:
-	case SIGTERM:
-	case SIGBREAK:
-		exit(eRetCode::Cancelled);
-	default:
-		exit(eRetCode::HardFailure);
-	}
-#endif
 }
 
 //------------------------------------------------------

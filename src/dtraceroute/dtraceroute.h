@@ -17,12 +17,9 @@ struct ApplicationStats
 
 	std::string	sTarget;
 
-	ApplicationStats(const std::string& sTarget);
-	~ApplicationStats();
-	void Print();
+	ApplicationStats(const std::string& sTarget_) : sTarget(sTarget_)
+	{}
 };
-
-extern ApplicationStats*	g_pApplicationStats;
 
 //------------------------------------------------------
 
