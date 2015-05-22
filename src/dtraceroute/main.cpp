@@ -137,6 +137,8 @@ int main(int argc, char* argv[])
 		nProgramRes = g_nSignalRetCode;
 	}
 
+	cerr << flush;
+	cout << flush;
 	return nProgramRes;
 }
 

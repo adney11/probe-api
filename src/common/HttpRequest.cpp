@@ -182,7 +182,7 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 
 #if 1
 		req.setOpt(NoProgress(false));
-		req.setOpt(ProgressFunction([&reply](const double dltotal, const double dlnow, const double ultotal, const double ulnow) -> int
+		req.setOpt(ProgressFunction([](const double dltotal, const double dlnow, const double ultotal, const double ulnow) -> int
 		{
 			while (bPauseAllRequests)
 				MySleep(1);
