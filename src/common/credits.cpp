@@ -153,7 +153,7 @@ SOFTWARE.
 		"MIT", "http://curl.haxx.se/docs/copyright.html");
 	buf << FormatLibraryInfo("cURLpp", LIBCURLPP_VERSION, "http://rrette.com/curlpp.html", "https://github.com/jpbarrette/curlpp",
 		"MIT", "http://www.curlpp.org/#license");
-	buf << FormatLibraryInfo("jsoncpp", JSONCPP_VERSION_STRING, "https://github.com/open-source-parsers/jsoncpp", "https://github.com/open-source-parsers/jsoncpp",
+	buf << FormatLibraryInfo("JsonCpp", JSONCPP_VERSION_STRING, "https://github.com/open-source-parsers/jsoncpp", "https://github.com/open-source-parsers/jsoncpp",
 		"Public Domain, MIT", "https://github.com/open-source-parsers/jsoncpp/blob/master/LICENSE");
 #ifndef DEST_OS_WINDOWS
 	buf << FormatLibraryInfo("OpenSSL", "????", "https://www.openssl.org/", "https://github.com/openssl/openssl",
