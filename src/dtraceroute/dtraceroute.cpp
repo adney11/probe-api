@@ -80,7 +80,6 @@ public:
 		// Tracing route to 1.1.1.2 over a maximum of 30 hops
 		cout << endl;
 		cout << "Tracing route to " << options.sTarget;
-		cout << flush;
 	}
 
 	void PrintHeaderAfterSearchArg(const string& sSearchArgument) const
@@ -88,7 +87,6 @@ public:
 		cout << " from " << FormatSearchDetails(sSearchArgument) << ":" << endl;
 		cout << "over a maximum of " << options.nTTL << " hops:" << endl;
 		cout << endl;
-		cout << flush;
 	}
 
 	void PrintJobStart(const ProbeAPI::ProbeInfo& info) const

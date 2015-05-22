@@ -55,7 +55,7 @@ void signal_handler(const int signal)
 {
 	if (g_bSignalCatched)
 	{
-		cerr << flush << endl << endl << "DUPLICATED SIGNAL " << decode_signal(signal) << endl << flush;
+		cerr << endl << endl << "DUPLICATED SIGNAL " << decode_signal(signal) << endl << flush;
 		return;
 	}
 
@@ -81,9 +81,8 @@ void signal_handler(const int signal)
 	HttpRequester::bTerminateAllRequests = true;
 
 	MySleep(5000);
-	cerr << flush << endl << endl << "ABNORMAL PROGRAM ABANDON!" << endl << flush;
-	cout << buf.str();
-	cerr << flush;
+	cerr << endl << endl << "ABNORMAL PROGRAM ABANDON!" << endl
+		<< buf.str() << flush;
 	cout << flush;
 	exit(g_nSignalRetCode);
 }
@@ -133,13 +132,10 @@ int main(int argc, char* argv[])
 
 	if (g_bSignalCatched)
 	{
-		cout << *g_psSignalMessage;
+		cerr << *g_psSignalMessage;
 		g_psSignalMessage = nullptr;
 		nProgramRes = g_nSignalRetCode;
 	}
-
-	cerr << flush;
-	cout << flush;
 
 	return nProgramRes;
 }

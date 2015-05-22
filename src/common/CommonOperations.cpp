@@ -82,7 +82,6 @@ int ListCountries(const CommonOptions& options)
 	const int nWidth2 = 40;
 	const int nWidth3 = 5;
 	cout << setw(nWidth1) << "ID" << " " << setw(nWidth2) << left << "Country Name" << " " << setw(nWidth3) << "Number of hosts" << endl;
-	cout << flush;
 
 	ProbeApiRequester requester;
 
@@ -95,7 +94,6 @@ int ListCountries(const CommonOptions& options)
 	}
 
 	cout << setfill('-') << setw(nWidth1 + 1 + nWidth2 + 1 + nWidth3 + 10) << "-" << setfill(' ') << endl;
-	cout << flush;
 
 	vector<ProbeAPI::CountryInfo> items;
 
@@ -159,7 +157,6 @@ int ListAsns(const CommonOptions& options)
 	const int nWidth1 = 8;
 	const int nWidth2 = 6;
 	cout << setw(nWidth1) << left << "ASN id" << right << " " << setw(nWidth2) << "Hosts" << " " << "ASN name" << endl;
-	cout << flush;
 
 	ProbeApiRequester requester;
 
@@ -174,7 +171,6 @@ int ListAsns(const CommonOptions& options)
 	}
 
 	cout << setfill('-') << setw(nWidth1 + 1 + nWidth2 + 1 + 40) << "-" << setfill(' ') << endl;
-	cout << flush;
 
 	vector<ProbeAPI::ProbeInfo> items;
 

@@ -79,13 +79,11 @@ public:
 		// Pinging 8.8.8.8 with 32 bytes of data:
 		cout << endl;
 		cout << "Pinging " << options.sTarget << " with " << options.nPacketSize << " bytes of data";
-		cout << flush;
 	}
 
 	void PrintHeaderAfterSearchArg(const string& sSearchArgument) const
 	{
 		cout << " from " << FormatSearchDetails(sSearchArgument) << ":" << endl;
-		cout << flush;
 	}
 
 	void PrintJobResult(const ProbeAPI::ProbeInfo& info) const
@@ -120,7 +118,6 @@ public:
 			cout << "Approximate round trip times in milli-seconds:" << endl;
 			cout << "    Minimum = " << stats.nPingMin << "ms, Maximum = " << stats.nPingMax << "ms, Average = " << (stats.nPingSum / stats.nReceived) << "ms" << endl;
 		}
-		cout << flush;
 	}
 
 protected:
