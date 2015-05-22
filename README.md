@@ -22,7 +22,6 @@ No special installation is needed for any of the tools. Currently precompiled bi
 ## Credits
 
 ```
-ProbeAPI Tools: dping
 Copyright (c) 2015 Optimal Software s.r.o. All rights reserved.
 
 Sources repository:  https://github.com/optimal-software/probe-api

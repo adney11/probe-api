@@ -148,7 +148,7 @@ SOFTWARE.
 
 	buf << endl;
 
-	buf << "Used third-party libraries: " << endl;
+	buf << "Used third-party libraries:" << endl;
 	buf << FormatLibraryInfo("cURL", GetCurlFullVersion(), "http://curl.haxx.se/", "https://github.com/bagder/curl",
 		"MIT", "http://curl.haxx.se/docs/copyright.html");
 	buf << FormatLibraryInfo("cURLpp", LIBCURLPP_VERSION, "http://rrette.com/curlpp.html", "https://github.com/jpbarrette/curlpp",

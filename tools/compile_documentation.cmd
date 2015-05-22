@@ -56,7 +56,7 @@ call :print_with_middle_trim "--list-asn ES" 10 2 1
 type %part_pref%_40.md >> %destfile%
 call :print_with_middle_trim "--country US 8.8.8.8" 20 14 3
 type %part_pref%_50.md >> %destfile%
-call :print_with_middle_trim "--asn AS3352 8.8.8.8" 20 14 3
+call :print_with_middle_trim "--asn AS3320 8.8.8.8" 20 14 3
 type %part_pref%_60.md >> %destfile%
 
 REM ======================================================
