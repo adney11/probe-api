@@ -223,7 +223,6 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
 				mode = MODE_DO_BY_ASN;
 				sModeArgument = sNextArg;
-				nCount = UINT_MAX;
 			}
 			else if (sArg == "--list-country")
 			{
@@ -237,6 +236,7 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
 				mode = MODE_GET_ASNS;
 				sModeArgument = sNextArg;
+				nCount = UINT_MAX;
 			}
 			else if ((
 #ifdef DO_BY_COUNTRY_BY_DEFAULT
