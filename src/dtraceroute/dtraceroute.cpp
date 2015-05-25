@@ -93,7 +93,7 @@ public:
 	{
 		// Tracing route to google-public-dns-a.google.com [8.8.8.8]
 		// over a maximum of 30 hops:
-		if (options.bVerbose)
+		//if (options.bVerbose)
 		{
 			cout << "Tracing route to [" << info.tracert.sTarget << "] from " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
 			cout << "over a maximum of " << options.nTTL << " hops:" << endl;
