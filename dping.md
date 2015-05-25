@@ -10,18 +10,23 @@ Usage: dping --help
     --version
     --list-country [-v] [--debug]
     --list-asn code [-v] [--debug]
-    --country code [-n count] [-w timeout] [-v] [--debug] {target_name}
-    --asn id [-n count] [-w timeout] [-v] [--debug] {target_name}
+    --country code [-n count] [-w timeout] [-wa timeout] [-v] [--debug]
+                   {target_name}
+    --asn id [-n count] [-w timeout] [-wa timeout] [-v] [--debug]
+             {target_name}
 
 Options:
     {target_name}  Destination host IP or domain name.
 
     --help          Display this help.
     --version       Display detailed program version, copyright notices.
-    --country code  Specify source addresses 2 letter country code (ISO 3166-1 alpha-2).
-    --asn id        Use source addresses from specified ASN (autonomous system number) network.
-    -n count        Number of probes: hosts to make network requests from.
-    -w timeout      Timeout in milliseconds to wait for each ping.
+    --country code  Specify source addresses 2 letter country code
+                    (ISO 3166-1 alpha-2).
+    --asn id        Use source addresses from specified ASN
+                    (autonomous system number) network.
+    -n count        Number of probes (hosts to make network requests from).
+    -w timeout      Timeout in milliseconds to wait for single ping.
+    -wa timeout     Timeout in milliseconds to wait for all probes.
     --list-country  List available countries.
     --list-asn code List ASNs for specified 2 letter country code.
     -v              Verbose output

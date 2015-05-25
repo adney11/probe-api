@@ -10,19 +10,25 @@ Usage: dtracert --help
     --version
     --list-country [-v] [--debug]
     --list-asn code [-v] [--debug]
-    --country code [-n count] [-w timeout] [-h maximum_hops] [-v] [--debug] {target_name}
-    --asn id [-n count] [-w timeout] [-h maximum_hops] [-v] [--debug] {target_name}
+    --country code [-n count] [-w timeout] [-h max_hops] [-hf max_hops]
+                   [-wa timeout] [-v] [--debug] {target_name}
+    --asn id [-n count] [-w timeout] [-h max_hops] [-hf max_hops]
+             [-wa timeout] [-v] [--debug] {target_name}
 
 Options:
     {target_name}  Destination host IP or domain name.
 
     --help          Display this help.
     --version       Display detailed program version, copyright notices.
-    --country code  Specify source addresses 2 letter country code (ISO 3166-1 alpha-2).
-    --asn id        Use source addresses from specified ASN (autonomous system number) network.
+    --country code  Specify source addresses 2 letter country code
+                    (ISO 3166-1 alpha-2).
+    --asn id        Use source addresses from specified ASN
+                    (autonomous system number) network.
     -n count        Number of probes: hosts to make network requests from.
-    -w timeout      Timeout in milliseconds to wait for each ping.
-    -h maximum_hops Maximum number of hops to search for target (also known as TTL).
+    -w timeout      Timeout in milliseconds to wait for single ping.
+    -wa timeout     Timeout in milliseconds to wait for all probes.
+    -h max_hops     Maximum number of hops to search for target (aka TTL).
+    -hf max_hops    Maximum number of failed hops in a row to stop.
     --list-country  List available countries.
     --list-asn code List ASNs for specified 2 letter country code.
     -v              Verbose output
@@ -91,6 +97,8 @@ $ dtracert --country US 8.8.8.8
 Tracing route to 8.8.8.8 from country code US:
 over a maximum of 30 hops:
 
+Tracing route to [8.8.8.8] from probe ID 7718232 net "Comcast Cable" (AS7922)
+over a maximum of 30 hops:
   1    <1 ms    <1 ms    <1 ms  10.0.0.1
   2     6 ms     8 ms     7 ms  50.54.32.1
   3     7 ms     8 ms     7 ms  74.42.150.33
@@ -103,24 +111,22 @@ over a maximum of 30 hops:
 
 Trace complete.
 
-  1     2 ms     1 ms     1 ms  10.0.0.1
-  2    12 ms    12 ms    11 ms  96.120.16.161
-  3    12 ms    25 ms    18 ms  68.85.255.9
-  4    20 ms    12 ms    11 ms  68.85.244.173
+Tracing route to [8.8.8.8] from probe ID 7692964 net "CenturyLink" (AS209)
+over a maximum of 30 hops:
 ...
 ...
 ...
-  6    16 ms    20 ms    15 ms  65.29.1.87
-  7    18 ms    20 ms    20 ms  65.29.1.212
-  8    30 ms    33 ms    31 ms  107.14.19.36
-  9    52 ms    53 ms    63 ms  66.109.9.41
- 10    49 ms    52 ms    50 ms  107.14.17.232
- 11    86 ms    68 ms    69 ms  207.86.210.125
- 12     *        *        *     207.88.14.182
- 13    67 ms    69 ms    68 ms  207.88.14.189
- 14    68 ms    66 ms    68 ms  65.47.204.58
- 15    68 ms    67 ms    68 ms  216.239.47.84
- 16    66 ms    69 ms    67 ms  8.8.8.8
+Tracing route to [8.8.8.8] from probe ID 6866195 net "Comcast Cable" (AS7922)
+over a maximum of 30 hops:
+  1     3 ms     2 ms     2 ms  10.0.0.1
+  2     9 ms     9 ms     8 ms  68.39.72.1
+  3     9 ms     9 ms     9 ms  162.151.35.101
+  4    14 ms    12 ms    19 ms  68.87.231.73
+  5    23 ms    24 ms    28 ms  68.87.230.9
+  6    22 ms    24 ms    20 ms  4.68.71.166
+  7     *        *        *     216.239.43.99
+  8     *        *        *     209.85.142.255
+  9    20 ms    20 ms    23 ms  8.8.8.8
 
 Trace complete.
 
@@ -133,6 +139,8 @@ $ dtracert --asn AS3320 8.8.8.8
 Tracing route to 8.8.8.8 from AS3320:
 over a maximum of 30 hops:
 
+Tracing route to [8.8.8.8] from probe ID 7722387 net "Deutsche Telekom AG" (DE)
+over a maximum of 30 hops:
   1    <1 ms    <1 ms    <1 ms  172.16.2.254
   2     *        *        *     62.159.95.221
   3     3 ms    16 ms     3 ms  62.154.10.157
@@ -143,26 +151,24 @@ over a maximum of 30 hops:
 
 Trace complete.
 
+Tracing route to [8.8.8.8] from probe ID 6959253 net "Deutsche Telekom AG" (DE)
+over a maximum of 30 hops:
+  1     2 ms     1 ms     1 ms  192.168.2.1
+  2     *        *        *     217.0.117.240
+...
+...
+...
+
+Tracing route to [8.8.8.8] from probe ID 7676323 net "Deutsche Telekom AG" (DE)
+over a maximum of 30 hops:
   1    <1 ms    <1 ms    <1 ms  192.168.2.1
-  2     *        *        *     87.186.224.50
-  3    21 ms    22 ms    22 ms  87.190.169.42
-  4    25 ms    25 ms    24 ms  62.154.15.2
-  5    25 ms    25 ms    25 ms  72.14.217.76
-  6    25 ms    57 ms    26 ms  209.85.248.107
-...
-...
-...
-  2     *        *        *     217.0.119.81
-  3    22 ms    19 ms    19 ms  217.0.65.222
-  4    23 ms    23 ms    23 ms  194.25.6.74
-  5    29 ms    24 ms    29 ms  72.14.217.76
-  6    24 ms   115 ms    24 ms  209.85.248.27
-  7     *        *        *     216.239.46.177
-  8    24 ms    23 ms    25 ms  8.8.8.8
-
-Trace complete.
-
-  1    47 ms    47 ms    47 ms  8.8.8.8
+  2     *        *        *     217.0.117.172
+  3    23 ms    23 ms    24 ms  87.186.196.226
+  4    26 ms    22 ms    22 ms  217.239.48.202
+  5    22 ms    22 ms    22 ms  72.14.217.76
+  6    23 ms    23 ms    23 ms  209.85.247.209
+  7     *        *        *     209.85.246.191
+  8    23 ms    75 ms    23 ms  8.8.8.8
 
 Trace complete.
 
