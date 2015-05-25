@@ -156,7 +156,13 @@ ProbeAPI::TracerouteInfo::TracerouteInfo(const Json::Value& v)
 	// 		]
 	// 	}
 	// ]
-	if (!v.isArray() || v.size() < 1)		return;	const Json::Value v2 = v[0];	sTarget = v2.get("Destination", "").asString();
+
+	if (!v.isArray() || v.size() < 1)
+		return;
+
+	const Json::Value v2 = v[0];
+
+	sTarget = v2.get("Destination", "").asString();
 	const Json::Value v3 = v2.get("Tracert", "");
 
 	const size_t n = v3.size();
@@ -185,7 +191,6 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 	//       },
 	//       "DateTimeStamp": "/Date(1429519784633+0000)/",
 	//       "ID": 57904,
-	//       "JID": "7427981831429519172968639@performancetests.pcspeedup.com/cz|1.0.14.0|acadeec2-5c2f-4c28-96d0-a6fd72985f8d|0||50.130981|14.466464|4|58",
 	//       "Location": {
 	//         "Latitude": 50.130981,
 	//         "Longitude": 14.466462
@@ -195,8 +200,7 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 	//         "NetworkID": 31,
 	//         "NetworkName": "UPC Ceska Republica, s.r.o."
 	//       },
-	//       "PingTime": 35,
-	//       "UniqueID": "acadeec2-5c2f-4c28-96d0-a6fd72985f8d"
+	//       "PingTime": 35
 	//     },
 
 	if (ProbeList_AsnOnly == mode)
@@ -208,7 +212,6 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 	ping = PingResult(v.get("PingTime", Json::Value::null));
 
 	nId = v.get("ID", 0).asInt64();
-	sUniqueId = v.get("UniqueID", "<unknown_guid>").asString();
 
 	country = CountryInfo(v.get("Country", ""));
 	asn = AsnInfo(v.get("ASN", ""));
@@ -311,7 +314,6 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseProbeList(const std::string& sJs
 	//       },
 	//       "DateTimeStamp": "/Date(1429519784633+0000)/",
 	//       "ID": 57904,
-	//       "JID": "7427981831429519172968639@performancetests.pcspeedup.com/cz|1.0.14.0|acadeec2-5c2f-4c28-96d0-a6fd72985f8d|0||50.130981|14.466464|4|58",
 	//       "Location": {
 	//         "Latitude": 50.130981,
 	//         "Longitude": 14.466462
@@ -321,8 +323,7 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseProbeList(const std::string& sJs
 	//         "NetworkID": 31,
 	//         "NetworkName": "UPC Ceska Republica, s.r.o."
 	//       },
-	//       "PingTime": 35,
-	//       "UniqueID": "acadeec2-5c2f-4c28-96d0-a6fd72985f8d"
+	//       "PingTime": 35
 	//     },
 	//     {
 	//       "ASN": {
