@@ -226,6 +226,16 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 
 std::string ProbeAPI::ProbeInfo::GetPeerInfo(const bool bAsnIsKnown) const
 {
+#if 1
+	if (bAsnIsKnown)
+	{
+		return OSSFMT("probe ID " << nId << " net \"" << network.sName << "\" (" << country.sCode << ")");
+	}
+	else
+	{
+		return OSSFMT("probe ID " << nId << " net \"" << network.sName << "\" (" << asn.sId << ")");
+	}
+#else
 	//return sUniqueId + " (" + network.sName + ")";
 	if (bAsnIsKnown)
 	{
@@ -235,6 +245,7 @@ std::string ProbeAPI::ProbeInfo::GetPeerInfo(const bool bAsnIsKnown) const
 	{
 		return asn.sId + " \"" + asn.sName + "\" (" + country.sCode + ")";
 	}
+#endif
 }
 
 //------------------------------------------------------

@@ -20,9 +20,9 @@ Options:
     --version       Display detailed program version, copyright notices.
     --country code  Specify source addresses 2 letter country code (ISO 3166-1 alpha-2).
     --asn id        Use source addresses from specified ASN (autonomous system number) network.
-    -n count        Number of echo requests to send.
-    -w timeout      Timeout in milliseconds to wait for each reply.
-    -h maximum_hops Maximum number of hops to search for target.
+    -n count        Number of probes: hosts to make network requests from.
+    -w timeout      Timeout in milliseconds to wait for each ping.
+    -h maximum_hops Maximum number of hops to search for target (also known as TTL).
     --list-country  List available countries.
     --list-asn code List ASNs for specified 2 letter country code.
     -v              Verbose output
@@ -51,7 +51,7 @@ dtracert --asn AS3352 8.8.8.8
 #### --list-country
 ```
 $ dtracert --list-country
-ID Country Name                             Number of hosts
+ID Country Name                             Number of probes
 -----------------------------------------------------------
 RU Russian Federation                       18129
 FR France                                    5365
@@ -69,7 +69,7 @@ SC Seychelles                                   1
 #### --list-asn
 ```
 $ dtracert --list-asn ES
-ASN id    Hosts ASN name
+ASN id   Probes ASN name
 --------------------------------------------------------
 AS3352      838 TELEFONICA DE ESPANA
 AS6739      285 Cableuropa - ONO

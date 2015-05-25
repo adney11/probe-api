@@ -20,8 +20,8 @@ Options:
     --version       Display detailed program version, copyright notices.
     --country code  Specify source addresses 2 letter country code (ISO 3166-1 alpha-2).
     --asn id        Use source addresses from specified ASN (autonomous system number) network.
-    -n count        Number of echo requests to send.
-    -w timeout      Timeout in milliseconds to wait for each reply.
+    -n count        Number of probes: hosts to make network requests from.
+    -w timeout      Timeout in milliseconds to wait for each ping.
     --list-country  List available countries.
     --list-asn code List ASNs for specified 2 letter country code.
     -v              Verbose output
@@ -50,7 +50,7 @@ dping --asn AS3352 8.8.8.8
 #### --list-country
 ```
 $ dping --list-country
-ID Country Name                             Number of hosts
+ID Country Name                             Number of probes
 -----------------------------------------------------------
 RU Russian Federation                       18064
 FR France                                    5337
@@ -68,7 +68,7 @@ SC Seychelles                                   1
 #### --list-asn
 ```
 $ dping --list-asn ES
-ASN id    Hosts ASN name
+ASN id   Probes ASN name
 --------------------------------------------------------
 AS3352      836 TELEFONICA DE ESPANA
 AS6739      282 Cableuropa - ONO

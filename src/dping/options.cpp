@@ -52,12 +52,12 @@ Options:
     --country code  Specify source addresses 2 letter country code (ISO 3166-1 alpha-2).)"
 #ifdef DO_BY_COUNTRY_BY_DEFAULT
 R"(
-                    Using source addresses from country with most of hosts available is a default setting.)"
+                    Using source addresses from country with most of probes available is a default setting.)"
 #endif
 R"(
     --asn id        Use source addresses from specified ASN (autonomous system number) network.
-    -n count        Number of echo requests to send.
-    -w timeout      Timeout in milliseconds to wait for each reply.
+    -n count        Number of probes: hosts to make network requests from.
+    -w timeout      Timeout in milliseconds to wait for each ping.
     --list-country  List available countries.
     --list-asn code List ASNs for specified 2 letter country code.
     -v              Verbose output
