@@ -11,19 +11,11 @@
 class ApplicationOptions
 {
 public:
-	ApplicationOptions();
-
 	void Print() const;
+	void RecalculateTotalTimeout();
 	int ProcessCommandLine(const int argc, const char* const argv[]);	// returns non-zero result if process exit required
 
 public:
-	bool		bVerbose;
-	bool		bDebug;
-	uint32_t	nMaxTimeoutMs;
-	uint32_t	nCount;
-	uint16_t	nPacketSize;
-	uint32_t	nTTL;
-
 	enum eMode
 	{
 		MODE_UNKNOWN,
@@ -33,7 +25,17 @@ public:
 		MODE_DO_BY_ASN,
 	};
 
-	eMode		mode;
+public:
+	bool		bVerbose		= false;
+	bool		bDebug			= false;
+	uint32_t	nTimeoutPingMs	= 3000;
+	uint32_t	nTimeoutTotalMs	= 30 * 1000;
+	uint32_t	nCount			= 10;
+	uint16_t	nPacketSize		= 32;
+	uint32_t	nMaxHops		= 30;
+	uint32_t	nMaxHopsFailed	= 3;
+
+	eMode		mode			= MODE_UNKNOWN;
 	std::string	sModeArgument;
 	std::string	sTarget;
 };

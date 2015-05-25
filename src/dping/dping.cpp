@@ -41,14 +41,14 @@ public:
 	string GetUrl(const ApplicationStats& stats, const string& sSearchArgument, const string& sTarget) const
 	{
 		const auto nRestJobs = options.nCount - stats.nSent;
-		const auto nDesiredProbeCount = nRestJobs * 4;
+		const auto nDesiredProbeCount = nRestJobs * 2;
 		const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
 
 		const string sUrl = OSSFMT(sMethod
 			<< "?" << sSearchArgName << "=" << sSearchArgument
 			<< "&destination=" << sTarget
 			<< "&probeslimit=" << nRequestedProbeCount
-			<< "&timeout=" << options.nMaxTimeoutMs);
+			<< "&timeout=" << options.nTimeoutTotalMs);
 
 		return sUrl;
 	}
@@ -160,7 +160,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 	const string sUrl = job.GetUrl(stats, sSearchArgument, options.sTarget);
 
 	ProbeApiRequester::Request request(sUrl);
-	request.nHttpTimeoutSec += options.nMaxTimeoutMs / 1000;
+	request.nHttpTimeoutSec += options.nTimeoutTotalMs / 1000;
 
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)

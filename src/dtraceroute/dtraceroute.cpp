@@ -48,8 +48,8 @@ public:
 			<< "?" << sSearchArgName << "=" << sSearchArgument
 			<< "&destination=" << sTarget
 			<< "&probeslimit=" << nRequestedProbeCount
-			<< "&ttl=" << options.nTTL
-			<< "&timeout=" << options.nMaxTimeoutMs);
+			<< "&ttl=" << options.nMaxHops
+			<< "&timeout=" << options.nTimeoutTotalMs);
 
 		return sUrl;
 	}
@@ -85,7 +85,7 @@ public:
 	void PrintHeaderAfterSearchArg(const string& sSearchArgument) const
 	{
 		cout << " from " << FormatSearchDetails(sSearchArgument) << ":" << endl;
-		cout << "over a maximum of " << options.nTTL << " hops:" << endl;
+		cout << "over a maximum of " << options.nMaxHops << " hops:" << endl;
 		cout << endl;
 	}
 
@@ -96,7 +96,7 @@ public:
 		//if (options.bVerbose)
 		{
 			cout << "Tracing route to [" << info.tracert.sTarget << "] from " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
-			cout << "over a maximum of " << options.nTTL << " hops:" << endl;
+			cout << "over a maximum of " << options.nMaxHops << " hops:" << endl;
 		}
 	}
 
@@ -193,7 +193,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 	const string sUrl = job.GetUrl(stats, sSearchArgument, options.sTarget);
 
 	ProbeApiRequester::Request request(sUrl);
-	request.nHttpTimeoutSec += options.nMaxTimeoutMs / 1000;
+	request.nHttpTimeoutSec += options.nTimeoutTotalMs / 1000;
 
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
