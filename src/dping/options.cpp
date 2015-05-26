@@ -211,7 +211,7 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 			{
 				mode = MODE_GET_COUNTRIES;
 				sModeArgument.clear();
-				nCount = UINT_MAX;
+				nCount = UINT_MAX;	// display ALL items from requested list
 			}
 			else if (sArg == "--list-asn" && !bLastArg)
 			{
@@ -219,7 +219,7 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
 				mode = MODE_GET_ASNS;
 				sModeArgument = sNextArg;
-				nCount = UINT_MAX;
+				nCount = UINT_MAX;	// display ALL items from requested list
 			}
 			else if ((
 #ifdef DO_BY_COUNTRY_BY_DEFAULT
