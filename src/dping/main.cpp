@@ -26,27 +26,29 @@ unique_ptr<string>  g_psSignalMessage = nullptr;
 
 string decode_signal(const int signal)
 {
+	const char* name = nullptr;
 	switch (signal)
 	{
 	case SIGINT:
-		return "SIGINT";
+		name = "SIGINT";
 	case SIGILL:
-		return "SIGILL";
+		name = "SIGILL";
 	case SIGABRT_COMPAT:
-		return "SIGABRT_COMPAT";
+		name = "SIGABRT_COMPAT";
 	case SIGFPE:
-		return "SIGFPE";
+		name = "SIGFPE";
 	case SIGSEGV:
-		return "SIGSEGV";
+		name = "SIGSEGV";
 	case SIGTERM:
-		return "SIGTERM";
+		name = "SIGTERM";
 	case SIGBREAK:
-		return "SIGBREAK";
+		name = "SIGBREAK";
 	case SIGABRT:
-		return "SIGABRT";
+		name = "SIGABRT";
 	default:
 		return to_string(signal);
 	}
+	return string(name) + "(" + to_string(signal) + ")";
 }
 
 //------------------------------------------------------
