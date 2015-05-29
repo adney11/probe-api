@@ -9,7 +9,7 @@
 //------------------------------------------------------
 
 #ifdef _MSC_VER
-#pragma comment (lib, "common.lib")
+//#pragma comment (lib, "common.lib")
 #endif // _MSC_VER > 1000
 
 //------------------------------------------------------

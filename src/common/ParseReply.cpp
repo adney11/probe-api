@@ -11,7 +11,7 @@ using namespace std;
 //------------------------------------------------------
 
 #ifdef _MSC_VER
-#pragma comment (lib, "jsoncpp.lib")
+//#pragma comment (lib, "jsoncpp.lib")
 #endif // _MSC_VER > 1000
 
 //------------------------------------------------------

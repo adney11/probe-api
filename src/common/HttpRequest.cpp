@@ -13,11 +13,11 @@
 //------------------------------------------------------
 
 #ifdef _MSC_VER
-#pragma comment (lib, "libcurl.lib")
-#pragma comment (lib, "curlpp.lib")
+//#pragma comment (lib, "libcurl.lib")
+//#pragma comment (lib, "curlpp.lib")
 // libcurl DLL dependencies:
-#pragma comment (lib, "Ws2_32.lib")
-#pragma comment (lib, "Wldap32.lib")
+//#pragma comment (lib, "Ws2_32.lib")
+//#pragma comment (lib, "Wldap32.lib")
 #endif // _MSC_VER > 1000
 
 //------------------------------------------------------
