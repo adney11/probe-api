@@ -19,7 +19,10 @@
     <ClCompile Include="..\ssl\d1_pkt.c" />
     <ClCompile Include="..\ssl\d1_srtp.c" />
     <ClCompile Include="..\ssl\d1_srvr.c" />
-    <ClCompile Include="..\ssl\heartbeat_test.c" />
+    <ClCompile Include="..\ssl\heartbeat_test.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\ssl\kssl.c" />
     <ClCompile Include="..\ssl\s23_clnt.c" />
     <ClCompile Include="..\ssl\s23_lib.c" />
@@ -52,7 +55,10 @@
     <ClCompile Include="..\ssl\ssl_rsa.c" />
     <ClCompile Include="..\ssl\ssl_sess.c" />
     <ClCompile Include="..\ssl\ssl_stat.c" />
-    <ClCompile Include="..\ssl\ssl_task.c" />
+    <ClCompile Include="..\ssl\ssl_task.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\ssl\ssl_txt.c" />
     <ClCompile Include="..\ssl\ssl_utst.c" />
     <ClCompile Include="..\ssl\t1_clnt.c" />
@@ -115,8 +121,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_LIB;DEBUGBUILD;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\inc32;..;..\crypto;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>OPENSSL_NO_ASM;OPENSSL_NO_JPAKE;OPENSSL_NO_KRB5;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;WIN32;_LIB;DEBUGBUILD;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
@@ -136,8 +142,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\inc32;..;..\crypto;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>OPENSSL_NO_ASM;OPENSSL_NO_JPAKE;OPENSSL_NO_KRB5;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;WIN32;_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
