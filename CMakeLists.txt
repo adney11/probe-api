@@ -10,4 +10,4 @@ add_subdirectory(deps/jsoncpp/ProbeApiBuild)
 add_subdirectory(src/common)
 
 add_subdirectory(src/dping)
-add_subdirectory(src/dtracert)
+add_subdirectory(src/dtraceroute)
