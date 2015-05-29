@@ -1,5 +1,4 @@
-# 3.0 is needed for "line continuation with \":
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.6)
 
 project(ProbeApiTools)
 
