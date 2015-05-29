@@ -10,6 +10,73 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\ssl\bio_ssl.c" />
+    <ClCompile Include="..\ssl\d1_both.c" />
+    <ClCompile Include="..\ssl\d1_clnt.c" />
+    <ClCompile Include="..\ssl\d1_lib.c" />
+    <ClCompile Include="..\ssl\d1_meth.c" />
+    <ClCompile Include="..\ssl\d1_pkt.c" />
+    <ClCompile Include="..\ssl\d1_srtp.c" />
+    <ClCompile Include="..\ssl\d1_srvr.c" />
+    <ClCompile Include="..\ssl\heartbeat_test.c" />
+    <ClCompile Include="..\ssl\kssl.c" />
+    <ClCompile Include="..\ssl\s23_clnt.c" />
+    <ClCompile Include="..\ssl\s23_lib.c" />
+    <ClCompile Include="..\ssl\s23_meth.c" />
+    <ClCompile Include="..\ssl\s23_pkt.c" />
+    <ClCompile Include="..\ssl\s23_srvr.c" />
+    <ClCompile Include="..\ssl\s2_clnt.c" />
+    <ClCompile Include="..\ssl\s2_enc.c" />
+    <ClCompile Include="..\ssl\s2_lib.c" />
+    <ClCompile Include="..\ssl\s2_meth.c" />
+    <ClCompile Include="..\ssl\s2_pkt.c" />
+    <ClCompile Include="..\ssl\s2_srvr.c" />
+    <ClCompile Include="..\ssl\s3_both.c" />
+    <ClCompile Include="..\ssl\s3_cbc.c" />
+    <ClCompile Include="..\ssl\s3_clnt.c" />
+    <ClCompile Include="..\ssl\s3_enc.c" />
+    <ClCompile Include="..\ssl\s3_lib.c" />
+    <ClCompile Include="..\ssl\s3_meth.c" />
+    <ClCompile Include="..\ssl\s3_pkt.c" />
+    <ClCompile Include="..\ssl\s3_srvr.c" />
+    <ClCompile Include="..\ssl\ssltest.c" />
+    <ClCompile Include="..\ssl\ssl_algs.c" />
+    <ClCompile Include="..\ssl\ssl_asn1.c" />
+    <ClCompile Include="..\ssl\ssl_cert.c" />
+    <ClCompile Include="..\ssl\ssl_ciph.c" />
+    <ClCompile Include="..\ssl\ssl_conf.c" />
+    <ClCompile Include="..\ssl\ssl_err.c" />
+    <ClCompile Include="..\ssl\ssl_err2.c" />
+    <ClCompile Include="..\ssl\ssl_lib.c" />
+    <ClCompile Include="..\ssl\ssl_rsa.c" />
+    <ClCompile Include="..\ssl\ssl_sess.c" />
+    <ClCompile Include="..\ssl\ssl_stat.c" />
+    <ClCompile Include="..\ssl\ssl_task.c" />
+    <ClCompile Include="..\ssl\ssl_txt.c" />
+    <ClCompile Include="..\ssl\ssl_utst.c" />
+    <ClCompile Include="..\ssl\t1_clnt.c" />
+    <ClCompile Include="..\ssl\t1_enc.c" />
+    <ClCompile Include="..\ssl\t1_ext.c" />
+    <ClCompile Include="..\ssl\t1_lib.c" />
+    <ClCompile Include="..\ssl\t1_meth.c" />
+    <ClCompile Include="..\ssl\t1_reneg.c" />
+    <ClCompile Include="..\ssl\t1_srvr.c" />
+    <ClCompile Include="..\ssl\t1_trce.c" />
+    <ClCompile Include="..\ssl\tls_srp.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\ssl\dtls1.h" />
+    <ClInclude Include="..\ssl\kssl.h" />
+    <ClInclude Include="..\ssl\kssl_lcl.h" />
+    <ClInclude Include="..\ssl\srtp.h" />
+    <ClInclude Include="..\ssl\ssl.h" />
+    <ClInclude Include="..\ssl\ssl2.h" />
+    <ClInclude Include="..\ssl\ssl23.h" />
+    <ClInclude Include="..\ssl\ssl3.h" />
+    <ClInclude Include="..\ssl\ssl_locl.h" />
+    <ClInclude Include="..\ssl\tls1.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A8BE5B2C-DFE0-470a-B672-723D1450E669}</ProjectGuid>
     <RootNamespace>openssl</RootNamespace>
@@ -48,7 +115,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\include;..\..\..\..\lib;..\..\..\..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_LIB;DEBUGBUILD;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -69,7 +136,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\..\..\include;..\..\..\..\lib;..\..\..\..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
