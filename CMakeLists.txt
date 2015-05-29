@@ -27,13 +27,20 @@ endif(MSVC)
 
 # =================================================
 
-add_subdirectory(deps/curl/ProbeApiBuild)
-add_subdirectory(deps/curlpp/ProbeApiBuild)
-add_subdirectory(deps/jsoncpp/ProbeApiBuild)
+#set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
+set(MYBINDIR .)
 
-add_subdirectory(src/common)
+# =================================================
 
-add_subdirectory(src/dping)
-add_subdirectory(src/dtraceroute)
+add_subdirectory(deps/curl/ProbeApiBuild ${MYBINDIR})
+add_subdirectory(deps/curlpp/ProbeApiBuild ${MYBINDIR})
+add_subdirectory(deps/jsoncpp/ProbeApiBuild ${MYBINDIR})
+
+add_subdirectory(src/common ${MYBINDIR})
+
+add_subdirectory(src/dping ${MYBINDIR})
+add_subdirectory(src/dtraceroute ${MYBINDIR})
 
 # =================================================
