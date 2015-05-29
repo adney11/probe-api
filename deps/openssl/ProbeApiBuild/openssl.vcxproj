@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\ssl\bio_ssl.c" />
+    <ClCompile Include="..\ssl\d1_both.c" />
+    <ClCompile Include="..\ssl\d1_clnt.c" />
+    <ClCompile Include="..\ssl\d1_lib.c" />
+    <ClCompile Include="..\ssl\d1_meth.c" />
+    <ClCompile Include="..\ssl\d1_pkt.c" />
+    <ClCompile Include="..\ssl\d1_srtp.c" />
+    <ClCompile Include="..\ssl\d1_srvr.c" />
+    <ClCompile Include="..\ssl\heartbeat_test.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\ssl\kssl.c" />
+    <ClCompile Include="..\ssl\s23_clnt.c" />
+    <ClCompile Include="..\ssl\s23_lib.c" />
+    <ClCompile Include="..\ssl\s23_meth.c" />
+    <ClCompile Include="..\ssl\s23_pkt.c" />
+    <ClCompile Include="..\ssl\s23_srvr.c" />
+    <ClCompile Include="..\ssl\s2_clnt.c" />
+    <ClCompile Include="..\ssl\s2_enc.c" />
+    <ClCompile Include="..\ssl\s2_lib.c" />
+    <ClCompile Include="..\ssl\s2_meth.c" />
+    <ClCompile Include="..\ssl\s2_pkt.c" />
+    <ClCompile Include="..\ssl\s2_srvr.c" />
+    <ClCompile Include="..\ssl\s3_both.c" />
+    <ClCompile Include="..\ssl\s3_cbc.c" />
+    <ClCompile Include="..\ssl\s3_clnt.c" />
+    <ClCompile Include="..\ssl\s3_enc.c" />
+    <ClCompile Include="..\ssl\s3_lib.c" />
+    <ClCompile Include="..\ssl\s3_meth.c" />
+    <ClCompile Include="..\ssl\s3_pkt.c" />
+    <ClCompile Include="..\ssl\s3_srvr.c" />
+    <ClCompile Include="..\ssl\ssltest.c" />
+    <ClCompile Include="..\ssl\ssl_algs.c" />
+    <ClCompile Include="..\ssl\ssl_asn1.c" />
+    <ClCompile Include="..\ssl\ssl_cert.c" />
+    <ClCompile Include="..\ssl\ssl_ciph.c" />
+    <ClCompile Include="..\ssl\ssl_conf.c" />
+    <ClCompile Include="..\ssl\ssl_err.c" />
+    <ClCompile Include="..\ssl\ssl_err2.c" />
+    <ClCompile Include="..\ssl\ssl_lib.c" />
+    <ClCompile Include="..\ssl\ssl_rsa.c" />
+    <ClCompile Include="..\ssl\ssl_sess.c" />
+    <ClCompile Include="..\ssl\ssl_stat.c" />
+    <ClCompile Include="..\ssl\ssl_task.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\ssl\ssl_txt.c" />
+    <ClCompile Include="..\ssl\ssl_utst.c" />
+    <ClCompile Include="..\ssl\t1_clnt.c" />
+    <ClCompile Include="..\ssl\t1_enc.c" />
+    <ClCompile Include="..\ssl\t1_ext.c" />
+    <ClCompile Include="..\ssl\t1_lib.c" />
+    <ClCompile Include="..\ssl\t1_meth.c" />
+    <ClCompile Include="..\ssl\t1_reneg.c" />
+    <ClCompile Include="..\ssl\t1_srvr.c" />
+    <ClCompile Include="..\ssl\t1_trce.c" />
+    <ClCompile Include="..\ssl\tls_srp.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\ssl\dtls1.h" />
+    <ClInclude Include="..\ssl\kssl.h" />
+    <ClInclude Include="..\ssl\kssl_lcl.h" />
+    <ClInclude Include="..\ssl\srtp.h" />
+    <ClInclude Include="..\ssl\ssl.h" />
+    <ClInclude Include="..\ssl\ssl2.h" />
+    <ClInclude Include="..\ssl\ssl23.h" />
+    <ClInclude Include="..\ssl\ssl3.h" />
+    <ClInclude Include="..\ssl\ssl_locl.h" />
+    <ClInclude Include="..\ssl\tls1.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A8BE5B2C-DFE0-470a-B672-723D1450E669}</ProjectGuid>
+    <RootNamespace>openssl</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Intermediate\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)Intermediate\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">openssl</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">openssl</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\inc32;..;..\crypto;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>OPENSSL_NO_ASM;OPENSSL_NO_JPAKE;OPENSSL_NO_KRB5;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;WIN32;_LIB;DEBUGBUILD;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <SDLCheck>true</SDLCheck>
+      <MinimalRebuild>true</MinimalRebuild>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\inc32;..;..\crypto;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>OPENSSL_NO_ASM;OPENSSL_NO_JPAKE;OPENSSL_NO_KRB5;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;WIN32;_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Lib>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
