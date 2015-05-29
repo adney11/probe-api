@@ -11,6 +11,7 @@ set(PROJECTNAME "dtraceroute")
 if(WIN32)
 	set(PROJECTNAME "dtracert")
 endif()
+set(TRACEROUTENAME "${PROJECTNAME}")
 
 FILE(GLOB CPPSOURCES *.cpp *.h *.ico *.rc)
 
