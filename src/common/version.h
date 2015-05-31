@@ -18,13 +18,13 @@
 
 // VERSION_PRODUCT_VER1 and VERSION_PRODUCT_VER2 are product version. They are incremented during official releases:
 #define VERSION_PRODUCT_VER1			1
-#define VERSION_PRODUCT_VER2			1
+#define VERSION_PRODUCT_VER2			2
 // This is a build version. It is incremented after any significant fix or feature added:
-#define VERSION_PRODUCT_VER3			23
+#define VERSION_PRODUCT_VER3			24
 #define VERSION_PRODUCT_VER4			0
 
 #define PRODUCT_BUILD_VER				VERSION_PRODUCT_VER3
-#define VERSION_PRODUCT_COMMENT			""	// " [comment]"	// NOTE! string should be empty OR it should start from space (' ')!
+#define VERSION_PRODUCT_COMMENT			" [openssl,zlib]"	// " [comment]"	// NOTE! string should be empty OR it should start from space (' ')!
 //#define VERSION_SPECIAL_BUILD			VERSION_PRODUCT_COMMENT
 
 //------------------------------------------------------
