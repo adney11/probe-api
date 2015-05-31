@@ -11,6 +11,30 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\crypto\bio\bf_buff.c" />
+    <ClCompile Include="..\crypto\bio\bf_lbuf.c" />
+    <ClCompile Include="..\crypto\bio\bf_nbio.c" />
+    <ClCompile Include="..\crypto\bio\bf_null.c" />
+    <ClCompile Include="..\crypto\bio\bio_cb.c" />
+    <ClCompile Include="..\crypto\bio\bio_err.c" />
+    <ClCompile Include="..\crypto\bio\bio_lib.c" />
+    <ClCompile Include="..\crypto\bio\bss_acpt.c" />
+    <ClCompile Include="..\crypto\bio\bss_bio.c" />
+    <ClCompile Include="..\crypto\bio\bss_conn.c" />
+    <ClCompile Include="..\crypto\bio\bss_dgram.c" />
+    <ClCompile Include="..\crypto\bio\bss_fd.c" />
+    <ClCompile Include="..\crypto\bio\bss_file.c" />
+    <ClCompile Include="..\crypto\bio\bss_log.c" />
+    <ClCompile Include="..\crypto\bio\bss_mem.c" />
+    <ClCompile Include="..\crypto\bio\bss_null.c" />
+    <ClCompile Include="..\crypto\bio\bss_rtcp.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\crypto\bio\bss_sock.c" />
+    <ClCompile Include="..\crypto\bio\b_dump.c" />
+    <ClCompile Include="..\crypto\bio\b_print.c" />
+    <ClCompile Include="..\crypto\bio\b_sock.c" />
     <ClCompile Include="..\ssl\bio_ssl.c" />
     <ClCompile Include="..\ssl\d1_both.c" />
     <ClCompile Include="..\ssl\d1_clnt.c" />
@@ -72,6 +96,8 @@
     <ClCompile Include="..\ssl\tls_srp.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\crypto\bio\bio.h" />
+    <ClInclude Include="..\crypto\bio\bio_lcl.h" />
     <ClInclude Include="..\ssl\dtls1.h" />
     <ClInclude Include="..\ssl\kssl.h" />
     <ClInclude Include="..\ssl\kssl_lcl.h" />
@@ -128,8 +154,9 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <SDLCheck>true</SDLCheck>
-      <MinimalRebuild>true</MinimalRebuild>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ExceptionHandling>false</ExceptionHandling>
+      <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -160,6 +187,8 @@ call $(ProjectDir)configure.bat &gt; nul
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <SDLCheck>true</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ExceptionHandling>false</ExceptionHandling>
+      <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
