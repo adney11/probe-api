@@ -604,7 +604,10 @@
     </ClCompile>
     <ClCompile Include="..\crypto\ripemd\rmd_dgst.c" />
     <ClCompile Include="..\crypto\ripemd\rmd_one.c" />
-    <ClCompile Include="..\crypto\rsa\rsa_ameth.c" />
+    <ClCompile Include="..\crypto\rsa\rsa_ameth.c">
+      <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</SDLCheck>
+      <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</SDLCheck>
+    </ClCompile>
     <ClCompile Include="..\crypto\rsa\rsa_asn1.c" />
     <ClCompile Include="..\crypto\rsa\rsa_chk.c" />
     <ClCompile Include="..\crypto\rsa\rsa_crpt.c" />

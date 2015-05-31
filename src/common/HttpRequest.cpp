@@ -86,6 +86,7 @@ void PrepareHttpRequest(curlpp::Easy &req, const HttpRequester::Request &info)
 	{
 		req.setOpt(new SslVerifyHost(false));	// SslVerifyHost does not support "1" value
 	}
+	req.setOpt(new SslVerifyPeer(false));
 
 	if (!info.sUserAgent.empty())
 	{
