@@ -1,10 +1,10 @@
 FILE(GLOB CPPSOURCES
-	../../jsoncpp/src/lib_json/*.cpp
-	../../jsoncpp/src/lib_json/*.h
-	../../jsoncpp/src/lib_json/*.inl
-	../../jsoncpp/include/json/*.h
+	${DEPS_DIR}/jsoncpp/src/lib_json/*.cpp
+	${DEPS_DIR}/jsoncpp/src/lib_json/*.h
+	${DEPS_DIR}/jsoncpp/src/lib_json/*.inl
+	${DEPS_DIR}/jsoncpp/include/json/*.h
 	)
 
 add_library(jsoncpp STATIC ${CPPSOURCES})
 
-target_include_directories(jsoncpp PUBLIC ../../jsoncpp/include)
+target_include_directories(jsoncpp PUBLIC ${DEPS_DIR}/jsoncpp/include)

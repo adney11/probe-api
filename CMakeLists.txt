@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.11)	# 2.8.11 required for target_include_dire
 
 project(ProbeApiTools)
 
-set(ROOT_DIR ".")
+set(DEPS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps")
 
 # =================================================
 

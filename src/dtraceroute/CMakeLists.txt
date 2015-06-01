@@ -10,4 +10,4 @@ add_executable(${PROJECTNAME} ${CPPSOURCES})
 
 target_link_libraries(${PROJECTNAME} common)
 
-target_compile_definitions(curlpp PRIVATE -DDTRACEROUTE_PRJ)
+target_compile_definitions(${PROJECTNAME} PRIVATE -DDTRACEROUTE_PRJ)

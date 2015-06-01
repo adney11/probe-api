@@ -4,13 +4,13 @@ endif()
 # set(USE_ZLIB 1)
 
 FILE(GLOB CPPSOURCES
-#	../../curl/src/*.c
-#	../../curl/src/*.h
-	../../curl/lib/*.c
-	../../curl/lib/*.h
-	../../curl/lib/vtls/*.c
-	../../curl/lib/vtls/*.h
-	../../curl/include/curl/*.h
+#	${DEPS_DIR}/curl/src/*.c
+#	${DEPS_DIR}/curl/src/*.h
+	${DEPS_DIR}/curl/lib/*.c
+	${DEPS_DIR}/curl/lib/*.h
+	${DEPS_DIR}/curl/lib/vtls/*.c
+	${DEPS_DIR}/curl/lib/vtls/*.h
+	${DEPS_DIR}/curl/include/curl/*.h
 	)
 
 add_library(curl STATIC ${CPPSOURCES})
@@ -26,8 +26,8 @@ if(WIN32)
   target_link_libraries(curl ws2_32)
 endif()
 
-target_include_directories(curl PUBLIC ../../curl/include)
-target_include_directories(curl PRIVATE ../../curl/lib)
+target_include_directories(curl PUBLIC ${DEPS_DIR}/curl/include)
+target_include_directories(curl PRIVATE ${DEPS_DIR}/curl/lib)
 
 target_compile_definitions(curl PUBLIC -DCURL_STATICLIB)
 target_compile_definitions(curl PRIVATE -DBUILDING_LIBCURL)

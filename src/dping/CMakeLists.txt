@@ -6,4 +6,4 @@ add_executable(${PROJECTNAME} ${CPPSOURCES})
 
 target_link_libraries(${PROJECTNAME} common)
 
-target_compile_definitions(curlpp PRIVATE -DDPING_PRJ)
+target_compile_definitions(${PROJECTNAME} PRIVATE -DDPING_PRJ)
