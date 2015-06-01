@@ -1,6 +1,3 @@
-include_directories(../../curlpp/include)
-include_directories(../../curl/include)
-
 add_definitions(-DCURL_STATICLIB)
 add_definitions(-DCURLPP_STATICLIB)
 
@@ -19,3 +16,6 @@ FILE(GLOB CPPSOURCES
 	)
 
 add_library(curlpp STATIC ${CPPSOURCES})
+target_link_libraries(curlpp curl)
+
+target_include_directories(curlpp PUBLIC ../../curlpp/include)

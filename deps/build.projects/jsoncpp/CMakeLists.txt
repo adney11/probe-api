@@ -1,5 +1,3 @@
-include_directories(../../jsoncpp/include)
-
 FILE(GLOB CPPSOURCES
 	../../jsoncpp/src/lib_json/*.cpp
 	../../jsoncpp/src/lib_json/*.h
@@ -8,3 +6,5 @@ FILE(GLOB CPPSOURCES
 	)
 
 add_library(jsoncpp STATIC ${CPPSOURCES})
+
+target_include_directories(jsoncpp PUBLIC ../../jsoncpp/include)
