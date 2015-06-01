@@ -13,13 +13,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dping", "src\dping\dping.vc
 		{8FD826F8-3739-44E6-8CC8-997122E53B8D} = {8FD826F8-3739-44E6-8CC8-997122E53B8D}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcurl-for-ProbeAPI", "deps\curl\projects\Windows\VC12\lib\libcurl-for-ProbeAPI.vcxproj", "{DA6F56B4-06A4-441D-AD70-AC5A7D51FADB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "curl", "deps\build.projects\curl.vcxproj", "{DA6F56B4-06A4-441D-AD70-AC5A7D51FADB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A8BE5B2C-DFE0-470A-B672-723D1450E669} = {A8BE5B2C-DFE0-470A-B672-723D1450E669}
+	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsoncpp", "deps\jsoncpp\jsoncpp.vcxproj", "{17800DC7-D639-4CEB-BC62-2DE7E0BF3DC5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsoncpp", "deps\build.projects\jsoncpp.vcxproj", "{17800DC7-D639-4CEB-BC62-2DE7E0BF3DC5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common", "src\common\common.vcxproj", "{DDB11010-0F0D-46AB-8378-CC85ED9FDA7E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "curlpp", "deps\curlpp\curlpp.vcxproj", "{DD2D30B5-B2CB-4DBC-9BA5-039F8CF7D087}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "curlpp", "deps\build.projects\curlpp.vcxproj", "{DD2D30B5-B2CB-4DBC-9BA5-039F8CF7D087}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtraceroute", "src\dtraceroute\dtraceroute.vcxproj", "{AB4D6298-7B68-4040-A0F3-E5704E099457}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -31,9 +34,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtraceroute", "src\dtracero
 		{8FD826F8-3739-44E6-8CC8-997122E53B8D} = {8FD826F8-3739-44E6-8CC8-997122E53B8D}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib-for-ProbeAPI", "deps\zlib\contrib\vstudio\vc12\zlib-for-ProbeAPI.vcxproj", "{8FD826F8-3739-44E6-8CC8-997122E53B8D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "deps\build.projects\zlib.vcxproj", "{8FD826F8-3739-44E6-8CC8-997122E53B8D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "openssl", "deps\openssl\ProbeApiBuild\openssl.vcxproj", "{A8BE5B2C-DFE0-470A-B672-723D1450E669}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "openssl", "deps\build.projects\openssl.vcxproj", "{A8BE5B2C-DFE0-470A-B672-723D1450E669}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3rd party libraries", "3rd party libraries", "{A6317C70-D432-40E2-86C6-1FBAB5FCAEFD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,5 +81,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DA6F56B4-06A4-441D-AD70-AC5A7D51FADB} = {A6317C70-D432-40E2-86C6-1FBAB5FCAEFD}
+		{DD2D30B5-B2CB-4DBC-9BA5-039F8CF7D087} = {A6317C70-D432-40E2-86C6-1FBAB5FCAEFD}
+		{17800DC7-D639-4CEB-BC62-2DE7E0BF3DC5} = {A6317C70-D432-40E2-86C6-1FBAB5FCAEFD}
+		{A8BE5B2C-DFE0-470A-B672-723D1450E669} = {A6317C70-D432-40E2-86C6-1FBAB5FCAEFD}
+		{8FD826F8-3739-44E6-8CC8-997122E53B8D} = {A6317C70-D432-40E2-86C6-1FBAB5FCAEFD}
 	EndGlobalSection
 EndGlobal

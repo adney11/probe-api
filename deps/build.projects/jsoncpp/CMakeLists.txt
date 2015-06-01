@@ -1,10 +1,10 @@
-include_directories(../include)
+include_directories(../../jsoncpp/include)
 
 FILE(GLOB CPPSOURCES
-	../src/lib_json/*.cpp
-	../src/lib_json/*.h
-	../src/lib_json/*.inl
-	../include/json/*.h
+	../../jsoncpp/src/lib_json/*.cpp
+	../../jsoncpp/src/lib_json/*.h
+	../../jsoncpp/src/lib_json/*.inl
+	../../jsoncpp/include/json/*.h
 	)
 
 add_library(jsoncpp STATIC ${CPPSOURCES})

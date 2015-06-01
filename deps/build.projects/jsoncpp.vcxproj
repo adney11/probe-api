@@ -11,25 +11,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\lib_json\json_reader.cpp" />
-    <ClCompile Include="src\lib_json\json_value.cpp" />
-    <ClCompile Include="src\lib_json\json_writer.cpp" />
+    <ClCompile Include="..\jsoncpp\src\lib_json\json_reader.cpp" />
+    <ClCompile Include="..\jsoncpp\src\lib_json\json_value.cpp" />
+    <ClCompile Include="..\jsoncpp\src\lib_json\json_writer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\json\assertions.h" />
-    <ClInclude Include="include\json\autolink.h" />
-    <ClInclude Include="include\json\config.h" />
-    <ClInclude Include="include\json\features.h" />
-    <ClInclude Include="include\json\forwards.h" />
-    <ClInclude Include="include\json\json.h" />
-    <ClInclude Include="include\json\reader.h" />
-    <ClInclude Include="include\json\value.h" />
-    <ClInclude Include="include\json\version.h" />
-    <ClInclude Include="include\json\writer.h" />
-    <ClInclude Include="src\lib_json\json_tool.h" />
+    <ClInclude Include="..\jsoncpp\include\json\assertions.h" />
+    <ClInclude Include="..\jsoncpp\include\json\autolink.h" />
+    <ClInclude Include="..\jsoncpp\include\json\config.h" />
+    <ClInclude Include="..\jsoncpp\include\json\features.h" />
+    <ClInclude Include="..\jsoncpp\include\json\forwards.h" />
+    <ClInclude Include="..\jsoncpp\include\json\json.h" />
+    <ClInclude Include="..\jsoncpp\include\json\reader.h" />
+    <ClInclude Include="..\jsoncpp\include\json\value.h" />
+    <ClInclude Include="..\jsoncpp\include\json\version.h" />
+    <ClInclude Include="..\jsoncpp\include\json\writer.h" />
+    <ClInclude Include="..\jsoncpp\src\lib_json\json_tool.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\lib_json\json_valueiterator.inl" />
+    <None Include="..\jsoncpp\src\lib_json\json_valueiterator.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{17800DC7-D639-4ceb-BC62-2DE7E0BF3DC5}</ProjectGuid>

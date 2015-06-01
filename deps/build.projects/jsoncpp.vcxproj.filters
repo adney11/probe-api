@@ -9,53 +9,53 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\lib_json\json_reader.cpp">
+    <ClCompile Include="..\jsoncpp\src\lib_json\json_reader.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\lib_json\json_value.cpp">
+    <ClCompile Include="..\jsoncpp\src\lib_json\json_value.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\lib_json\json_writer.cpp">
+    <ClCompile Include="..\jsoncpp\src\lib_json\json_writer.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\lib_json\json_tool.h">
+    <ClInclude Include="..\jsoncpp\src\lib_json\json_tool.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="include\json\assertions.h">
+    <ClInclude Include="..\jsoncpp\include\json\assertions.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\json\autolink.h">
+    <ClInclude Include="..\jsoncpp\include\json\autolink.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\json\config.h">
+    <ClInclude Include="..\jsoncpp\include\json\config.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\json\features.h">
+    <ClInclude Include="..\jsoncpp\include\json\features.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\json\forwards.h">
+    <ClInclude Include="..\jsoncpp\include\json\forwards.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\json\json.h">
+    <ClInclude Include="..\jsoncpp\include\json\json.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\json\reader.h">
+    <ClInclude Include="..\jsoncpp\include\json\reader.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\json\value.h">
+    <ClInclude Include="..\jsoncpp\include\json\value.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\json\version.h">
+    <ClInclude Include="..\jsoncpp\include\json\version.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\json\writer.h">
+    <ClInclude Include="..\jsoncpp\include\json\writer.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\lib_json\json_valueiterator.inl">
+    <None Include="..\jsoncpp\src\lib_json\json_valueiterator.inl">
       <Filter>src</Filter>
     </None>
   </ItemGroup>
