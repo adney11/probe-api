@@ -3,24 +3,6 @@ if(WIN32)
 endif()
 # set(USE_ZLIB 1)
 
-add_definitions(-DBUILDING_LIBCURL)
-add_definitions(-DCURL_STATICLIB)
-
-if(USE_WINSSL)
-	add_definitions(-DUSE_WINDOWS_SSPI)
-	add_definitions(-DUSE_SCHANNEL)
-else()
-	add_definitions(-DUSE_OPENSSL)
-endif()
-
-add_definitions(-DHTTP_ONLY)
-add_definitions(-DCURL_DISABLE_CRYPTO_AUTH)
-if(USE_ZLIB)
-	add_definitions(-DHAVE_ZLIB_H)
-	add_definitions(-DHAVE_ZLIB)
-	add_definitions(-DHAVE_LIBZ)
-endif()
-
 FILE(GLOB CPPSOURCES
 #	../../curl/src/*.c
 #	../../curl/src/*.h
@@ -46,3 +28,21 @@ endif()
 
 target_include_directories(curl PUBLIC ../../curl/include)
 target_include_directories(curl PRIVATE ../../curl/lib)
+
+target_compile_definitions(curl PUBLIC -DCURL_STATICLIB)
+target_compile_definitions(curl PRIVATE -DBUILDING_LIBCURL)
+
+if(USE_WINSSL)
+	target_compile_definitions(curl PRIVATE -DUSE_WINDOWS_SSPI)
+	target_compile_definitions(curl PRIVATE -DUSE_SCHANNEL)
+else()
+	target_compile_definitions(curl PRIVATE -DUSE_OPENSSL)
+endif()
+
+target_compile_definitions(curl PRIVATE -DHTTP_ONLY)
+target_compile_definitions(curl PRIVATE -DCURL_DISABLE_CRYPTO_AUTH)
+if(USE_ZLIB)
+	target_compile_definitions(curl PRIVATE -DHAVE_ZLIB_H)
+	target_compile_definitions(curl PRIVATE -DHAVE_ZLIB)
+	target_compile_definitions(curl PRIVATE -DHAVE_LIBZ)
+endif()

@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8.11)	# 2.8.11 required for target_include_dire
 
 project(ProbeApiTools)
 
+set(ROOT_DIR ".")
+
 # =================================================
 
 # http://stackoverflow.com/questions/1618927/cmake-microsoft-visual-studio-and-monolithic-runtimes
