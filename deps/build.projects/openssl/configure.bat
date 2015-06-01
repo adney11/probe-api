@@ -1,9 +1,9 @@
 @echo off
 REM This batch file is creating folder inc_prepared\openssl and fills it with correct C header files.
 
-set outfold="%~dp0inc_prepared\openssl"
+set outfold="%~dp0..\..\openssl\inc_prepared\openssl"
 
-pushd "%~dp0.."
+pushd "%~dp0..\..\openssl"
 if not exist %outfold% mkdir %outfold%
 copy /Y *.h %outfold%
 copy /Y ssl\*.h %outfold%
