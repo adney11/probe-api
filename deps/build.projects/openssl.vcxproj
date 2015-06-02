@@ -839,7 +839,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\openssl\include;..\openssl;..\openssl\crypto;..\openssl\crypto\asn1;..\openssl\crypto\evp;..\openssl\crypto\modes;..\openssl\crypto\include;..\build.projects;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)deps\openssl_include_prepared;$(SolutionDir)deps\openssl\include;$(SolutionDir)deps\openssl;$(SolutionDir)deps\openssl\crypto;$(SolutionDir)deps\openssl\crypto\asn1;$(SolutionDir)deps\openssl\crypto\evp;$(SolutionDir)deps\openssl\crypto\modes;$(SolutionDir)deps\openssl\crypto\include;$(SolutionDir)deps\build.projects;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NO_WINDOWS_BRAINDEATH;OPENSSL_SYSNAME_WIN32;OPENSSL_NO_DEPRECATED;OPENSSL_NO_ASM;OPENSSL_THREADS;OPENSSL_USE_APPLINK;OPENSSL_NO_RC5;OPENSSL_NO_MD2;OPENSSL_NO_KRB5;OPENSSL_NO_JPAKE;OPENSSL_NO_STATIC_ENGINE;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;WIN32;_LIB;DEBUGBUILD;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -850,12 +850,19 @@
       <ExceptionHandling>false</ExceptionHandling>
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
-    <PreBuildEvent />
-    <PreBuildEvent />
+    <PreBuildEvent>
+      <Command>echo Prepare header files...
+call $(ProjectDir)openssl\configure.bat &gt; nul
+
+</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Prepare header files</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\openssl\include;..\openssl;..\openssl\crypto;..\openssl\crypto\asn1;..\openssl\crypto\evp;..\openssl\crypto\modes;..\openssl\crypto\include;..\build.projects;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)deps\openssl_include_prepared;$(SolutionDir)deps\openssl\include;$(SolutionDir)deps\openssl;$(SolutionDir)deps\openssl\crypto;$(SolutionDir)deps\openssl\crypto\asn1;$(SolutionDir)deps\openssl\crypto\evp;$(SolutionDir)deps\openssl\crypto\modes;$(SolutionDir)deps\openssl\crypto\include;$(SolutionDir)deps\build.projects;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NO_WINDOWS_BRAINDEATH;OPENSSL_SYSNAME_WIN32;OPENSSL_NO_DEPRECATED;OPENSSL_NO_ASM;OPENSSL_THREADS;OPENSSL_USE_APPLINK;OPENSSL_NO_RC5;OPENSSL_NO_MD2;OPENSSL_NO_KRB5;OPENSSL_NO_JPAKE;OPENSSL_NO_STATIC_ENGINE;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;WIN32;_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -867,8 +874,15 @@
       <ExceptionHandling>false</ExceptionHandling>
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
-    <PreBuildEvent />
-    <PreBuildEvent />
+    <PreBuildEvent>
+      <Command>echo Prepare header files...
+call $(ProjectDir)openssl\configure.bat &gt; nul
+
+</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Prepare header files</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -69,6 +69,7 @@ add_library(openssl STATIC ${CPPSOURCES} ${CPPSOURCES_2} ${CPPSOURCES_3})
 
 target_include_directories(openssl PRIVATE ${DEPS_DIR}/openssl)
 target_include_directories(openssl PUBLIC ${DEPS_DIR}/openssl/include)
+target_include_directories(openssl PUBLIC ${DEPS_DIR}/openssl_include_prepared)
 target_include_directories(openssl PRIVATE ${DEPS_DIR}/openssl/crypto)
 target_include_directories(openssl PRIVATE ${DEPS_DIR}/openssl/crypto/asn1)
 target_include_directories(openssl PRIVATE ${DEPS_DIR}/openssl/crypto/evp)
