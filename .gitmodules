@@ -1,1 +1,15 @@
-
+[submodule "deps/curl"]
+	path = deps/curl
+	url = https://github.com/bagder/curl.git
+[submodule "deps/curlpp"]
+	path = deps/curlpp
+	url = https://github.com/datacratic/curlpp.git
+[submodule "deps/jsoncpp"]
+	path = deps/jsoncpp
+	url = https://github.com/open-source-parsers/jsoncpp.git
+[submodule "deps/zlib"]
+	path = deps/zlib
+	url = https://github.com/madler/zlib.git
+[submodule "deps/openssl"]
+	path = deps/openssl
+	url = https://github.com/openssl/openssl.git
