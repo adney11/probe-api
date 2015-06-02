@@ -20,7 +20,6 @@ if(USE_ZLIB)
 endif()
 if(NOT USE_WINSSL)
 	target_link_libraries(curl openssl)
-	add_dependencies(curl openssl)	# OpenSSL should prepare its include folder during pre-build step
 endif()
 if(WIN32)
   target_link_libraries(curl ws2_32)
@@ -28,6 +27,8 @@ endif()
 
 target_include_directories(curl PUBLIC ${DEPS_DIR}/curl/include)
 target_include_directories(curl PRIVATE ${DEPS_DIR}/curl/lib)
+target_include_directories(curl PRIVATE ${DEPS_DIR}/build.projects)
+target_include_directories(curl PUBLIC ${DEPS_DIR}/build.projects/curl)
 
 target_compile_definitions(curl PUBLIC -DCURL_STATICLIB)
 target_compile_definitions(curl PRIVATE -DBUILDING_LIBCURL)
