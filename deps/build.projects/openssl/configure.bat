@@ -1,7 +1,7 @@
 @echo off
-REM This batch file is creating folder inc_prepared\openssl and fills it with correct C header files.
+REM This batch file is creating folder openssl_include_prepared\openssl and fills it with correct C header files.
 
-set outfold="%~dp0..\..\openssl\inc_prepared\openssl"
+set outfold="%~dp0..\..\openssl_include_prepared\openssl"
 
 pushd "%~dp0..\..\openssl"
 if not exist %outfold% mkdir %outfold%
