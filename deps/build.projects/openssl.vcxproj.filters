@@ -21,6 +21,9 @@
     <ClCompile Include="..\openssl\crypto\aes\aes_core.c">
       <Filter>crypto</Filter>
     </ClCompile>
+    <ClCompile Include="..\openssl\crypto\aes\aes_ctr.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
     <ClCompile Include="..\openssl\crypto\aes\aes_ecb.c">
       <Filter>crypto</Filter>
     </ClCompile>
@@ -45,6 +48,12 @@
     <ClCompile Include="..\openssl\crypto\asn1\a_bitstr.c">
       <Filter>crypto</Filter>
     </ClCompile>
+    <ClCompile Include="..\openssl\crypto\asn1\a_bool.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\crypto\asn1\a_bytes.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
     <ClCompile Include="..\openssl\crypto\asn1\a_d2i_fp.c">
       <Filter>crypto</Filter>
     </ClCompile>
@@ -52,6 +61,9 @@
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\asn1\a_dup.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\crypto\asn1\a_enum.c">
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\asn1\a_gentm.c">
@@ -73,6 +85,9 @@
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\asn1\a_print.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\crypto\asn1\a_set.c">
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\asn1\a_sign.c">
@@ -130,6 +145,9 @@
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\asn1\evp_asn1.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\crypto\asn1\f_enum.c">
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\asn1\f_int.c">
@@ -204,16 +222,25 @@
     <ClCompile Include="..\openssl\crypto\asn1\x_algor.c">
       <Filter>crypto</Filter>
     </ClCompile>
+    <ClCompile Include="..\openssl\crypto\asn1\x_attrib.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
     <ClCompile Include="..\openssl\crypto\asn1\x_bignum.c">
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\asn1\x_crl.c">
       <Filter>crypto</Filter>
     </ClCompile>
+    <ClCompile Include="..\openssl\crypto\asn1\x_exten.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
     <ClCompile Include="..\openssl\crypto\asn1\x_info.c">
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\asn1\x_long.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\crypto\asn1\x_name.c">
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\asn1\x_nx509.c">
@@ -447,6 +474,9 @@
     <ClCompile Include="..\openssl\crypto\camellia\cmll_ofb.c">
       <Filter>crypto</Filter>
     </ClCompile>
+    <ClCompile Include="..\openssl\crypto\camellia\cmll_utl.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
     <ClCompile Include="..\openssl\crypto\cast\c_cfb64.c">
       <Filter>crypto</Filter>
     </ClCompile>
@@ -513,6 +543,9 @@
     <ClCompile Include="..\openssl\crypto\cms\cms_smime.c">
       <Filter>crypto</Filter>
     </ClCompile>
+    <ClCompile Include="..\openssl\crypto\comp\c_rle.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
     <ClCompile Include="..\openssl\crypto\comp\c_zlib.c">
       <Filter>crypto</Filter>
     </ClCompile>
@@ -549,6 +582,9 @@
     <ClCompile Include="..\openssl\crypto\cversion.c">
       <Filter>crypto</Filter>
     </ClCompile>
+    <ClCompile Include="..\openssl\crypto\des\cbc3_enc.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
     <ClCompile Include="..\openssl\crypto\des\cbc_cksm.c">
       <Filter>crypto</Filter>
     </ClCompile>
@@ -577,6 +613,9 @@
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\des\ecb_enc.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\crypto\des\ede_cbcm_enc.c">
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\des\enc_read.c">
@@ -700,6 +739,9 @@
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\dsa\dsa_vrf.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\crypto\dso\dso_beos.c">
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\dso\dso_dl.c">
@@ -1026,6 +1068,9 @@
     <ClCompile Include="..\openssl\crypto\evp\evp_pkey.c">
       <Filter>crypto</Filter>
     </ClCompile>
+    <ClCompile Include="..\openssl\crypto\evp\m_dss.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
     <ClCompile Include="..\openssl\crypto\evp\m_dss1.c">
       <Filter>crypto</Filter>
     </ClCompile>
@@ -1050,6 +1095,9 @@
     <ClCompile Include="..\openssl\crypto\evp\m_ripemd.c">
       <Filter>crypto</Filter>
     </ClCompile>
+    <ClCompile Include="..\openssl\crypto\evp\m_sha.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
     <ClCompile Include="..\openssl\crypto\evp\m_sha1.c">
       <Filter>crypto</Filter>
     </ClCompile>
@@ -1060,6 +1108,9 @@
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\evp\names.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\crypto\evp\openbsd_hw.c">
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\evp\p5_crpt.c">
@@ -1129,6 +1180,9 @@
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\jpake\jpake_err.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\crypto\krb5\krb5_asn.c">
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\lhash\lh_stats.c">
@@ -1425,6 +1479,9 @@
     <ClCompile Include="..\openssl\crypto\rc4\rc4_skey.c">
       <Filter>crypto</Filter>
     </ClCompile>
+    <ClCompile Include="..\openssl\crypto\rc4\rc4_utl.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
     <ClCompile Include="..\openssl\crypto\rc5\rc5_ecb.c">
       <Filter>crypto</Filter>
     </ClCompile>
@@ -1536,6 +1593,12 @@
     <ClCompile Include="..\openssl\crypto\sha\sha512.c">
       <Filter>crypto</Filter>
     </ClCompile>
+    <ClCompile Include="..\openssl\crypto\sha\sha_dgst.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\crypto\sha\sha_one.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
     <ClCompile Include="..\openssl\crypto\sparcv9cap.c">
       <Filter>crypto</Filter>
     </ClCompile>
@@ -1597,6 +1660,9 @@
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\txt_db\txt_db.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\crypto\ui\ui_compat.c">
       <Filter>crypto</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\ui\ui_err.c">
@@ -1764,6 +1830,9 @@
     <ClCompile Include="..\openssl\crypto\x509v3\v3_ncons.c">
       <Filter>crypto</Filter>
     </ClCompile>
+    <ClCompile Include="..\openssl\crypto\x509v3\v3_ocsp.c">
+      <Filter>crypto</Filter>
+    </ClCompile>
     <ClCompile Include="..\openssl\crypto\x509v3\v3_pci.c">
       <Filter>crypto</Filter>
     </ClCompile>
@@ -1815,10 +1884,34 @@
     <ClCompile Include="..\openssl\ssl\d1_meth.c">
       <Filter>ssl</Filter>
     </ClCompile>
+    <ClCompile Include="..\openssl\ssl\d1_pkt.c">
+      <Filter>ssl</Filter>
+    </ClCompile>
     <ClCompile Include="..\openssl\ssl\d1_srtp.c">
       <Filter>ssl</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\ssl\d1_srvr.c">
+      <Filter>ssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\ssl\kssl.c">
+      <Filter>ssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\ssl\s2_clnt.c">
+      <Filter>ssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\ssl\s2_enc.c">
+      <Filter>ssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\ssl\s2_lib.c">
+      <Filter>ssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\ssl\s2_meth.c">
+      <Filter>ssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\ssl\s2_pkt.c">
+      <Filter>ssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\ssl\s2_srvr.c">
       <Filter>ssl</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\ssl\s3_both.c">
@@ -1836,7 +1929,28 @@
     <ClCompile Include="..\openssl\ssl\s3_lib.c">
       <Filter>ssl</Filter>
     </ClCompile>
+    <ClCompile Include="..\openssl\ssl\s3_meth.c">
+      <Filter>ssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\ssl\s3_pkt.c">
+      <Filter>ssl</Filter>
+    </ClCompile>
     <ClCompile Include="..\openssl\ssl\s3_srvr.c">
+      <Filter>ssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\ssl\s23_clnt.c">
+      <Filter>ssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\ssl\s23_lib.c">
+      <Filter>ssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\ssl\s23_meth.c">
+      <Filter>ssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\ssl\s23_pkt.c">
+      <Filter>ssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\openssl\ssl\s23_srvr.c">
       <Filter>ssl</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\ssl\ssl_algs.c">
@@ -1936,75 +2050,6 @@
       <Filter>ms</Filter>
     </ClCompile>
     <ClCompile Include="..\openssl\crypto\evp\p5_crpt2.c">
-      <Filter>crypto</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\crypto\lock.c">
-      <Filter>crypto</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\crypto\x509\x_name.c">
-      <Filter>crypto</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\crypto\x509\x_attrib.c">
-      <Filter>crypto</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\crypto\x509\x_exten.c">
-      <Filter>crypto</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\ssl\d1_msg.c">
-      <Filter>ssl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\ssl\s3_msg.c">
-      <Filter>ssl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\ssl\record\dtls1_bitmap.c">
-      <Filter>ssl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\ssl\record\rec_layer_d1.c">
-      <Filter>ssl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\ssl\record\rec_layer_s3.c">
-      <Filter>ssl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\ssl\record\ssl3_buffer.c">
-      <Filter>ssl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\ssl\record\ssl3_record.c">
-      <Filter>ssl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\crypto\thr_id.c">
-      <Filter>crypto</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\crypto\bn\bn_intern.c">
-      <Filter>crypto</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\crypto\ocsp\v3_ocsp.c">
-      <Filter>crypto</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\crypto\conf\cnf_save.c">
-      <Filter>crypto</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\crypto\modes\cts128.c">
-      <Filter>crypto</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\crypto\modes\ocb128.c">
-      <Filter>crypto</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\crypto\bn\bn_dh.c">
-      <Filter>crypto</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\crypto\bn\bn_srp.c">
-      <Filter>crypto</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\crypto\asn1\p5_scrypt.c">
-      <Filter>crypto</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\crypto\asn1\asn_mstbl.c">
-      <Filter>crypto</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\crypto\asn1\tasn_scn.c">
-      <Filter>crypto</Filter>
-    </ClCompile>
-    <ClCompile Include="..\openssl\crypto\evp\scrypt.c">
       <Filter>crypto</Filter>
     </ClCompile>
   </ItemGroup>
