@@ -1,4 +1,4 @@
-if(WIN32)
+if(WIN32 OR CYGWIN)
 	set(USE_WINSSL 1)
 endif()
 set(USE_ZLIB 1)
@@ -16,13 +16,13 @@ FILE(GLOB CPPSOURCES
 add_library(curl STATIC ${CPPSOURCES})
 
 if(USE_ZLIB)
-	target_link_libraries(curl zlib)
+	target_link_libraries(curl PRIVATE zlib)
 endif()
 if(NOT USE_WINSSL)
-	target_link_libraries(curl openssl)
+	target_link_libraries(curl PRIVATE openssl)
 endif()
-if(WIN32)
-  target_link_libraries(curl ws2_32)
+if(WIN32 OR CYGWIN)
+  target_link_libraries(curl PRIVATE ws2_32)
 endif()
 
 target_include_directories(curl PUBLIC ${DEPS_DIR}/curl/include)

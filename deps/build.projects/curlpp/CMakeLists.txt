@@ -13,7 +13,7 @@ FILE(GLOB CPPSOURCES
 	)
 
 add_library(curlpp STATIC ${CPPSOURCES})
-target_link_libraries(curlpp curl)
+target_link_libraries(curlpp INTERFACE_LINK_LIBRARIES curl)
 
 target_include_directories(curlpp PUBLIC ${DEPS_DIR}/curlpp/include)
 
