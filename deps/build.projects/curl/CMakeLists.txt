@@ -1,7 +1,7 @@
 if(WIN32)
 	set(USE_WINSSL 1)
 endif()
-# set(USE_ZLIB 1)
+set(USE_ZLIB 1)
 
 FILE(GLOB CPPSOURCES
 #	${DEPS_DIR}/curl/src/*.c

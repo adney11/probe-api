@@ -39,7 +39,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 add_subdirectory(deps/build.projects/curl ${MYBINDIR})
 add_subdirectory(deps/build.projects/curlpp ${MYBINDIR})
 add_subdirectory(deps/build.projects/jsoncpp ${MYBINDIR})
-# add_subdirectory(deps/build.projects/zlib ${MYBINDIR})
+add_subdirectory(deps/build.projects/zlib ${MYBINDIR})
 # add_subdirectory(deps/build.projects/openssl ${MYBINDIR})
 
 add_subdirectory(src/common ${MYBINDIR})
