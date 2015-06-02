@@ -1,6 +1,9 @@
 [submodule "deps/curl"]
 	path = deps/curl
 	url = https://github.com/bagder/curl.git
+[submodule "deps/curlpp"]
+	path = deps/curlpp
+	url = https://github.com/jpbarrette/curlpp.git
 [submodule "deps/jsoncpp"]
 	path = deps/jsoncpp
 	url = https://github.com/open-source-parsers/jsoncpp.git
