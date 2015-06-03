@@ -7,4 +7,6 @@ FILE(GLOB CPPSOURCES
 
 add_library(jsoncpp STATIC ${CPPSOURCES})
 
+set_property(TARGET jsoncpp PROPERTY CXX_STANDARD 11)
+
 target_include_directories(jsoncpp PUBLIC ${DEPS_DIR}/jsoncpp/include)

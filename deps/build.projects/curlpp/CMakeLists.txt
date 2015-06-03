@@ -14,6 +14,8 @@ FILE(GLOB CPPSOURCES
 
 add_library(curlpp STATIC ${CPPSOURCES})
 
+set_property(TARGET curlpp PROPERTY CXX_STANDARD 11)
+
 if(WIN32 OR CYGWIN)
 	target_link_libraries(curlpp curl)
 else()
