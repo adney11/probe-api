@@ -90,7 +90,11 @@ void signal_handler(const int signal)
 	default:
 		g_nSignalRetCode = eRetCode::HardFailure;
 	}
+#ifdef _MSC_VER
 	g_psSignalMessage = make_unique<string>(buf.str());
+#else
+	g_psSignalMessage = unique_ptr<string>(new string(buf.str()));
+#endif
 	g_bSignalCatched = true;
 
 	g_bTerminateProgram = true;
