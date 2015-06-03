@@ -27,6 +27,10 @@ if(MSVC)
 	set(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL} /OPT:REF /OPT:ICF /LTCG")
 endif(MSVC)
 
+if(CMAKE_COMPILER_IS_GNUCXX)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
+
 # =================================================
 
 #set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -36,11 +40,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 
 # =================================================
 
-add_subdirectory(deps/build.projects/curl ${MYBINDIR})
+if(WIN32 OR CYGWIN)
+	add_subdirectory(deps/build.projects/curl ${MYBINDIR})
+	add_subdirectory(deps/build.projects/zlib ${MYBINDIR})
+#	add_subdirectory(deps/build.projects/openssl ${MYBINDIR})
+endif()
+
 add_subdirectory(deps/build.projects/curlpp ${MYBINDIR})
 add_subdirectory(deps/build.projects/jsoncpp ${MYBINDIR})
-add_subdirectory(deps/build.projects/zlib ${MYBINDIR})
-add_subdirectory(deps/build.projects/openssl ${MYBINDIR})
 
 add_subdirectory(src/common ${MYBINDIR})
 

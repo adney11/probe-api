@@ -13,8 +13,17 @@ FILE(GLOB CPPSOURCES
 	)
 
 add_library(curlpp STATIC ${CPPSOURCES})
-target_link_libraries(curlpp curl)
+
+if(WIN32 OR CYGWIN)
+	target_link_libraries(curlpp curl)
+else()
+	find_path(LIBCURL_INCLUDE_DIR curl/curl.h HINTS ${LIBCURL_DIR}/include)
+	include_directories(${LIBCURL_INCLUDE_DIR})
+	add_definitions(-DCURL_STATICLIB)
+	target_link_libraries(curlpp ${CURL_LIBRARIES})
+endif()
 
 target_include_directories(curlpp PUBLIC ${DEPS_DIR}/curlpp/include)
 
 target_compile_definitions(curlpp PUBLIC -DCURLPP_STATICLIB)
+

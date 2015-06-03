@@ -49,7 +49,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)deps\curl\include;$(SolutionDir)deps\curl\lib;$(SolutionDir)deps\zlib;$(SolutionDir)deps\openssl_include_prepared;$(SolutionDir)deps\openssl\include;$(SolutionDir)deps\build.projects;$(SolutionDir)deps\build.projects\curl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BUILDING_LIBCURL;CURL_STATICLIB;USE_OPENSSL;HTTP_ONLY;CURL_DISABLE_CRYPTO_AUTH;HAVE_ZLIB_H;HAVE_ZLIB;HAVE_LIBZ;DEBUGBUILD;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BUILDING_LIBCURL;CURL_STATICLIB;USE_WINDOWS_SSPI;USE_SCHANNEL;HTTP_ONLY;CURL_DISABLE_CRYPTO_AUTH;HAVE_ZLIB_H;HAVE_ZLIB;HAVE_LIBZ;DEBUGBUILD;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
@@ -63,7 +63,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)deps\curl\include;$(SolutionDir)deps\curl\lib;$(SolutionDir)deps\zlib;$(SolutionDir)deps\openssl_include_prepared;$(SolutionDir)deps\openssl\include;$(SolutionDir)deps\build.projects;$(SolutionDir)deps\build.projects\curl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BUILDING_LIBCURL;CURL_STATICLIB;USE_OPENSSL;HTTP_ONLY;CURL_DISABLE_CRYPTO_AUTH;HAVE_ZLIB_H;HAVE_ZLIB;HAVE_LIBZ;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BUILDING_LIBCURL;CURL_STATICLIB;USE_WINDOWS_SSPI;USE_SCHANNEL;HTTP_ONLY;CURL_DISABLE_CRYPTO_AUTH;HAVE_ZLIB_H;HAVE_ZLIB;HAVE_LIBZ;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
