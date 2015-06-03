@@ -12,6 +12,7 @@
 #include "compiler.h"
 
 #include <stdint.h>
+#include <string.h>		// for memcmp
 #include <assert.h>
 
 #include <iostream>

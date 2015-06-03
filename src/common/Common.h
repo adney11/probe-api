@@ -82,7 +82,7 @@ public:
 		return m_nRetCode;
 	}
 
-	virtual const char * what() const
+	virtual const char * what() const throw () override
 	{
 		//return m_buf.str().c_str();
 		return m_str.c_str();

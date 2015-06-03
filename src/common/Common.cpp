@@ -7,6 +7,7 @@
 
 #include <json/json.h>
 
+#include <chrono>
 #include <thread>
 
 //------------------------------------------------------
@@ -117,7 +118,7 @@ void ProbeApiRequester::HttpReplyDebugPrint(const ProbeApiRequester::Reply &repl
 
 void MySleep(const uint32_t nSleepMs)
 {
-	this_thread::sleep_for(chrono::milliseconds(nSleepMs));
+	std::this_thread::sleep_for(std::chrono::milliseconds(nSleepMs));
 }
 
 //------------------------------------------------------

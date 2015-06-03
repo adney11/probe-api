@@ -85,6 +85,9 @@ list(REMOVE_ITEM CPPSOURCES "${DEPS_DIR}/openssl/crypto/bf/bf_cbc.c")
 list(REMOVE_ITEM CPPSOURCES "${DEPS_DIR}/openssl/crypto/armcap.c")
 list(REMOVE_ITEM CPPSOURCES "${DEPS_DIR}/openssl/crypto/aes/aes_x86core.c")
 # 1.0.2a specific (added later):
+# some files with bad unused code inside (bad for gcc, good for msvc):
+list(REMOVE_ITEM CPPSOURCES "${DEPS_DIR}/openssl/crypto/pkcs7/pk7_enc.c")
+list(REMOVE_ITEM CPPSOURCES "${DEPS_DIR}/openssl/crypto/threads/th-lock.c")
 # duplicated functions/data:
 list(REMOVE_ITEM CPPSOURCES "${DEPS_DIR}/openssl/crypto/sha/sha1.c")
 list(REMOVE_ITEM CPPSOURCES "${DEPS_DIR}/openssl/crypto/md5/md5.c")

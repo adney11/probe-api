@@ -554,7 +554,10 @@
     <ClCompile Include="..\openssl\crypto\pkcs7\pk7_attr.c" />
     <ClCompile Include="..\openssl\crypto\pkcs7\pk7_dgst.c" />
     <ClCompile Include="..\openssl\crypto\pkcs7\pk7_doit.c" />
-    <ClCompile Include="..\openssl\crypto\pkcs7\pk7_enc.c" />
+    <ClCompile Include="..\openssl\crypto\pkcs7\pk7_enc.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\openssl\crypto\pkcs7\pk7_lib.c" />
     <ClCompile Include="..\openssl\crypto\pkcs7\pk7_mime.c" />
     <ClCompile Include="..\openssl\crypto\pkcs7\pk7_smime.c" />
@@ -665,7 +668,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\openssl\crypto\threads\th-lock.c" />
+    <ClCompile Include="..\openssl\crypto\threads\th-lock.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\openssl\crypto\ts\ts_asn1.c" />
     <ClCompile Include="..\openssl\crypto\ts\ts_conf.c" />
     <ClCompile Include="..\openssl\crypto\ts\ts_err.c" />
