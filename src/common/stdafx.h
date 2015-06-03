@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include <string.h>		// for memcmp
 #include <assert.h>
+#include <limits.h>		// for INT_MAX
 
 #include <iostream>
 #include <iomanip>
