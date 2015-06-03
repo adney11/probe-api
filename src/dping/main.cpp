@@ -81,9 +81,11 @@ void signal_handler(const int signal)
 	switch (signal)
 	{
 	case SIGINT:
+#ifdef WIN32
 	case SIGABRT_COMPAT:
-	case SIGTERM:
 	case SIGBREAK:
+#endif
+	case SIGTERM:
 		g_nSignalRetCode = eRetCode::Cancelled;
 	default:
 		g_nSignalRetCode = eRetCode::HardFailure;
