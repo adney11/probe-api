@@ -173,7 +173,12 @@ inline void findandreplaceT(T& source, const T& find, const T& replace)
 
 	if (find.length() != replace.length())
 	{
+#ifdef _MSC_VER
 		std::swap(source, findandreplaceConstT(source, find, replace));
+#else
+		// FIXME: there should be more effective way like MSVC allow, but I don't know how to write it for gcc:
+		source = findandreplaceConstT(source, find, replace);
+#endif
 		return;
 	}
 
