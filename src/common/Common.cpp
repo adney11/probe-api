@@ -139,7 +139,7 @@ inline T findandreplaceConstT(const T& source, const T& find, const T& replace)
 	T res;
 	res.reserve(source.length() + nPredictReplaces * (replace.length() - find.length()));
 
-	T::size_type posPrev = 0;
+	typename T::size_type posPrev = 0;
 	for (std::size_t pos = source.find(find); pos != source.npos; pos = source.find(find, pos))
 	{
 		if (pos > posPrev)
@@ -179,7 +179,7 @@ inline void findandreplaceT(T& source, const T& find, const T& replace)
 
 	// Fast in-place string replacement:
 
-	T::size_type pos = 0;
+	typename T::size_type pos = 0;
 	while ((pos = source.find(find, pos)) != T::npos)
 	{
 		source.replace(pos, find.length(), replace);
