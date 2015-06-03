@@ -31,20 +31,32 @@ string decode_signal(const int signal)
 	{
 	case SIGINT:
 		name = "SIGINT";
+		break;
 	case SIGILL:
 		name = "SIGILL";
+		break;
+#ifdef WIN32
 	case SIGABRT_COMPAT:
 		name = "SIGABRT_COMPAT";
+		break;
+#endif
 	case SIGFPE:
 		name = "SIGFPE";
+		break;
 	case SIGSEGV:
 		name = "SIGSEGV";
+		break;
 	case SIGTERM:
 		name = "SIGTERM";
+		break;
+#ifdef WIN32
 	case SIGBREAK:
 		name = "SIGBREAK";
+		break;
+#endif
 	case SIGABRT:
 		name = "SIGABRT";
+		break;
 	default:
 		return to_string(signal);
 	}
