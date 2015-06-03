@@ -1,5 +1,5 @@
 if(WIN32 OR CYGWIN)
-	set(USE_WINSSL 1)
+#	set(USE_WINSSL 1)
 endif()
 set(USE_ZLIB 1)
 

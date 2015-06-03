@@ -1,3 +1,23 @@
+# ================================================
+# pre-create openssl_include_prepared folder:
+file(MAKE_DIRECTORY "${DEPS_DIR}/openssl_include_prepared")
+file(MAKE_DIRECTORY "${DEPS_DIR}/openssl_include_prepared/openssl")
+
+set(HEADERS "")
+FILE(GLOB HEADERS_TMP
+	${DEPS_DIR}/openssl/*.h
+	${DEPS_DIR}/openssl/ssl/*.h
+	)
+set(HEADERS ${HEADERS} ${HEADERS_TMP})
+
+FILE(GLOB_RECURSE HEADERS_TMP
+	${DEPS_DIR}/openssl/crypto/*.h
+	)
+set(HEADERS ${HEADERS} ${HEADERS_TMP})
+
+file(COPY ${HEADERS} DESTINATION "${DEPS_DIR}/openssl_include_prepared/openssl")
+# ================================================
+
 set(CPPSOURCES "")
 
 FILE(GLOB CPPSOURCES_TMP

@@ -1,5 +1,6 @@
 # External dependencies
 build
+build2
 openssl_include_prepared
 
 # Auto-generated MSVC files
