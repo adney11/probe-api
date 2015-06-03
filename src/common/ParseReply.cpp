@@ -165,11 +165,11 @@ ProbeAPI::TracerouteInfo::TracerouteInfo(const Json::Value& v)
 	sTarget = v2.get("Destination", "").asString();
 	const Json::Value v3 = v2.get("Tracert", "");
 
-	const size_t n = v3.size();
+	const Json::ArrayIndex n = v3.size();
 	assert(v3.isArray());
 	vectHops.reserve(n);
 
-	for (size_t i = 0; i < n; ++i)
+	for (Json::ArrayIndex i = 0; i < n; ++i)
 	{
 		vectHops.emplace_back(v3[i]);
 	}
@@ -278,10 +278,11 @@ std::vector<ProbeAPI::CountryInfo> ProbeAPI::ParseCountries(const std::string& s
 	const Json::Value items = root["GetCountriesResult"];
 
 	assert(items.isArray());
+	const Json::ArrayIndex n = items.size();
 	std::vector<CountryInfo> res;
-	res.reserve(items.size());
+	res.reserve(n);
 
-	for (size_t index = 0; index < items.size(); ++index)
+	for (Json::ArrayIndex index = 0; index < n; ++index)
 	{
 		const Json::Value item = items[index];
 		res.emplace_back(item);
@@ -346,9 +347,10 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseProbeList(const std::string& sJs
 	const Json::Value items = root[sJsonRootItemName];
 
 	assert(items.isArray());
-	res.reserve(items.size());
+	const Json::ArrayIndex n = items.size();
+	res.reserve(n);
 
-	for (size_t index = 0; index < items.size(); ++index)
+	for (Json::ArrayIndex index = 0; index < n; ++index)
 	{
 		const Json::Value item = items[index];
 		res.emplace_back(item, mode);
