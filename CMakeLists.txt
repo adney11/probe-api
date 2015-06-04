@@ -6,8 +6,14 @@ set(DEPS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps")
 
 # =================================================
 
+if(NOT WIN32 AND CYGWIN)
+	message(STATUS "WARNING! CYGWIN without WIN32 was found!")
+	set(WIN32 1)
+endif()
+
 # http://stackoverflow.com/questions/1618927/cmake-microsoft-visual-studio-and-monolithic-runtimes
 if(MSVC)
+	message(STATUS "MSVC compiler is used! Use static linking to CRT...")
 #We statically link to reduce dependencies
 foreach(flag_var CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO
 		CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO)
@@ -33,6 +39,42 @@ endif()
 
 # =================================================
 
+FIND_PACKAGE(Boost)
+if(Boost_FOUND)
+	message(STATUS "Boost libraries found at: ${Boost_LIBRARIES}")
+	message(STATUS "Boost includes found at: ${Boost_INCLUDE_DIRS}")
+else()
+	message(STATUS "Could not find Boost on your system")
+endif(Boost_FOUND)
+
+FIND_PACKAGE(CURL)
+if(CURL_FOUND)
+	message(STATUS "Curl libraries found at: ${CURL_LIBRARIES}")
+	message(STATUS "Curl includes found at: ${CURL_INCLUDE_DIRS}")
+else()
+	message(STATUS "Could not find cURL on your system")
+endif(CURL_FOUND)
+
+if(0)
+FIND_PACKAGE(curlpp)
+if(curlpp_FOUND)
+	message(STATUS "curlpp libraries found at: ${curlpp_LIBRARIES}")
+	message(STATUS "curlpp includes found at: ${curlpp_INCLUDE_DIRS}")
+else()
+	message(STATUS "Could not find curlpp on your system")
+endif(curlpp_FOUND)
+
+FIND_PACKAGE(jsoncpp)
+if(jsoncpp_FOUND)
+	message(STATUS "jsoncpp libraries found at: ${jsoncpp_LIBRARIES}")
+	message(STATUS "jsoncpp includes found at: ${jsoncpp_INCLUDE_DIRS}")
+else()
+	message(STATUS "Could not find jsoncpp on your system")
+endif(jsoncpp_FOUND)
+endif()
+
+# =================================================
+
 #set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 #set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
@@ -40,7 +82,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 
 # =================================================
 
-if(WIN32 OR CYGWIN)
+if(WIN32)
 	add_subdirectory(deps/build.projects/curl ${MYBINDIR})
 	add_subdirectory(deps/build.projects/zlib ${MYBINDIR})
 #	add_subdirectory(deps/build.projects/openssl ${MYBINDIR})

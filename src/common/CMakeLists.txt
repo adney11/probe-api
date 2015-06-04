@@ -16,5 +16,6 @@ endif()
 set_property(TARGET common PROPERTY CXX_STANDARD 11)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
+	# enable std::this_thread and std::this_thread::sleep_for:
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -D_GLIBCXX_USE_NANOSLEEP ")
 endif()

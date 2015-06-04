@@ -36,7 +36,7 @@ FILE(GLOB_RECURSE CPPSOURCES_TMP
 	)
 set(CPPSOURCES ${CPPSOURCES} ${CPPSOURCES_TMP})
 
-if(WIN32 OR CYGWIN)
+if(WIN32)
 	FILE(GLOB CPPSOURCES_TMP
 		${DEPS_DIR}/openssl/ms/*.c
 		${DEPS_DIR}/openssl/ms/*.h
@@ -188,7 +188,7 @@ target_compile_definitions(openssl PRIVATE -DOPENSSL_NO_KRB5)
 target_compile_definitions(openssl PRIVATE -DOPENSSL_NO_JPAKE)
 target_compile_definitions(openssl PRIVATE -DOPENSSL_NO_STATIC_ENGINE)
 
-if(WIN32 OR CYGWIN)
+if(WIN32)
 	target_compile_definitions(openssl PRIVATE -DOPENSSL_SYSNAME_WIN32)
 	target_compile_definitions(openssl PRIVATE -DNO_WINDOWS_BRAINDEATH)
 	target_compile_definitions(openssl PRIVATE -DWIN32_LEAN_AND_MEAN)
