@@ -1,3 +1,8 @@
+#if 0
+# This is a cmake config:
+set(PRODUCT_VERSION "1.2.25")
+#[[
+#endif
 //------------------------------------------------------
 #ifndef _VERSION_H_UID00000347C85021AC
 #define _VERSION_H_UID00000347C85021AC
@@ -106,3 +111,8 @@
 
 //------------------------------------------------------
 #endif //ifndef _VERSION_H_UID00000347C85021AC
+
+#if 0
+# cmake code:
+]]
+#endif

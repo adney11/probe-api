@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.11)	# 2.8.11 required for target_include_directories
 
 project(ProbeApiTools)
+include(src/common/version.h)
+message(STATUS "Probe API Tools v.${PRODUCT_VERSION}")
 
 set(DEPS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps")
 
@@ -77,5 +79,18 @@ add_subdirectory(src/common ${MYBINDIR})
 
 add_subdirectory(src/dping ${MYBINDIR})
 add_subdirectory(src/dtraceroute ${MYBINDIR})
+
+# =================================================
+
+set(VERSION "${PRODUCT_VERSION}")
+set(CPACK_PACKAGE_VERSION ${VERSION})
+set(CPACK_GENERATOR "RPM")
+set(CPACK_PACKAGE_NAME "probe-api-tools")
+set(CPACK_PACKAGE_RELEASE 1)
+set(CPACK_PACKAGE_CONTACT "Sergey Kolomenkin")
+set(CPACK_PACKAGE_VENDOR "Optimal Software s.r.o.")
+set(CPACK_PACKAGING_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_PACKAGE_RELEASE}.${CMAKE_SYSTEM_PROCESSOR}")
+include(CPack)
 
 # =================================================
