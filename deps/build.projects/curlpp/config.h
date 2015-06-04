@@ -6,7 +6,7 @@
 /* using solution files for VC9. Project files define or undefine this from within the IDE */
 //#define BUILDING_CURLPP
 
-#include "../../curlpp/config.h.sample" // to define curlpp version (VERSION)
+#include "curlpp/config.h.sample" // to define curlpp version (VERSION)
 
 /* Define to 1 if you have the <curl/curl.h> header file. */
 #define HAVE_CURL_CURL_H 1
@@ -51,6 +51,7 @@
 #undef PACKAGE_BUGREPORT
 
 /* Define to the full name of this package. */
+#undef PACKAGE_NAME
 #define PACKAGE_NAME "CurlPP"
 
 /* Define to the full name and version of this package. */
@@ -64,7 +65,7 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 /* #undef STDC_HEADERS */
-#ifdef WIN32
+#ifdef _MSC_VER
 #define STDC_HEADERS
 #endif
 
