@@ -18,6 +18,7 @@ set_property(TARGET curlpp PROPERTY CXX_STANDARD 11)
 
 if(WIN32)
 	target_link_libraries(curlpp curl)
+	target_compile_definitions(curlpp PUBLIC -DCURLPP_STATICLIB)
 else()
 	#find_package(CURL)
 	if(NOT CURL_FOUND)
@@ -31,7 +32,6 @@ endif()
 target_include_directories(curlpp PUBLIC ${DEPS_DIR}/curlpp/include)
 target_include_directories(curlpp PUBLIC ${DEPS_DIR}/build.projects)	# for curlpp/config.h
 
-target_compile_definitions(curlpp PUBLIC -DCURLPP_STATICLIB)
 target_compile_definitions(curlpp PUBLIC -DHAVE_CONFIG_H)				# disable usage of config.win32.h which generates lots of warnings in gcc on linux
 
 #find_package(Boost)

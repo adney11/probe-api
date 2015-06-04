@@ -55,29 +55,11 @@ else()
 	message(STATUS "Could not find cURL on your system")
 endif(CURL_FOUND)
 
-if(0)
-FIND_PACKAGE(curlpp)
-if(curlpp_FOUND)
-	message(STATUS "curlpp libraries found at: ${curlpp_LIBRARIES}")
-	message(STATUS "curlpp includes found at: ${curlpp_INCLUDE_DIRS}")
-else()
-	message(STATUS "Could not find curlpp on your system")
-endif(curlpp_FOUND)
-
-FIND_PACKAGE(jsoncpp)
-if(jsoncpp_FOUND)
-	message(STATUS "jsoncpp libraries found at: ${jsoncpp_LIBRARIES}")
-	message(STATUS "jsoncpp includes found at: ${jsoncpp_INCLUDE_DIRS}")
-else()
-	message(STATUS "Could not find jsoncpp on your system")
-endif(jsoncpp_FOUND)
-endif()
-
 # =================================================
 
 #set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 #set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 #set(MYBINDIR .)
 
 # =================================================
