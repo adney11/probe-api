@@ -80,16 +80,28 @@ string FormatLibraryInfo(
 	const string& sWebsite,
 	const string& sRepository,
 	const string& sLicenseType,
-	const string& sLicenseURL)
+	const string& sLicenseURL,
+	const bool bSubModule = false)
 {
 	ostringstream buf;
-	const size_t nTab1 = 4;
-	const size_t nTab2 = 12;
+	const size_t nTab0 = bSubModule ? 2 : 0;	// pad before library name
+	const size_t nTab1 = 4;		// pad before Website, Repo, License words
+	const size_t nTab2 = 12;	// position of ':' char
+	const string sPad0(nTab0, ' ');
 	const string sPad(nTab1, ' ');
 
 	buf
 		<< left
-		<< setw(nTab2) << sName << ": " << sVersion << endl
+		;
+	if (sVersion.empty())
+	{
+		buf << sPad0 << sName << endl;
+	}
+	else
+	{
+		buf << sPad0 << setw(nTab2 - nTab0) << sName << ": " << sVersion << endl;
+	}
+	buf
 		<< sPad << setw(nTab2 - nTab1) << "Website" << ": " << sWebsite << endl
 		<< sPad << setw(nTab2 - nTab1) << "Repo" << ": " << sRepository << endl
 		<< sPad << setw(nTab2 - nTab1) << "License" << ": " << sLicenseType << "; " << sLicenseURL << endl
@@ -148,17 +160,30 @@ SOFTWARE.
 
 	buf << endl;
 
+	const string sCurlVer = GetCurlFullVersion();
+
 	buf << "Used third-party libraries:" << endl;
-	buf << FormatLibraryInfo("cURL", GetCurlFullVersion(), "http://curl.haxx.se/", "https://github.com/bagder/curl",
+
+	buf << FormatLibraryInfo("cURL", sCurlVer, "http://curl.haxx.se/", "https://github.com/bagder/curl.git",
 		"MIT", "http://curl.haxx.se/docs/copyright.html");
-	buf << FormatLibraryInfo("cURLpp", LIBCURLPP_VERSION, "http://rrette.com/curlpp.html", "https://github.com/jpbarrette/curlpp",
+
+	if (contains(sCurlVer, "zlib"))
+	{
+		buf << FormatLibraryInfo("zlib", "", "http://zlib.net/", "https://github.com/madler/zlib.git",
+			"MIT", "http://zlib.net/zlib_license.html", true);
+	}
+
+	if (contains(sCurlVer, "OpenSSL"))
+	{
+		buf << FormatLibraryInfo("OpenSSL", "", "https://www.openssl.org/", "https://github.com/openssl/openssl.git",
+			"BSD-based", "http://www.openssl.org/source/license.html", true);
+	}
+
+	buf << FormatLibraryInfo("cURLpp", LIBCURLPP_VERSION, "http://rrette.com/curlpp.html", "https://github.com/jpbarrette/curlpp.git",
 		"MIT", "http://www.curlpp.org/#license");
-	buf << FormatLibraryInfo("JsonCpp", JSONCPP_VERSION_STRING, "https://github.com/open-source-parsers/jsoncpp", "https://github.com/open-source-parsers/jsoncpp",
+
+	buf << FormatLibraryInfo("JsonCpp", JSONCPP_VERSION_STRING, "https://github.com/open-source-parsers/jsoncpp", "https://github.com/open-source-parsers/jsoncpp.git",
 		"Public Domain, MIT", "https://github.com/open-source-parsers/jsoncpp/blob/master/LICENSE");
-#ifndef DEST_OS_WINDOWS
-	buf << FormatLibraryInfo("OpenSSL", "????", "https://www.openssl.org/", "https://github.com/openssl/openssl",
-		"BSD-based", "http://www.openssl.org/source/license.html");
-#endif
 
 	return buf.str();
 }
