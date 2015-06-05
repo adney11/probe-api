@@ -88,7 +88,7 @@ void CheckArgumentParameterNotEmpty(const string& sArg, const string& sParam)
 template<class T>
 void PrintOption(const char* name, const T& v)
 {
-	cout << "options: " << setw(10) << left << name << right << " = " << v << endl;
+	cout << "options: " << setw(10) << left << name << resetiosflags(ios_base::adjustfield) << " = " << v << endl;
 }
 
 //------------------------------------------------------

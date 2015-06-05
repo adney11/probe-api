@@ -105,7 +105,7 @@ string FormatLibraryInfo(
 		<< sPad << setw(nTab2 - nTab1) << "Website" << ": " << sWebsite << endl
 		<< sPad << setw(nTab2 - nTab1) << "Repo" << ": " << sRepository << endl
 		<< sPad << setw(nTab2 - nTab1) << "License" << ": " << sLicenseType << "; " << sLicenseURL << endl
-		<< right
+		<< resetiosflags(ios_base::adjustfield)
 		;
 	return buf.str();
 }
