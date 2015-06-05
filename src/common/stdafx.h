@@ -15,6 +15,8 @@
 #include <string.h>		// for memcmp
 #include <assert.h>
 #include <limits.h>		// for INT_MAX
+#include <time.h>		// for clock_t
+#include <stdlib.h>		// for strtoul
 
 #include <iostream>
 #include <iomanip>
@@ -28,6 +30,7 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <set>
 
 //------------------------------------------------------
 

@@ -8,6 +8,10 @@
 
 using namespace std;
 
+#ifdef DEST_OS_WINDOWS
+#define PRINT_AS_WINDOWS
+#endif
+
 //------------------------------------------------------
 // Windows sample: (Win 8.1)
 
@@ -262,6 +266,8 @@ int DoJob(const ApplicationOptions& options)
 {
 	int res = eRetCode::OK;
 
+	ApplicationStats stats(options.sTarget);
+
 	const JobType job(options);
 	job.PrintHeaderBeforeSearchArg();
 
@@ -269,8 +275,6 @@ int DoJob(const ApplicationOptions& options)
 	const string sSearchArgument = job.CalculateSearchArgument(requester);
 
 	job.PrintHeaderAfterSearchArg(sSearchArgument);
-
-	ApplicationStats stats(options.sTarget);
 
 	try
 	{

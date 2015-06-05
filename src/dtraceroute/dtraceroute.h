@@ -14,11 +14,19 @@ struct ApplicationStats
 {
 	int64_t		nSent = 0;
 	int64_t		nReceived = 0;
+	clock_t		nStartTime = 0;
 
 	std::string	sTarget;
 
 	ApplicationStats(const std::string& sTarget_) : sTarget(sTarget_)
-	{}
+	{
+		nStartTime = clock();
+	}
+
+	int64_t GetTimeElapsedMs() const
+	{
+		return int64_t(double(clock() - nStartTime) * 1000 / CLOCKS_PER_SEC);
+	}
 };
 
 //------------------------------------------------------

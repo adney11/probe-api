@@ -8,6 +8,10 @@
 
 using namespace std;
 
+#ifdef DEST_OS_WINDOWS
+#define PRINT_AS_WINDOWS
+#endif
+
 //------------------------------------------------------
 // Windows sample: (Win 8.1)
 
@@ -48,6 +52,14 @@ using namespace std;
 // --- 8.8.8.8 ping statistics ---
 // 13 packets transmitted, 13 received, 0% packet loss, time 12025ms
 // rtt min/avg/max/mdev = 13.521/14.979/18.114/1.232 ms
+// sergey@ubuntu:~$
+
+// sergey@ubuntu:~$ ping 1.1.1.2
+// PING 1.1.1.2 (1.1.1.2) 56(84) bytes of data.
+// ^C
+// --- 1.1.1.2 ping statistics ---
+// 33 packets transmitted, 0 received, 100% packet loss, time 32059ms
+// 
 // sergey@ubuntu:~$
 
 //------------------------------------------------------
@@ -118,18 +130,30 @@ public:
 
 	void PrintHeaderBeforeSearchArg() const
 	{
+#ifdef PRINT_AS_WINDOWS
+		// 
 		// Pinging 8.8.8.8 with 32 bytes of data:
 		cout << endl;
 		cout << "Pinging " << options.sTarget << " with " << options.nPacketSize << " bytes of data";
+#else
+		// PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+		const int nHeadersSize = 20 + 8; // IP + ICMP headers size
+		cout << "PING " << options.sTarget << " (" << options.sTarget << ") " << options.nPacketSize << "(" << (options.nPacketSize + nHeadersSize) << ") bytes of data";
+#endif
 	}
 
 	void PrintHeaderAfterSearchArg(const string& sSearchArgument) const
 	{
+#ifdef PRINT_AS_WINDOWS
 		cout << " from " << FormatSearchDetails(sSearchArgument) << ":" << endl;
+#else
+		cout << " from " << FormatSearchDetails(sSearchArgument) << "." << endl;
+#endif
 	}
 
 	void PrintJobResult(const ProbeAPI::ProbeInfo& info) const
 	{
+#ifdef PRINT_AS_WINDOWS
 		// Reply from 8.8.8.8: bytes=32 time=13ms TTL=55
 		if (info.ping.bTimeout)
 		{
@@ -146,20 +170,61 @@ public:
 		}
 
 		cout << endl;
+#else
+		// 64 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=13.7 ms
+		if (info.ping.bTimeout)
+		{
+		}
+		else
+		{
+			cout << options.nPacketSize << " bytes from " << options.sTarget << ": icmp_seq=1 ttl=" << options.nTTL << " time=" << info.ping.nTimeMs << ".0 ms";
+			if (options.bVerbose)
+			{
+				cout << " to " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
+			}
+			cout << endl;
+		}
+#endif
 	}
 
 	void PrintFooter(const ApplicationStats& stats) const
 	{
+#ifdef PRINT_AS_WINDOWS
+		// 
+		// Ping statistics for 8.8.8.8:
+		// Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+		// Approximate round trip times in milli-seconds:
+		// Minimum = 13ms, Maximum = 14ms, Average = 13ms
 		cout << endl;
 		cout << "Ping statistics for " << options.sTarget << endl;
 		cout << "    Packets : Sent = " << stats.nSent << ", Received = " << stats.nReceived << ", Lost = " << (stats.nSent - stats.nReceived)
-			<< " (" << ((stats.nSent - stats.nReceived) * 100 / (stats.nSent ? stats.nSent : 1)) << " % loss)," << endl;
+			<< " (" << ((stats.nSent - stats.nReceived) * 100 / (stats.nSent ? stats.nSent : 1)) << "% loss)," << endl;
 
 		if (stats.nReceived > 0)
 		{
 			cout << "Approximate round trip times in milli-seconds:" << endl;
-			cout << "    Minimum = " << stats.nPingMin << "ms, Maximum = " << stats.nPingMax << "ms, Average = " << (stats.nPingSum / stats.nReceived) << "ms" << endl;
+			cout << "    Minimum = " << stats.pings.GetMin() << "ms, Maximum = "
+				<< stats.pings.GetMax() << "ms, Average = " << (int)stats.pings.GetAverage() << "ms" << endl;
 		}
+#else
+		// ^C
+		// --- 8.8.8.8 ping statistics ---
+		// 13 packets transmitted, 13 received, 0% packet loss, time 12025ms
+		// rtt min/avg/max/mdev = 13.521/14.979/18.114/1.232 ms
+		cout << endl;
+		cout << "--- " << options.sTarget << " ping statistics ---" << endl;
+		cout << stats.nSent << " packets transmitted, " << stats.nReceived << " received, "
+			<< ((stats.nSent - stats.nReceived) * 100 / (stats.nSent ? stats.nSent : 1)) << "% packet loss, time "
+			<< fixed << setprecision(3) << stats.GetTimeElapsedMs() << "ms" << endl;
+
+		if (stats.nReceived > 0)
+		{
+			cout << "rtt min/avg/max/mdev = " << fixed << setprecision(3)
+				<< (double)stats.pings.GetMin() << "/" << (double)stats.pings.GetAverage()
+				<< "/" << (double)stats.pings.GetMax() << "/" << (double)stats.pings.GetMedianAbsoluteDeviation()
+				<< resetiosflags(cout.flags()) << resetiosflags(ios_base::floatfield) << " ms" << endl;
+		}
+#endif
 	}
 
 protected:
@@ -184,9 +249,7 @@ void PrintPackOfResults(const JobType& job, const vector<ProbeAPI::ProbeInfo>& i
 		if (!info.ping.bTimeout)
 		{
 			++stats.nReceived;
-			stats.nPingMin = (min)(stats.nPingMin, info.ping.nTimeMs);
-			stats.nPingMax = (max)(stats.nPingMax, info.ping.nTimeMs);
-			stats.nPingSum += info.ping.nTimeMs;
+			stats.pings.AddItem(info.ping.nTimeMs);
 		}
 
 		DoSleep(info.ping, bFirstIteration);
@@ -232,6 +295,8 @@ int DoJob(const ApplicationOptions& options)
 {
 	int res = eRetCode::OK;
 
+	ApplicationStats stats(options.sTarget);
+
 	const JobType job(options);
 	job.PrintHeaderBeforeSearchArg();
 
@@ -239,8 +304,6 @@ int DoJob(const ApplicationOptions& options)
 	const string sSearchArgument = job.CalculateSearchArgument(requester);
 
 	job.PrintHeaderAfterSearchArg(sSearchArgument);
-
-	ApplicationStats stats(options.sTarget);
 
 	try
 	{
