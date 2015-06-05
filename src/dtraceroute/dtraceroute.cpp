@@ -20,16 +20,16 @@ using namespace std;
 // Tracing route to google-public-dns-a.google.com [8.8.8.8]
 // over a maximum of 30 hops:
 // 
-// 1    <1 ms    <1 ms    <1 ms  10.168.0.1
-// 2     3 ms     3 ms     3 ms  134.17.128.1
-// 3     2 ms     2 ms     1 ms  172.30.65.36
-// 4     2 ms     2 ms     2 ms  172.30.65.25
-// 5    43 ms     2 ms     2 ms  185.32.224.156
-// 6    13 ms    12 ms    12 ms  188.254.103.221
-// 7    28 ms    15 ms    12 ms  95.167.95.222
-// 8    47 ms    44 ms    44 ms  79.133.94.86
-// 9    13 ms    13 ms    14 ms  216.239.47.143
-// 10    13 ms    13 ms    13 ms  google-public-dns-a.google.com [8.8.8.8]
+//   1    <1 ms    <1 ms    <1 ms  10.168.0.1
+//   2     3 ms     3 ms     3 ms  134.17.128.1
+//   3     2 ms     2 ms     1 ms  172.30.65.36
+//   4     2 ms     2 ms     2 ms  172.30.65.25
+//   5    43 ms     2 ms     2 ms  185.32.224.156
+//   6    13 ms    12 ms    12 ms  188.254.103.221
+//   7    28 ms    15 ms    12 ms  95.167.95.222
+//   8    47 ms    44 ms    44 ms  79.133.94.86
+//   9    13 ms    13 ms    14 ms  216.239.47.143
+//  10    13 ms    13 ms    13 ms  google-public-dns-a.google.com [8.8.8.8]
 // 
 // Trace complete.
 // 
@@ -40,9 +40,9 @@ using namespace std;
 
 // sergey@ubuntu:$ traceroute 8.8.8.8
 // traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
-// 1  192.168.163.2 (192.168.163.2)  0.160 ms  0.109 ms  0.068 ms
-// 2  * * *
-// 3  * * *
+//  1  192.168.163.2 (192.168.163.2)  0.160 ms  0.109 ms  0.068 ms
+//  2  * * *
+//  3  * * *
 // ...
 // 29  * * *
 // 30  * * *
@@ -117,39 +117,75 @@ public:
 
 	void PrintHeaderBeforeSearchArg() const
 	{
+#ifdef PRINT_AS_WINDOWS
 		// Tracing route to 1.1.1.2 over a maximum of 30 hops
+		// 
+		// Tracing route to google-public-dns-a.google.com [8.8.8.8]
+		// over a maximum of 30 hops:
+		// 
 		cout << endl;
 		cout << "Tracing route to " << options.sTarget;
+#else
+		// traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
+		cout << "traceroute to " << options.sTarget << " (" << options.sTarget << ")";
+#endif
 	}
 
 	void PrintHeaderAfterSearchArg(const string& sSearchArgument) const
 	{
+#ifdef PRINT_AS_WINDOWS
+		// Tracing route to 1.1.1.2 over a maximum of 30 hops
+		// 
+		// Tracing route to google-public-dns-a.google.com [8.8.8.8]
+		// over a maximum of 30 hops:
+		// 
 		cout << " from " << FormatSearchDetails(sSearchArgument) << ":" << endl;
 		cout << "over a maximum of " << options.nMaxHops << " hops:" << endl;
 		cout << endl;
+#else
+		// traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
+		cout << " from " << FormatSearchDetails(sSearchArgument) << ", " << options.nMaxHops << " hops max, " << options.nPacketSize << " byte packets" << endl;
+#endif
 	}
 
 	void PrintJobStart(const ProbeAPI::ProbeInfo& info) const
 	{
+#ifdef PRINT_AS_WINDOWS
 		// Tracing route to google-public-dns-a.google.com [8.8.8.8]
 		// over a maximum of 30 hops:
 		//if (options.bVerbose)
 		{
-			cout << "Tracing route to [" << info.tracert.sTarget << "] from " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
+			cout << "Tracing route to " << info.tracert.sTarget << " from " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
 			cout << "over a maximum of " << options.nMaxHops << " hops:" << endl;
 		}
+#else
+		// Tracing route to google-public-dns-a.google.com [8.8.8.8]
+		// over a maximum of 30 hops:
+		//if (options.bVerbose)
+		{
+			cout << "traceroute to " << options.sTarget << " (" << options.sTarget << ")";
+			cout << " from " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << ", " << options.nMaxHops << " hops max, " << options.nPacketSize << " byte packets" << endl;
+		}
+#endif
 	}
 
-	void PrintHopStart(const int nHop) const
+	void PrintHopStart(const int nHop, const ProbeAPI::TracertHopResults& hop) const
 	{
+#ifdef PRINT_AS_WINDOWS
 		//   1    <1 ms    <1 ms    <1 ms  10.10.0.1
 		//   2     3 ms     3 ms     4 ms  124.47.118.1
 		//   3     *        *        *     124.47.118.100
 		cout << setw(3) << nHop;
+#else
+		//  1  192.168.163.2 (192.168.163.2)  0.160 ms  0.109 ms  0.068 ms
+		//  2  * * *
+		cout << setw(2) << nHop << "  " << hop.sReplyHost << " (" << hop.sReplyHost << ")";
+#endif
 	}
 
 	void PrintHopTry(const ProbeAPI::PingResult& ping) const
 	{
+#ifdef PRINT_AS_WINDOWS
 		const int nWidth = 5;
 		if (ping.bTimeout)
 		{
@@ -163,18 +199,35 @@ public:
 		{
 			cout << " " << setw(nWidth) << ping.nTimeMs << " ms";
 		}
+#else
+		if (ping.bTimeout)
+		{
+			cout << " *";
+		}
+		else
+		{
+			cout << "  " << ping.nTimeMs << ".000 ms";
+		}
+#endif
 	}
 
 	void PrintHopFinish(const ProbeAPI::TracertHopResults& hop) const
 	{
+#ifdef PRINT_AS_WINDOWS
 		cout << "  " << hop.sReplyHost << endl;
+#else
+		cout << endl;
+#endif
 	}
 
 	void PrintJobFinish() const
 	{
+#ifdef PRINT_AS_WINDOWS
 		cout << endl;
 		cout << "Trace complete." << endl;
 		cout << endl;
+#else
+#endif
 	}
 
 	void PrintFooter(const ApplicationStats& stats) const
@@ -207,7 +260,7 @@ void PrintPackOfResults(const JobType& job, const vector<ProbeAPI::ProbeInfo>& i
 			if (g_bTerminateProgram)
 				throw PException("PrintPackOfResults: loop2: Terminate Program");
 
-			job.PrintHopStart(++iHop);
+			job.PrintHopStart(++iHop, hop);
 
 			for (const auto& ping : hop.vectResults)
 			{
