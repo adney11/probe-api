@@ -163,10 +163,11 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 		req.setOpt(DebugFunction([](const curl_infotype type, const char *data, const size_t size) -> int
 		{
 			string sData(data, size);
-#ifdef DEST_OS_WINDOWS
+
 			// Replace "\r\n" to "\n" because "\n" is replaced into "\r\n" in Windows automatically
+			// And we don't need those "\r" in linux console too:
 			findandreplace(sData, "\r\n", "\n");
-#endif
+
 			cout << GetDebugPrefix(type) << sData << flush;
 			return 0;
 		}));
