@@ -9,6 +9,48 @@
 using namespace std;
 
 //------------------------------------------------------
+// Windows sample: (Win 8.1)
+
+// c:\bin>ping 8.8.8.8
+// 
+// Pinging 8.8.8.8 with 32 bytes of data:
+// Reply from 8.8.8.8: bytes=32 time=14ms TTL=55
+// Reply from 8.8.8.8: bytes=32 time=13ms TTL=55
+// Reply from 8.8.8.8: bytes=32 time=13ms TTL=55
+// Reply from 8.8.8.8: bytes=32 time=13ms TTL=55
+// 
+// Ping statistics for 8.8.8.8:
+// Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+// Approximate round trip times in milli-seconds:
+// Minimum = 13ms, Maximum = 14ms, Average = 13ms
+// 
+// c:\bin>
+
+//------------------------------------------------------
+// Linux sample: (ubuntu)
+
+// sergey@ubuntu:~$ ping 8.8.8.8
+// PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+// 64 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=13.7 ms
+// 64 bytes from 8.8.8.8: icmp_seq=2 ttl=128 time=14.0 ms
+// 64 bytes from 8.8.8.8: icmp_seq=3 ttl=128 time=15.7 ms
+// 64 bytes from 8.8.8.8: icmp_seq=4 ttl=128 time=15.4 ms
+// 64 bytes from 8.8.8.8: icmp_seq=5 ttl=128 time=15.4 ms
+// 64 bytes from 8.8.8.8: icmp_seq=6 ttl=128 time=13.5 ms
+// 64 bytes from 8.8.8.8: icmp_seq=7 ttl=128 time=14.4 ms
+// 64 bytes from 8.8.8.8: icmp_seq=8 ttl=128 time=14.9 ms
+// 64 bytes from 8.8.8.8: icmp_seq=9 ttl=128 time=14.3 ms
+// 64 bytes from 8.8.8.8: icmp_seq=10 ttl=128 time=13.8 ms
+// 64 bytes from 8.8.8.8: icmp_seq=11 ttl=128 time=18.1 ms
+// 64 bytes from 8.8.8.8: icmp_seq=12 ttl=128 time=14.6 ms
+// 64 bytes from 8.8.8.8: icmp_seq=13 ttl=128 time=16.4 ms
+// ^C
+// --- 8.8.8.8 ping statistics ---
+// 13 packets transmitted, 13 received, 0% packet loss, time 12025ms
+// rtt min/avg/max/mdev = 13.521/14.979/18.114/1.232 ms
+// sergey@ubuntu:~$
+
+//------------------------------------------------------
 
 class JobType
 {

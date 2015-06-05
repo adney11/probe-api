@@ -9,6 +9,42 @@
 using namespace std;
 
 //------------------------------------------------------
+// Windows sample: (Win 8.1)
+
+// c:\bin>tracert 8.8.8.8
+// 
+// Tracing route to google-public-dns-a.google.com [8.8.8.8]
+// over a maximum of 30 hops:
+// 
+// 1    <1 ms    <1 ms    <1 ms  10.168.0.1
+// 2     3 ms     3 ms     3 ms  134.17.128.1
+// 3     2 ms     2 ms     1 ms  172.30.65.36
+// 4     2 ms     2 ms     2 ms  172.30.65.25
+// 5    43 ms     2 ms     2 ms  185.32.224.156
+// 6    13 ms    12 ms    12 ms  188.254.103.221
+// 7    28 ms    15 ms    12 ms  95.167.95.222
+// 8    47 ms    44 ms    44 ms  79.133.94.86
+// 9    13 ms    13 ms    14 ms  216.239.47.143
+// 10    13 ms    13 ms    13 ms  google-public-dns-a.google.com [8.8.8.8]
+// 
+// Trace complete.
+// 
+// c:\bin>
+
+//------------------------------------------------------
+// Linux sample: (ubuntu)
+
+// sergey@ubuntu:$ traceroute 8.8.8.8
+// traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
+// 1  192.168.163.2 (192.168.163.2)  0.160 ms  0.109 ms  0.068 ms
+// 2  * * *
+// 3  * * *
+// ...
+// 29  * * *
+// 30  * * *
+// sergey@ubuntu:$
+
+//------------------------------------------------------
 
 class JobType
 {
