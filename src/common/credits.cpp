@@ -126,6 +126,25 @@ string GetPrintCredits()
 
 	buf << endl;
 
+#if defined(NDEBUG) || defined(_DEBUG) || defined(DEBUG)
+	buf << "Build mode: "
+#if defined(_DEBUG)
+		<< "Debug"
+#elif defined(NDEBUG)
+		<< "Release"
+#elif defined(DEBUG) && 0 == DEBUG
+		<< "Debug = 0"
+#elif defined(DEBUG) && 1 == DEBUG
+		<< "Debug = 1"
+#elif defined(DEBUG)
+		<< "Debug (noval)" <<
+#else
+		<< "unknown"
+#endif
+		<< endl;
+	buf << endl;
+#endif
+
 	buf << "Authors: "
 		<< implode(vector < string > {"Sergey Kolomenkin"}, ", ")
 		<< endl;

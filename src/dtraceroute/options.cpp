@@ -224,13 +224,13 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 				mode = MODE_DO_BY_ASN;
 				sModeArgument = sNextArg;
 			}
-			else if (sArg == "--list-country")
+			else if (sArg == "--list-country" || sArg == "--list-countries")
 			{
 				mode = MODE_GET_COUNTRIES;
 				sModeArgument.clear();
 				nCount = UINT_MAX;	// display ALL items from requested list
 			}
-			else if (sArg == "--list-asn" && !bLastArg)
+			else if ((sArg == "--list-asn" || sArg == "--list-asns") && !bLastArg)
 			{
 				const string sNextArg = argv[++i];
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
