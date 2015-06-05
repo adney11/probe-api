@@ -1,6 +1,6 @@
 #if 0
 # This is a cmake config:
-set(PRODUCT_VERSION "1.2.26")
+set(PRODUCT_VERSION "1.3.27")
 #[[
 #endif
 //------------------------------------------------------
@@ -25,9 +25,9 @@ set(PRODUCT_VERSION "1.2.26")
 
 // VERSION_PRODUCT_VER1 and VERSION_PRODUCT_VER2 are product version. They are incremented during official releases:
 #define VERSION_PRODUCT_VER1			1
-#define VERSION_PRODUCT_VER2			2
+#define VERSION_PRODUCT_VER2			3
 // This is a build version. It is incremented after any significant fix or feature added:
-#define VERSION_PRODUCT_VER3			26
+#define VERSION_PRODUCT_VER3			27
 #define VERSION_PRODUCT_VER4			0
 
 #define PRODUCT_BUILD_VER				VERSION_PRODUCT_VER3
