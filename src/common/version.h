@@ -11,7 +11,9 @@ set(PRODUCT_VERSION "1.2.26")
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "compiler.h"
+#if defined(RC_INVOKED)
+#include "compiler.h"		// for including version.h from .rc files
+#endif
 
 //------------------------------------------------------
 
@@ -29,7 +31,7 @@ set(PRODUCT_VERSION "1.2.26")
 #define VERSION_PRODUCT_VER4			0
 
 #define PRODUCT_BUILD_VER				VERSION_PRODUCT_VER3
-#define VERSION_PRODUCT_COMMENT			" [openssl,zlib]"	// " [comment]"	// NOTE! string should be empty OR it should start from space (' ')!
+#define VERSION_PRODUCT_COMMENT			""	// " [comment]"	// NOTE! string should be empty OR it should start from space (' ')!
 //#define VERSION_SPECIAL_BUILD			VERSION_PRODUCT_COMMENT
 
 //------------------------------------------------------
