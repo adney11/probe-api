@@ -11,7 +11,7 @@ set_property(TARGET jsoncpp PROPERTY CXX_STANDARD 11)
 
 target_include_directories(jsoncpp PUBLIC ${DEPS_DIR}/jsoncpp/include)
 
-if(CMAKE_COMPILER_IS_GNUCXX AND WIN32)
+if(MINGW AND CMAKE_COMPILER_IS_GNUCXX)
 	# fix bug in Windows MinGW gcc compiler:
 	target_compile_definitions(jsoncpp PRIVATE -D__cplusplus=201102)
 endif()

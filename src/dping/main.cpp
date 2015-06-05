@@ -35,7 +35,7 @@ string decode_signal(const int signal)
 	case SIGILL:
 		name = "SIGILL";
 		break;
-#ifdef WIN32
+#ifdef SIGABRT_COMPAT
 	case SIGABRT_COMPAT:
 		name = "SIGABRT_COMPAT";
 		break;
@@ -49,7 +49,7 @@ string decode_signal(const int signal)
 	case SIGTERM:
 		name = "SIGTERM";
 		break;
-#ifdef WIN32
+#ifdef SIGBREAK
 	case SIGBREAK:
 		name = "SIGBREAK";
 		break;
@@ -81,11 +81,13 @@ void signal_handler(const int signal)
 	switch (signal)
 	{
 	case SIGINT:
-#ifdef WIN32
+#ifdef SIGABRT_COMPAT
 	case SIGABRT_COMPAT:
-	case SIGBREAK:
 #endif
 	case SIGTERM:
+#ifdef SIGBREAK
+	case SIGBREAK:
+#endif
 		g_nSignalRetCode = eRetCode::Cancelled;
 	default:
 		g_nSignalRetCode = eRetCode::HardFailure;
@@ -118,13 +120,15 @@ int main(int argc, char* argv[])
 	{
 		signal(SIGINT, signal_handler);
 		signal(SIGILL, signal_handler);
-#ifdef WIN32
+#ifdef SIGABRT_COMPAT
 		signal(SIGABRT_COMPAT, signal_handler);
-		signal(SIGBREAK, signal_handler);
 #endif
 		signal(SIGFPE, signal_handler);
 		signal(SIGSEGV, signal_handler);
 		signal(SIGTERM, signal_handler);
+#ifdef SIGBREAK
+		signal(SIGBREAK, signal_handler);
+#endif
 		signal(SIGABRT, signal_handler);
 
 		ApplicationOptions options;

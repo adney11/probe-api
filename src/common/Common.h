@@ -216,4 +216,33 @@ std::string findandreplaceConst(const std::string& source, const std::string& fi
 void findandreplace(std::string& source, const std::string& find, const std::string& replace);
 
 //------------------------------------------------------
+
+#ifdef __MINGW32__
+// MinGW gcc does not support conversion function from STL:
+// http://stackoverflow.com/questions/8542221/stdstoi-doesnt-exist-in-g-4-6-1-on-mingw
+
+#include <stdlib.h>		// for strtoul
+#include <sstream>		// for ostringstream
+
+inline unsigned long stoul(const std::string& s)
+{
+	return strtoul(s.c_str(), nullptr, 10);
+}
+
+inline int stoi(const std::string& s)
+{
+	return atoi(s.c_str());
+}
+
+template<class T>
+inline std::string to_string(const T& v)
+{
+	std::ostringstream oss;
+	oss << v;
+	return oss.str();
+}
+
+#endif
+
+//------------------------------------------------------
 #endif //ifndef _COMMON_H_UID000003467CD53C58

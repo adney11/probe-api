@@ -7,8 +7,16 @@
 
 #include <json/json.h>
 
+#ifdef __MINGW32__
+// MinGW gcc does not support std::this_thread for some reason (gcc 4.8.1). So use native Windows API:
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#else
 #include <chrono>
 #include <thread>
+#endif
 
 //------------------------------------------------------
 
@@ -118,7 +126,11 @@ void ProbeApiRequester::HttpReplyDebugPrint(const ProbeApiRequester::Reply &repl
 
 void MySleep(const uint32_t nSleepMs)
 {
+#ifdef __MINGW32__
+	Sleep(nSleepMs);
+#else
 	std::this_thread::sleep_for(std::chrono::milliseconds(nSleepMs));
+#endif
 }
 
 //------------------------------------------------------
