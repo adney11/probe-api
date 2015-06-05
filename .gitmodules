@@ -12,7 +12,3 @@
 [submodule "deps/zlib"]
 	path = deps/zlib
 	url = https://github.com/madler/zlib.git
-[submodule "deps/openssl"]
-	path = deps/openssl
-	url = https://github.com/openssl/openssl.git
-	branch = OpenSSL_1_0_2-stable
