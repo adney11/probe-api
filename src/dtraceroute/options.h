@@ -28,6 +28,7 @@ public:
 public:
 	bool		bVerbose		= false;
 	bool		bDebug			= false;
+	bool		bNoDelays		= false;
 	uint32_t	nTimeoutPingMs	= 3000;
 	uint32_t	nTimeoutTotalMs	= 30 * 1000;
 	uint32_t	nCount			= 10;

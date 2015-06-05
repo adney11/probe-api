@@ -29,9 +29,9 @@ Usage: )" FILE_INTERNAL_NAME R"( --help
     --list-country [-v] [--debug]
     --list-asn code [-v] [--debug]
     --country code [-n count] [-w timeout] [-h max_hops] [-hf max_hops]
-                   [-wa timeout] [-v] [--debug] {target_name}
+                   [-wa timeout] [--no-delays] [-v] [--debug] {target_name}
     --asn id [-n count] [-w timeout] [-h max_hops] [-hf max_hops]
-             [-wa timeout] [-v] [--debug] {target_name}
+             [-wa timeout] [--no-delays] [-v] [--debug] {target_name}
 
 Options:
     {target_name}  Destination host IP or domain name.
@@ -55,6 +55,7 @@ R"(
     -hf max_hops    Maximum number of failed hops in a row to stop.
     --list-country  List available countries.
     --list-asn code List ASNs for specified 2 letter country code.
+    --no-delays     Disable delays during printing of results to console.
     -v              Verbose output
     --debug         Additional debug output
 
@@ -102,6 +103,7 @@ void ApplicationOptions::Print() const
 
 	PrintOption("verbose", bVerbose);
 	PrintOption("debug", bDebug);
+	PrintOption("noDelays", bNoDelays);
 	PrintOption("ping timeout", nTimeoutPingMs);
 	PrintOption("total timeout", nTimeoutTotalMs);
 	PrintOption("count", nCount);
@@ -176,6 +178,10 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 			{
 				bDebug = true;
 				cout << "Debug mode ON" << endl;
+			}
+			else if (sArg == "--no-delay" || sArg == "--no-delays" || sArg == "--no-wait")
+			{
+				bNoDelays = true;
 			}
 			else if (sArg == "-n" && !bLastArg)
 			{

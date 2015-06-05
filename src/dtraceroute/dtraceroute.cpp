@@ -244,7 +244,7 @@ protected:
 
 //------------------------------------------------------
 
-void PrintPackOfResults(const JobType& job, const vector<ProbeAPI::ProbeInfo>& items, ApplicationStats& stats)
+void PrintPackOfResults(const JobType& job, const ApplicationOptions& options, const vector<ProbeAPI::ProbeInfo>& items, ApplicationStats& stats)
 {
 	bool bFirstIteration = (0 == stats.nSent);
 	for (const auto& info : items)
@@ -267,7 +267,10 @@ void PrintPackOfResults(const JobType& job, const vector<ProbeAPI::ProbeInfo>& i
 				if (g_bTerminateProgram)
 					throw PException("PrintPackOfResults: loop3: Terminate Program");
 
-				DoSleep(ping, bFirstIteration);
+				if (!options.bNoDelays)
+				{
+					DoSleep(info.ping, bFirstIteration);
+				}
 				job.PrintHopTry(ping);
 			}
 
@@ -305,7 +308,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 		throw PException("MakePackOfJobs: " + e.str(), eRetCode::ApiParsingFail);
 	}
 
-	PrintPackOfResults(job, items, stats);
+	PrintPackOfResults(job, options, items, stats);
 
 	// hack to have only one call to this function:
 	stats.nSent = options.nCount;
