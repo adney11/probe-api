@@ -22,9 +22,9 @@ copy %parts%\README_10.md %destfile%
 type %parts%\README_100.md >> %destfile%
 
 REM ======================================================
-echo dping.md...
+echo dping.windows.md...
 set tool_name=dping
-set destfile=%dest%\%tool_name%.md
+set destfile=%dest%\doc\%tool_name%.windows.md
 set tool=%bin%\%tool_name%.exe
 set part_pref=%parts%\%tool_name%
 
@@ -41,9 +41,9 @@ call :print_with_middle_trim "--asn AS3352 8.8.8.8" 10 7 1
 type %part_pref%_60.md >> %destfile%
 
 REM ======================================================
-echo dtraceroute.md...
+echo dtraceroute.windows.md...
 set tool_name=dtracert
-set destfile=%dest%\dtraceroute.md
+set destfile=%dest%\doc\dtraceroute.windows.md
 set tool=%bin%\%tool_name%.exe
 set part_pref=%parts%\dtraceroute
 

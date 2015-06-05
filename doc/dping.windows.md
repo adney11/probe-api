@@ -10,9 +10,9 @@ Usage: dping --help
     --version
     --list-country [-v] [--debug]
     --list-asn code [-v] [--debug]
-    --country code [-n count] [-w timeout] [-wa timeout] [-v] [--debug]
-                   {target_name}
-    --asn id [-n count] [-w timeout] [-wa timeout] [-v] [--debug]
+    --country code [-n count] [-w timeout] [-wa timeout] [--no-delays] [-v]
+                   [--debug] {target_name}
+    --asn id [-n count] [-w timeout] [-wa timeout] [--no-delays] [-v] [--debug]
              {target_name}
 
 Options:
@@ -29,6 +29,7 @@ Options:
     -wa timeout     Timeout in milliseconds to wait for all probes.
     --list-country  List available countries.
     --list-asn code List ASNs for specified 2 letter country code.
+    --no-delays     Disable delays during printing of results to console.
     -v              Verbose output
     --debug         Additional debug output
 

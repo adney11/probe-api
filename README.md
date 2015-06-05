@@ -60,6 +60,8 @@ Copyright (c) 2015 Optimal Software s.r.o. All rights reserved.
 Sources repository:  https://github.com/optimal-software/probe-api
 Latest license:      https://github.com/optimal-software/probe-api/blob/master/LICENSE
 
+Build mode: Release
+
 Authors: Sergey Kolomenkin
 
 ===============================================================================
@@ -89,16 +91,20 @@ SOFTWARE.
 ===============================================================================
 
 Used third-party libraries:
-cURL        : libcurl/7.42.1 WinSSL; Protocols: http https
+cURL        : libcurl/7.42.1 WinSSL zlib/1.2.8; Protocols: http https
     Website : http://curl.haxx.se/
-    Repo    : https://github.com/bagder/curl
+    Repo    : https://github.com/bagder/curl.git
     License : MIT; http://curl.haxx.se/docs/copyright.html
+  zlib
+    Website : http://zlib.net/
+    Repo    : https://github.com/madler/zlib.git
+    License : MIT; http://zlib.net/zlib_license.html
 cURLpp      : 0.7.3
     Website : http://rrette.com/curlpp.html
-    Repo    : https://github.com/jpbarrette/curlpp
+    Repo    : https://github.com/jpbarrette/curlpp.git
     License : MIT; http://www.curlpp.org/#license
 JsonCpp     : 0.10.2
     Website : https://github.com/open-source-parsers/jsoncpp
-    Repo    : https://github.com/open-source-parsers/jsoncpp
+    Repo    : https://github.com/open-source-parsers/jsoncpp.git
     License : Public Domain, MIT; https://github.com/open-source-parsers/jsoncpp/blob/master/LICENSE
 ```
