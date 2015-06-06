@@ -109,7 +109,12 @@ void signal_handler(const int signal)
 		<< buf.str() << flush;
 #else
 	cout << flush;
-	cerr << endl << endl << buf.str() << flush;
+	cerr << buf.str() << flush;
+	if (g_pOptions)
+	{
+		g_pOptions->Print();
+		cout << endl;
+	}
 #endif
 
 	exit(g_nSignalRetCode);
