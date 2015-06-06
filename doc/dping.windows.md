@@ -104,7 +104,7 @@ Reply from 8.8.8.8: bytes=32 time=47ms TTL=128
 Reply from 8.8.8.8: bytes=32 time=59ms TTL=128
 
 Ping statistics for 8.8.8.8
-    Packets : Sent = 8, Received = 8, Lost = 0 (0 % loss),
+    Packets : Sent = 8, Received = 8, Lost = 0 (0% loss),
 Approximate round trip times in milli-seconds:
     Minimum = 18ms, Maximum = 59ms, Average = 32ms
 ```
@@ -127,7 +127,7 @@ Reply from 8.8.8.8: bytes=32 time=48ms TTL=128
 Reply from 8.8.8.8: bytes=32 time=44ms TTL=128
 
 Ping statistics for 8.8.8.8
-    Packets : Sent = 16, Received = 16, Lost = 0 (0 % loss),
+    Packets : Sent = 16, Received = 16, Lost = 0 (0% loss),
 Approximate round trip times in milli-seconds:
     Minimum = 11ms, Maximum = 113ms, Average = 38ms
 ```

@@ -25,19 +25,66 @@ Tested environments and compilers:
 * MinGW for Windows (with gcc 4.8.1)
 * gcc 4.9.2 (tested in Ubuntu 15.04)
 
-In linux you will need to install some packets prior to building projects. Please run the following commands:
+### Compilation in Linux
+In Linux you will need to install some packets prior to building projects. Please run the following commands:
 Required packets:
 ```
-sudo apt-get install libcurl4-openssl-dev cmake git gcc make
+sudo apt-get install git cmake libcurl4-openssl-dev make gcc
 ```
 Optional packets:
 ```
-sudo apt-get install librpmbuild3 alien zlib1g-dev libssl-dev
+sudo apt-get install librpmbuild3 alien bash gawk
 ```
 
-Microsoft Visual Studio Solution and a set of project files are provided in Git repository.
+Checkout and build ProbeAPI Tools:
+```
+cd ~
+git clone --recursive https://github.com/optimal-software/probe-api.git
+cd probe-api/build
+cmake ..
+make
+```
 
-There is a number of external dependencies in "deps" subfolder. Please use git commands to checkout repository recursively, so you will get all necessary external sources automatically.
+Now you can run tools:
+```
+cd ~/probe-api/bin
+./dping --version
+./dtraceroute --version
+```
+
+You can also build RPM:
+```
+cd ~/probe-api/build
+make package
+```
+
+### Compilation in Windows
+
+Please checkout repository recursively:
+```
+git clone --recursive https://github.com/optimal-software/probe-api.git
+```
+
+#### MinGW
+1. Please install cmake for Windows.
+2. Execute following commands:
+```
+cd probe-api/build
+```
+And later:
+```
+cmake -G "MinGW Makefiles" ..
+make
+```
+or
+```
+cmake ..
+make
+```
+
+#### Microsoft Visual Studio
+
+Microsoft Visual Studio solution file is provided in the root of Git repository.
 
 ## Installation
 

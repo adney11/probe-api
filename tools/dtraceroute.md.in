@@ -13,20 +13,24 @@
 
 #### --list-country
 ```
+$ dtraceroute --list-country
 {{dtraceroute --list-country | gawk -v first=10 -v last=2 -v insert=1 -f ./strip_middle_lines.awk}}
 ```
 
 #### --list-asn
 ```
+$ dtraceroute --list-asn ES
 {{dtraceroute --list-asn ES | gawk -v first=10 -v last=2 -v insert=1 -f ./strip_middle_lines.awk}}
 ```
 
 #### --country
 ```
+$ dtraceroute --country US 8.8.8.8
 {{dtraceroute --no-delays --country US 8.8.8.8 | gawk -v first=20 -v last=14 -v insert=3 -f ./strip_middle_lines.awk}}
 ```
 
 #### --asn
 ```
+$ dtraceroute --asn AS3320 8.8.8.8
 {{dtraceroute --no-delays --asn AS3320 8.8.8.8 | gawk -v first=20 -v last=14 -v insert=3 -f ./strip_middle_lines.awk}}
 ```

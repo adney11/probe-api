@@ -10,9 +10,9 @@ Usage: dping --help
     --version
     --list-country [-v] [--debug]
     --list-asn code [-v] [--debug]
-    --country code [-n count] [-w timeout] [-wa timeout] [-v] [--debug]
-                   {target_name}
-    --asn id [-n count] [-w timeout] [-wa timeout] [-v] [--debug]
+    --country code [-n count] [-w timeout] [-wa timeout] [--no-delays] [-v]
+                   [--debug] {target_name}
+    --asn id [-n count] [-w timeout] [-wa timeout] [--no-delays] [-v] [--debug]
              {target_name}
 
 Options:
@@ -29,6 +29,7 @@ Options:
     -wa timeout     Timeout in milliseconds to wait for all probes.
     --list-country  List available countries.
     --list-asn code List ASNs for specified 2 letter country code.
+    --no-delays     Disable delays during printing of results to console.
     -v              Verbose output
     --debug         Additional debug output
 
@@ -91,42 +92,28 @@ AS199435      1 Wimax On Line, S.L.
 #### --country
 ```
 $ dping --country US 8.8.8.8
-
-Pinging 8.8.8.8 with 32 bytes of data from country code US:
-Reply from 8.8.8.8: bytes=32 time=29ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=30ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=18ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=25ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=23ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=32ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=47ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=59ms TTL=128
-
-Ping statistics for 8.8.8.8
-    Packets : Sent = 8, Received = 8, Lost = 0 (0 % loss),
-Approximate round trip times in milli-seconds:
-    Minimum = 18ms, Maximum = 59ms, Average = 32ms
+PING 8.8.8.8 (8.8.8.8) 32(60) bytes of data from country code US.
+32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=30.0 ms
+32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=35.0 ms
+32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=666.0 ms
+32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=62.0 ms
+--- 8.8.8.8 ping statistics ---
+10 packets transmitted, 4 received, 60% packet loss, time 7103ms
+rtt min/avg/max/mdev = 30.000/198.250/666.000/16.000 ms
 ```
 
 #### --asn
 ```
 $ dping --asn AS3352 8.8.8.8
-
-Pinging 8.8.8.8 with 32 bytes of data from AS3352:
-Reply from 8.8.8.8: bytes=32 time=29ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=30ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=18ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=25ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=11ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=51ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=23ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=32ms TTL=128
-...
-Reply from 8.8.8.8: bytes=32 time=48ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=44ms TTL=128
-
-Ping statistics for 8.8.8.8
-    Packets : Sent = 16, Received = 16, Lost = 0 (0 % loss),
-Approximate round trip times in milli-seconds:
-    Minimum = 11ms, Maximum = 113ms, Average = 38ms
+PING 8.8.8.8 (8.8.8.8) 32(60) bytes of data from AS3352.
+32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=81.0 ms
+32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=30.0 ms
+32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=35.0 ms
+32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=666.0 ms
+32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=13.0 ms
+32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=40.0 ms
+32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=62.0 ms
+--- 8.8.8.8 ping statistics ---
+10 packets transmitted, 7 received, 30% packet loss, time 5978ms
+rtt min/avg/max/mdev = 13.000/132.429/666.000/22.000 ms
 ```
