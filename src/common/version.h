@@ -1,6 +1,6 @@
 #if 0
 # This is a cmake config:
-set(PRODUCT_VERSION "1.3.27")
+set(PRODUCT_VERSION "1.3.28")
 #[[
 #endif
 //------------------------------------------------------
@@ -27,7 +27,7 @@ set(PRODUCT_VERSION "1.3.27")
 #define VERSION_PRODUCT_VER1			1
 #define VERSION_PRODUCT_VER2			3
 // This is a build version. It is incremented after any significant fix or feature added:
-#define VERSION_PRODUCT_VER3			27
+#define VERSION_PRODUCT_VER3			28
 #define VERSION_PRODUCT_VER4			0
 
 #define PRODUCT_BUILD_VER				VERSION_PRODUCT_VER3
@@ -41,7 +41,7 @@ set(PRODUCT_VERSION "1.3.27")
 #define FILE_DESCRIPTION				VERSION_PRODUCT_NAME ": Distributed Ping"
 #define FILE_INTERNAL_NAME				"dping"
 #define MODVERSION						1
-#define MODREVISION						5
+#define MODREVISION						6
 #define MODSUBREVISION					PRODUCT_BUILD_VER
 #define MODRELEASE						0
 #endif
@@ -55,7 +55,7 @@ set(PRODUCT_VERSION "1.3.27")
 #define FILE_INTERNAL_NAME				"dtraceroute"
 #endif
 #define MODVERSION						1
-#define MODREVISION						2
+#define MODREVISION						3
 #define MODSUBREVISION					PRODUCT_BUILD_VER
 #define MODRELEASE						0
 #endif
