@@ -94,6 +94,11 @@ struct MathCollection
 
 //------------------------------------------------------
 
+struct ApplicationStats;
+extern ApplicationStats* g_pStats;
+
+//------------------------------------------------------
+
 struct ApplicationStats
 {
 	int64_t		nSent = 0;
@@ -106,6 +111,11 @@ struct ApplicationStats
 	ApplicationStats(const std::string& sTarget_) : sTarget(sTarget_)
 	{
 		nStartTime = clock();
+		g_pStats = this;
+	}
+	~ApplicationStats()
+	{
+		g_pStats = nullptr;
 	}
 
 	int64_t GetTimeElapsedMs() const

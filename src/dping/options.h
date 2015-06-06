@@ -8,22 +8,9 @@
 
 //------------------------------------------------------
 
-class ApplicationOptions;
-extern ApplicationOptions* g_pOptions;
-
-//------------------------------------------------------
-
 class ApplicationOptions
 {
 public:
-	ApplicationOptions()
-	{
-		g_pOptions = this;
-	}
-	~ApplicationOptions()
-	{
-		g_pOptions = nullptr;
-	}
 	void Print() const;
 	void RecalculateTotalTimeout();
 	int ProcessCommandLine(const int argc, const char* const argv[]);	// returns non-zero result if process exit required

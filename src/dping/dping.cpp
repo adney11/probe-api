@@ -13,6 +13,12 @@ using namespace std;
 #endif
 
 //------------------------------------------------------
+
+class JobType;
+JobType* g_pJob = nullptr;
+ApplicationStats* g_pStats = nullptr;
+
+//------------------------------------------------------
 // Windows sample: (Win 8.1)
 
 // c:\bin>ping 8.8.8.8
@@ -90,6 +96,11 @@ public:
 			sSearchDetails = "{ARG}";
 			break;
 		}
+		g_pJob = this;
+	}
+	~JobType()
+	{
+		g_pJob = nullptr;
 	}
 
 	string GetUrl(const ApplicationStats& stats, const string& sSearchArgument, const string& sTarget) const
@@ -234,6 +245,16 @@ protected:
 	string						sSearchDetails;
 	string						sResultRoot;
 };
+
+//------------------------------------------------------
+
+void PrintFinalStats()
+{
+	if (g_pJob && g_pStats)
+	{
+		g_pJob->PrintFooter(*g_pStats);
+	}
+}
 
 //------------------------------------------------------
 

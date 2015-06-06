@@ -12,8 +12,6 @@ using namespace std;
 
 //#define DO_BY_COUNTRY_BY_DEFAULT
 
-ApplicationOptions* g_pOptions = nullptr;
-
 //------------------------------------------------------
 
 string GetPrintVersion()

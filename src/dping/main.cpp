@@ -14,6 +14,8 @@
 
 //------------------------------------------------------
 
+extern void PrintFinalStats();
+
 using namespace std;
 
 //------------------------------------------------------
@@ -110,11 +112,7 @@ void signal_handler(const int signal)
 #else
 	cout << flush;
 	cerr << buf.str() << flush;
-	if (g_pOptions)
-	{
-		g_pOptions->Print();
-		cout << endl;
-	}
+	PrintFinalStats();
 #endif
 
 	exit(g_nSignalRetCode);
