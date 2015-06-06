@@ -102,10 +102,16 @@ void signal_handler(const int signal)
 	g_bTerminateProgram = true;
 	HttpRequester::bTerminateAllRequests = true;
 
+#ifdef DEST_OS_WINDOWS
 	MySleep(5000);
+	cout << flush;
 	cerr << endl << endl << "ABNORMAL PROGRAM ABANDON!" << endl
 		<< buf.str() << flush;
+#else
 	cout << flush;
+	cerr << endl << endl << buf.str() << flush;
+#endif
+
 	exit(g_nSignalRetCode);
 }
 
