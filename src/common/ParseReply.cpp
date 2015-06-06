@@ -11,7 +11,7 @@ using namespace std;
 //------------------------------------------------------
 
 #ifdef _MSC_VER
-#pragma comment (lib, "jsoncpp.lib")
+//#pragma comment (lib, "jsoncpp.lib")
 #endif // _MSC_VER > 1000
 
 //------------------------------------------------------
@@ -156,14 +156,20 @@ ProbeAPI::TracerouteInfo::TracerouteInfo(const Json::Value& v)
 	// 		]
 	// 	}
 	// ]
-	if (!v.isArray() || v.size() < 1)		return;	const Json::Value v2 = v[0];	sTarget = v2.get("Destination", "").asString();
+
+	if (!v.isArray() || v.size() < 1)
+		return;
+
+	const Json::Value v2 = v[0];
+
+	sTarget = v2.get("Destination", "").asString();
 	const Json::Value v3 = v2.get("Tracert", "");
 
-	const size_t n = v3.size();
+	const Json::ArrayIndex n = v3.size();
 	assert(v3.isArray());
 	vectHops.reserve(n);
 
-	for (size_t i = 0; i < n; ++i)
+	for (Json::ArrayIndex i = 0; i < n; ++i)
 	{
 		vectHops.emplace_back(v3[i]);
 	}
@@ -185,7 +191,6 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 	//       },
 	//       "DateTimeStamp": "/Date(1429519784633+0000)/",
 	//       "ID": 57904,
-	//       "JID": "7427981831429519172968639@performancetests.pcspeedup.com/cz|1.0.14.0|acadeec2-5c2f-4c28-96d0-a6fd72985f8d|0||50.130981|14.466464|4|58",
 	//       "Location": {
 	//         "Latitude": 50.130981,
 	//         "Longitude": 14.466462
@@ -195,8 +200,7 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 	//         "NetworkID": 31,
 	//         "NetworkName": "UPC Ceska Republica, s.r.o."
 	//       },
-	//       "PingTime": 35,
-	//       "UniqueID": "acadeec2-5c2f-4c28-96d0-a6fd72985f8d"
+	//       "PingTime": 35
 	//     },
 
 	if (ProbeList_AsnOnly == mode)
@@ -208,7 +212,6 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 	ping = PingResult(v.get("PingTime", Json::Value::null));
 
 	nId = v.get("ID", 0).asInt64();
-	sUniqueId = v.get("UniqueID", "<unknown_guid>").asString();
 
 	country = CountryInfo(v.get("Country", ""));
 	asn = AsnInfo(v.get("ASN", ""));
@@ -223,6 +226,16 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 
 std::string ProbeAPI::ProbeInfo::GetPeerInfo(const bool bAsnIsKnown) const
 {
+#if 1
+	if (bAsnIsKnown)
+	{
+		return OSSFMT("probe ID " << nId << " net \"" << network.sName << "\" (" << country.sCode << ")");
+	}
+	else
+	{
+		return OSSFMT("probe ID " << nId << " net \"" << network.sName << "\" (" << asn.sId << ")");
+	}
+#else
 	//return sUniqueId + " (" + network.sName + ")";
 	if (bAsnIsKnown)
 	{
@@ -232,6 +245,7 @@ std::string ProbeAPI::ProbeInfo::GetPeerInfo(const bool bAsnIsKnown) const
 	{
 		return asn.sId + " \"" + asn.sName + "\" (" + country.sCode + ")";
 	}
+#endif
 }
 
 //------------------------------------------------------
@@ -264,10 +278,11 @@ std::vector<ProbeAPI::CountryInfo> ProbeAPI::ParseCountries(const std::string& s
 	const Json::Value items = root["GetCountriesResult"];
 
 	assert(items.isArray());
+	const Json::ArrayIndex n = items.size();
 	std::vector<CountryInfo> res;
-	res.reserve(items.size());
+	res.reserve(n);
 
-	for (size_t index = 0; index < items.size(); ++index)
+	for (Json::ArrayIndex index = 0; index < n; ++index)
 	{
 		const Json::Value item = items[index];
 		res.emplace_back(item);
@@ -311,7 +326,6 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseProbeList(const std::string& sJs
 	//       },
 	//       "DateTimeStamp": "/Date(1429519784633+0000)/",
 	//       "ID": 57904,
-	//       "JID": "7427981831429519172968639@performancetests.pcspeedup.com/cz|1.0.14.0|acadeec2-5c2f-4c28-96d0-a6fd72985f8d|0||50.130981|14.466464|4|58",
 	//       "Location": {
 	//         "Latitude": 50.130981,
 	//         "Longitude": 14.466462
@@ -321,8 +335,7 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseProbeList(const std::string& sJs
 	//         "NetworkID": 31,
 	//         "NetworkName": "UPC Ceska Republica, s.r.o."
 	//       },
-	//       "PingTime": 35,
-	//       "UniqueID": "acadeec2-5c2f-4c28-96d0-a6fd72985f8d"
+	//       "PingTime": 35
 	//     },
 	//     {
 	//       "ASN": {
@@ -334,9 +347,10 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseProbeList(const std::string& sJs
 	const Json::Value items = root[sJsonRootItemName];
 
 	assert(items.isArray());
-	res.reserve(items.size());
+	const Json::ArrayIndex n = items.size();
+	res.reserve(n);
 
-	for (size_t index = 0; index < items.size(); ++index)
+	for (Json::ArrayIndex index = 0; index < n; ++index)
 	{
 		const Json::Value item = items[index];
 		res.emplace_back(item, mode);

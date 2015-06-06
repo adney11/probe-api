@@ -88,7 +88,6 @@ namespace ProbeAPI
 	{
 		PingResult		ping;
 		int64_t			nId = 0;
-		std::string		sUniqueId;
 
 		CountryInfo		country;
 		AsnInfo			asn;

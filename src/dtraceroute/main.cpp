@@ -9,12 +9,14 @@
 //------------------------------------------------------
 
 #ifdef _MSC_VER
-#pragma comment (lib, "common.lib")
+//#pragma comment (lib, "common.lib")
 #endif // _MSC_VER > 1000
 
 //------------------------------------------------------
 
 using namespace std;
+
+extern void PrintFinalStats();
 
 //------------------------------------------------------
 
@@ -26,27 +28,41 @@ unique_ptr<string>  g_psSignalMessage = nullptr;
 
 string decode_signal(const int signal)
 {
+	const char* name = nullptr;
 	switch (signal)
 	{
 	case SIGINT:
-		return "SIGINT";
+		name = "SIGINT";
+		break;
 	case SIGILL:
-		return "SIGILL";
+		name = "SIGILL";
+		break;
+#ifdef SIGABRT_COMPAT
 	case SIGABRT_COMPAT:
-		return "SIGABRT_COMPAT";
+		name = "SIGABRT_COMPAT";
+		break;
+#endif
 	case SIGFPE:
-		return "SIGFPE";
+		name = "SIGFPE";
+		break;
 	case SIGSEGV:
-		return "SIGSEGV";
+		name = "SIGSEGV";
+		break;
 	case SIGTERM:
-		return "SIGTERM";
+		name = "SIGTERM";
+		break;
+#ifdef SIGBREAK
 	case SIGBREAK:
-		return "SIGBREAK";
+		name = "SIGBREAK";
+		break;
+#endif
 	case SIGABRT:
-		return "SIGABRT";
+		name = "SIGABRT";
+		break;
 	default:
 		return to_string(signal);
 	}
+	return string(name) + "(" + to_string(signal) + ")";
 }
 
 //------------------------------------------------------
@@ -62,28 +78,48 @@ void signal_handler(const int signal)
 	ostringstream buf;
 	buf << endl;
 	buf << "Caught signal " << decode_signal(signal) << ". Program terminated." << endl;
+#ifdef DEST_OS_WINDOWS
 	buf << endl;
+#endif
 
 	switch (signal)
 	{
 	case SIGINT:
+#ifdef SIGABRT_COMPAT
 	case SIGABRT_COMPAT:
+#endif
 	case SIGTERM:
+#ifdef SIGBREAK
 	case SIGBREAK:
+#endif
 		g_nSignalRetCode = eRetCode::Cancelled;
 	default:
 		g_nSignalRetCode = eRetCode::HardFailure;
 	}
+#ifdef _MSC_VER
 	g_psSignalMessage = make_unique<string>(buf.str());
+#else
+	g_psSignalMessage = unique_ptr<string>(new string(buf.str()));
+#endif
 	g_bSignalCatched = true;
 
 	g_bTerminateProgram = true;
 	HttpRequester::bTerminateAllRequests = true;
 
+	// In Windows signal handler is called from another thread. So we can signal primary thread
+	// we want to exit and wait until program will be terminated in main thread softly.
+	// In Linux it looks like handler is executed in the same thread and waiting for main thread is just useless blocking.
+#ifdef DEST_OS_WINDOWS
 	MySleep(5000);
+	cout << flush;
 	cerr << endl << endl << "ABNORMAL PROGRAM ABANDON!" << endl
 		<< buf.str() << flush;
+#else
 	cout << flush;
+	cerr << buf.str() << flush;
+	PrintFinalStats();
+#endif
+
 	exit(g_nSignalRetCode);
 }
 
@@ -98,11 +134,15 @@ int main(int argc, char* argv[])
 	{
 		signal(SIGINT, signal_handler);
 		signal(SIGILL, signal_handler);
+#ifdef SIGABRT_COMPAT
 		signal(SIGABRT_COMPAT, signal_handler);
+#endif
 		signal(SIGFPE, signal_handler);
 		signal(SIGSEGV, signal_handler);
 		signal(SIGTERM, signal_handler);
+#ifdef SIGBREAK
 		signal(SIGBREAK, signal_handler);
+#endif
 		signal(SIGABRT, signal_handler);
 
 		ApplicationOptions options;

@@ -7,12 +7,21 @@
 
 #include <json/json.h>
 
+#ifdef __MINGW32__
+// MinGW gcc does not support std::this_thread for some reason (gcc 4.8.1). So use native Windows API:
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#else
+#include <chrono>
 #include <thread>
+#endif
 
 //------------------------------------------------------
 
 #ifdef _MSC_VER
-#pragma comment (lib, "jsoncpp.lib")
+//#pragma comment (lib, "jsoncpp.lib")
 #endif // _MSC_VER > 1000
 
 //------------------------------------------------------
@@ -117,7 +126,11 @@ void ProbeApiRequester::HttpReplyDebugPrint(const ProbeApiRequester::Reply &repl
 
 void MySleep(const uint32_t nSleepMs)
 {
-	this_thread::sleep_for(chrono::milliseconds(nSleepMs));
+#ifdef __MINGW32__
+	Sleep(nSleepMs);
+#else
+	std::this_thread::sleep_for(std::chrono::milliseconds(nSleepMs));
+#endif
 }
 
 //------------------------------------------------------
@@ -138,7 +151,7 @@ inline T findandreplaceConstT(const T& source, const T& find, const T& replace)
 	T res;
 	res.reserve(source.length() + nPredictReplaces * (replace.length() - find.length()));
 
-	T::size_type posPrev = 0;
+	typename T::size_type posPrev = 0;
 	for (std::size_t pos = source.find(find); pos != source.npos; pos = source.find(find, pos))
 	{
 		if (pos > posPrev)
@@ -172,13 +185,18 @@ inline void findandreplaceT(T& source, const T& find, const T& replace)
 
 	if (find.length() != replace.length())
 	{
+#ifdef _MSC_VER
 		std::swap(source, findandreplaceConstT(source, find, replace));
+#else
+		// FIXME: there should be more effective way like MSVC allow, but I don't know how to write it for gcc:
+		source = findandreplaceConstT(source, find, replace);
+#endif
 		return;
 	}
 
 	// Fast in-place string replacement:
 
-	T::size_type pos = 0;
+	typename T::size_type pos = 0;
 	while ((pos = source.find(find, pos)) != T::npos)
 	{
 		source.replace(pos, find.length(), replace);

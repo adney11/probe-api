@@ -1,6 +1,0 @@
-```
-
-### Example
-
-#### --list-country
-```

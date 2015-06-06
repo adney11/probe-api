@@ -1,0 +1,14 @@
+[submodule "deps/curl"]
+	path = deps/curl
+	url = https://github.com/bagder/curl.git
+	branch = 7_42
+[submodule "deps/curlpp"]
+	path = deps/curlpp
+	url = https://github.com/jpbarrette/curlpp.git
+[submodule "deps/jsoncpp"]
+	path = deps/jsoncpp
+	url = https://github.com/open-source-parsers/jsoncpp.git
+	branch = 0.y.z
+[submodule "deps/zlib"]
+	path = deps/zlib
+	url = https://github.com/madler/zlib.git

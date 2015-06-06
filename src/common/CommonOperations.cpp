@@ -81,7 +81,7 @@ int ListCountries(const CommonOptions& options)
 	const int nWidth1 = 2;
 	const int nWidth2 = 40;
 	const int nWidth3 = 5;
-	cout << setw(nWidth1) << "ID" << " " << setw(nWidth2) << left << "Country Name" << " " << setw(nWidth3) << "Number of hosts" << endl;
+	cout << setw(nWidth1) << "ID" << " " << setw(nWidth2) << left << "Country Name" << " " << setw(nWidth3) << "Number of probes" << endl;
 
 	ProbeApiRequester requester;
 
@@ -137,7 +137,7 @@ int ListCountries(const CommonOptions& options)
 			break;
 		}
 
-		cout << setw(nWidth1) << info.sCode << " " << setw(nWidth2) << left << info.sName << right << " " << setw(nWidth3) << info.nProbes << endl;
+		cout << setw(nWidth1) << info.sCode << " " << setw(nWidth2) << left << info.sName << resetiosflags(ios_base::adjustfield) << " " << setw(nWidth3) << info.nProbes << endl;
 
 		if (g_bTerminateProgram)
 			throw PException("ListCountries: Terminate Program");
@@ -163,7 +163,7 @@ int ListAsns(const CommonOptions& options)
 
 	const int nWidth1 = 8;
 	const int nWidth2 = 6;
-	cout << setw(nWidth1) << left << "ASN id" << right << " " << setw(nWidth2) << "Hosts" << " " << "ASN name" << endl;
+	cout << setw(nWidth1) << left << "ASN id" << resetiosflags(ios_base::adjustfield) << " " << setw(nWidth2) << "Probes" << " " << "ASN name" << endl;
 
 	ProbeApiRequester requester;
 
@@ -263,7 +263,7 @@ int ListAsns(const CommonOptions& options)
 			break;
 		}
 
-		cout << setw(nWidth1) << left << info.probe.asn.sId << right << " " << setw(nWidth2) << info.nProbes << " " << info.probe.asn.sName << endl;
+		cout << setw(nWidth1) << left << info.probe.asn.sId << resetiosflags(ios_base::adjustfield) << " " << setw(nWidth2) << info.nProbes << " " << info.probe.asn.sName << endl;
 
 		if (g_bTerminateProgram)
 			throw PException("ListAsns: loop3: Terminate Program");

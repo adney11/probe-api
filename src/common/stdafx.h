@@ -12,12 +12,16 @@
 #include "compiler.h"
 
 #include <stdint.h>
+#include <string.h>		// for memcmp
 #include <assert.h>
+#include <limits.h>		// for INT_MAX
+#include <stdlib.h>		// for strtoul
 
 #include <iostream>
 #include <iomanip>
 #include <memory>
 #include <algorithm>
+#include <chrono>
 
 #include <sstream>
 #define OSSFMT(expr)	(static_cast<std::ostringstream&>(std::ostringstream() << expr).str())
@@ -26,6 +30,7 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <set>
 
 //------------------------------------------------------
 

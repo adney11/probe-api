@@ -10,15 +10,33 @@
 
 //------------------------------------------------------
 
+struct ApplicationStats;
+extern ApplicationStats* g_pStats;
+
+//------------------------------------------------------
+
 struct ApplicationStats
 {
 	int64_t		nSent = 0;
 	int64_t		nReceived = 0;
+	std::chrono::time_point<std::chrono::system_clock>	nStartTime;
 
 	std::string	sTarget;
 
 	ApplicationStats(const std::string& sTarget_) : sTarget(sTarget_)
-	{}
+	{
+		nStartTime = std::chrono::system_clock::now();
+		g_pStats = this;
+	}
+	~ApplicationStats()
+	{
+		g_pStats = nullptr;
+	}
+
+	int64_t GetTimeElapsedMs() const
+	{
+		return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - nStartTime).count();
+	}
 };
 
 //------------------------------------------------------

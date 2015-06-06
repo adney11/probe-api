@@ -1,5 +1,7 @@
 # External dependencies
-deps
+build
+build2
+openssl_include_prepared
 
 # Auto-generated MSVC files
 *.suo

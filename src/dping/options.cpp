@@ -14,19 +14,6 @@ using namespace std;
 
 //------------------------------------------------------
 
-ApplicationOptions::ApplicationOptions()
-	: bVerbose(false)
-	, bDebug(false)
-	, nMaxTimeoutMs(DEFAULT_PING_TIMEOUT)
-	, nCount(DEFAULT_PING_COUNT)
-	, nTTL(DEFAULT_PING_TTL)
-	, nPacketSize(DEFAULT_PING_PACKET_SIZE)
-	, mode(MODE_UNKNOWN)
-{
-}
-
-//------------------------------------------------------
-
 string GetPrintVersion()
 {
 	return OSSFMT(VERSION_PRODUCT_NAME ": " FILE_INTERNAL_NAME " v." MAIN_PRODUCT_VERSION_STR_A << endl);
@@ -41,25 +28,32 @@ Usage: )" FILE_INTERNAL_NAME R"( --help
     --version
     --list-country [-v] [--debug]
     --list-asn code [-v] [--debug]
-    --country code [-n count] [-w timeout] [-v] [--debug] {target_name}
-    --asn id [-n count] [-w timeout] [-v] [--debug] {target_name}
+    --country code [-n count] [-w timeout] [-wa timeout] [--no-delays] [-v]
+                   [--debug] {target_name}
+    --asn id [-n count] [-w timeout] [-wa timeout] [--no-delays] [-v] [--debug]
+             {target_name}
 
 Options:
     {target_name}  Destination host IP or domain name.
 
     --help          Display this help.
     --version       Display detailed program version, copyright notices.
-    --country code  Specify source addresses 2 letter country code (ISO 3166-1 alpha-2).)"
+    --country code  Specify source addresses 2 letter country code
+                    (ISO 3166-1 alpha-2).)"
 #ifdef DO_BY_COUNTRY_BY_DEFAULT
 R"(
-                    Using source addresses from country with most of hosts available is a default setting.)"
+                    Using source addresses from country with most of probes
+                    available is a default setting.)"
 #endif
 R"(
-    --asn id        Use source addresses from specified ASN (autonomous system number) network.
-    -n count        Number of echo requests to send.
-    -w timeout      Timeout in milliseconds to wait for each reply.
+    --asn id        Use source addresses from specified ASN
+                    (autonomous system number) network.
+    -n count        Number of probes (hosts to make network requests from).
+    -w timeout      Timeout in milliseconds to wait for single ping.
+    -wa timeout     Timeout in milliseconds to wait for all probes.
     --list-country  List available countries.
     --list-asn code List ASNs for specified 2 letter country code.
+    --no-delays     Disable delays during printing of results to console.
     -v              Verbose output
     --debug         Additional debug output
 
@@ -93,7 +87,7 @@ void CheckArgumentParameterNotEmpty(const string& sArg, const string& sParam)
 template<class T>
 void PrintOption(const char* name, const T& v)
 {
-	cout << "options: " << setw(10) << left << name << right << " = " << v << endl;
+	cout << "options: " << setw(10) << left << name << resetiosflags(ios_base::adjustfield) << " = " << v << endl;
 }
 
 //------------------------------------------------------
@@ -107,7 +101,9 @@ void ApplicationOptions::Print() const
 
 	PrintOption("verbose", bVerbose);
 	PrintOption("debug", bDebug);
-	PrintOption("timeout", nMaxTimeoutMs);
+	PrintOption("noDelays", bNoDelays);
+	PrintOption("ping timeout", nTimeoutPingMs);
+	PrintOption("total timeout", nTimeoutTotalMs);
 	PrintOption("count", nCount);
 	//PrintOption("packet size", nPacketSize);
 	PrintOption("ttl", nTTL);
@@ -116,6 +112,13 @@ void ApplicationOptions::Print() const
 		PrintOption("mode arg", sModeArgument);
 	if (!sTarget.empty())
 		PrintOption("target", sTarget);
+}
+
+//------------------------------------------------------
+
+void ApplicationOptions::RecalculateTotalTimeout()
+{
+	nTimeoutTotalMs = nTimeoutPingMs + 2000;
 }
 
 //------------------------------------------------------
@@ -131,6 +134,7 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 		}
 
 		bool bTargetSet = false;
+		RecalculateTotalTimeout();
 
 		for (int i = 1; i < argc; ++i)
 		{
@@ -172,6 +176,10 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 				bDebug = true;
 				cout << "Debug mode ON" << endl;
 			}
+			else if (sArg == "--no-delay" || sArg == "--no-delays" || sArg == "--no-wait")
+			{
+				bNoDelays = true;
+			}
 			else if (sArg == "-n" && !bLastArg)
 			{
 				const string sNextArg = argv[++i];
@@ -182,13 +190,14 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 			{
 				const string sNextArg = argv[++i];
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nMaxTimeoutMs = stoul(sNextArg);
+				nTimeoutPingMs = stoul(sNextArg);
+				RecalculateTotalTimeout();
 			}
-			else if (sArg == "-h" && !bLastArg)
+			else if (sArg == "-wt" && !bLastArg)
 			{
 				const string sNextArg = argv[++i];
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nTTL = stoul(sNextArg);
+				nTimeoutTotalMs = stoul(sNextArg);
 			}
 			else if (sArg == "--country" && !bLastArg)
 			{
@@ -204,19 +213,19 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 				mode = MODE_DO_BY_ASN;
 				sModeArgument = sNextArg;
 			}
-			else if (sArg == "--list-country")
+			else if (sArg == "--list-country" || sArg == "--list-countries")
 			{
 				mode = MODE_GET_COUNTRIES;
 				sModeArgument.clear();
-				nCount = UINT_MAX;
+				nCount = UINT_MAX;	// display ALL items from requested list
 			}
-			else if (sArg == "--list-asn" && !bLastArg)
+			else if ((sArg == "--list-asn" || sArg == "--list-asns") && !bLastArg)
 			{
 				const string sNextArg = argv[++i];
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
 				mode = MODE_GET_ASNS;
 				sModeArgument = sNextArg;
-				nCount = UINT_MAX;
+				nCount = UINT_MAX;	// display ALL items from requested list
 			}
 			else if ((
 #ifdef DO_BY_COUNTRY_BY_DEFAULT

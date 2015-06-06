@@ -26,7 +26,7 @@ public:
 		std::string		sUrl;
 		//std::string		sBody;
 
-		std::list<std::pair<std::string, std::string>> headers;
+		std::list<std::pair<std::string, std::string> > headers;
 		std::string		sUserAgent;
 		std::string		sReferer;
 

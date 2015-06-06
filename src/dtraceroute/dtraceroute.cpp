@@ -8,6 +8,52 @@
 
 using namespace std;
 
+#ifdef DEST_OS_WINDOWS
+#define PRINT_AS_WINDOWS
+#endif
+
+//------------------------------------------------------
+
+class JobType;
+JobType* g_pJob = nullptr;
+ApplicationStats* g_pStats = nullptr;
+
+//------------------------------------------------------
+// Windows sample: (Win 8.1)
+
+// c:\bin>tracert 8.8.8.8
+// 
+// Tracing route to google-public-dns-a.google.com [8.8.8.8]
+// over a maximum of 30 hops:
+// 
+//   1    <1 ms    <1 ms    <1 ms  10.168.0.1
+//   2     3 ms     3 ms     3 ms  134.17.128.1
+//   3     2 ms     2 ms     1 ms  172.30.65.36
+//   4     2 ms     2 ms     2 ms  172.30.65.25
+//   5    43 ms     2 ms     2 ms  185.32.224.156
+//   6    13 ms    12 ms    12 ms  188.254.103.221
+//   7    28 ms    15 ms    12 ms  95.167.95.222
+//   8    47 ms    44 ms    44 ms  79.133.94.86
+//   9    13 ms    13 ms    14 ms  216.239.47.143
+//  10    13 ms    13 ms    13 ms  google-public-dns-a.google.com [8.8.8.8]
+// 
+// Trace complete.
+// 
+// c:\bin>
+
+//------------------------------------------------------
+// Linux sample: (ubuntu)
+
+// sergey@ubuntu:$ traceroute 8.8.8.8
+// traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
+//  1  192.168.163.2 (192.168.163.2)  0.160 ms  0.109 ms  0.068 ms
+//  2  * * *
+//  3  * * *
+// ...
+// 29  * * *
+// 30  * * *
+// sergey@ubuntu:$
+
 //------------------------------------------------------
 
 class JobType
@@ -36,6 +82,11 @@ public:
 			sSearchDetails = "{ARG}";
 			break;
 		}
+		g_pJob = this;
+	}
+	~JobType()
+	{
+		g_pJob = nullptr;
 	}
 
 	string GetUrl(const ApplicationStats& stats, const string& sSearchArgument, const string& sTarget) const
@@ -48,8 +99,8 @@ public:
 			<< "?" << sSearchArgName << "=" << sSearchArgument
 			<< "&destination=" << sTarget
 			<< "&probeslimit=" << nRequestedProbeCount
-			<< "&ttl=" << options.nTTL
-			<< "&timeout=" << options.nMaxTimeoutMs);
+			<< "&ttl=" << options.nMaxHops
+			<< "&timeout=" << options.nTimeoutTotalMs);
 
 		return sUrl;
 	}
@@ -77,39 +128,75 @@ public:
 
 	void PrintHeaderBeforeSearchArg() const
 	{
+#ifdef PRINT_AS_WINDOWS
 		// Tracing route to 1.1.1.2 over a maximum of 30 hops
+		// 
+		// Tracing route to google-public-dns-a.google.com [8.8.8.8]
+		// over a maximum of 30 hops:
+		// 
 		cout << endl;
 		cout << "Tracing route to " << options.sTarget;
+#else
+		// traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
+		cout << "traceroute to " << options.sTarget << " (" << options.sTarget << ")";
+#endif
 	}
 
 	void PrintHeaderAfterSearchArg(const string& sSearchArgument) const
 	{
+#ifdef PRINT_AS_WINDOWS
+		// Tracing route to 1.1.1.2 over a maximum of 30 hops
+		// 
+		// Tracing route to google-public-dns-a.google.com [8.8.8.8]
+		// over a maximum of 30 hops:
+		// 
 		cout << " from " << FormatSearchDetails(sSearchArgument) << ":" << endl;
-		cout << "over a maximum of " << options.nTTL << " hops:" << endl;
+		cout << "over a maximum of " << options.nMaxHops << " hops:" << endl;
 		cout << endl;
+#else
+		// traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
+		cout << " from " << FormatSearchDetails(sSearchArgument) << ", " << options.nMaxHops << " hops max, " << options.nPacketSize << " byte packets" << endl;
+#endif
 	}
 
 	void PrintJobStart(const ProbeAPI::ProbeInfo& info) const
 	{
+#ifdef PRINT_AS_WINDOWS
 		// Tracing route to google-public-dns-a.google.com [8.8.8.8]
 		// over a maximum of 30 hops:
-		if (options.bVerbose)
+		//if (options.bVerbose)
 		{
-			cout << "Tracing route to [" << info.tracert.sTarget << "] from " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
-			cout << "over a maximum of " << options.nTTL << " hops:" << endl;
+			cout << "Tracing route to " << info.tracert.sTarget << " from " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
+			cout << "over a maximum of " << options.nMaxHops << " hops:" << endl;
 		}
+#else
+		// Tracing route to google-public-dns-a.google.com [8.8.8.8]
+		// over a maximum of 30 hops:
+		//if (options.bVerbose)
+		{
+			cout << "traceroute to " << options.sTarget << " (" << options.sTarget << ")";
+			cout << " from " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << ", " << options.nMaxHops << " hops max, " << options.nPacketSize << " byte packets" << endl;
+		}
+#endif
 	}
 
-	void PrintHopStart(const int nHop) const
+	void PrintHopStart(const int nHop, const ProbeAPI::TracertHopResults& hop) const
 	{
+#ifdef PRINT_AS_WINDOWS
 		//   1    <1 ms    <1 ms    <1 ms  10.10.0.1
 		//   2     3 ms     3 ms     4 ms  124.47.118.1
 		//   3     *        *        *     124.47.118.100
 		cout << setw(3) << nHop;
+#else
+		//  1  192.168.163.2 (192.168.163.2)  0.160 ms  0.109 ms  0.068 ms
+		//  2  * * *
+		cout << setw(2) << nHop << "  " << hop.sReplyHost << " (" << hop.sReplyHost << ")";
+#endif
 	}
 
 	void PrintHopTry(const ProbeAPI::PingResult& ping) const
 	{
+#ifdef PRINT_AS_WINDOWS
 		const int nWidth = 5;
 		if (ping.bTimeout)
 		{
@@ -123,18 +210,35 @@ public:
 		{
 			cout << " " << setw(nWidth) << ping.nTimeMs << " ms";
 		}
+#else
+		if (ping.bTimeout)
+		{
+			cout << " *";
+		}
+		else
+		{
+			cout << "  " << ping.nTimeMs << ".000 ms";
+		}
+#endif
 	}
 
 	void PrintHopFinish(const ProbeAPI::TracertHopResults& hop) const
 	{
+#ifdef PRINT_AS_WINDOWS
 		cout << "  " << hop.sReplyHost << endl;
+#else
+		cout << endl;
+#endif
 	}
 
 	void PrintJobFinish() const
 	{
+#ifdef PRINT_AS_WINDOWS
 		cout << endl;
 		cout << "Trace complete." << endl;
 		cout << endl;
+#else
+#endif
 	}
 
 	void PrintFooter(const ApplicationStats& stats) const
@@ -151,7 +255,17 @@ protected:
 
 //------------------------------------------------------
 
-void PrintPackOfResults(const JobType& job, const vector<ProbeAPI::ProbeInfo>& items, ApplicationStats& stats)
+void PrintFinalStats()
+{
+	if (g_pJob && g_pStats)
+	{
+		g_pJob->PrintFooter(*g_pStats);
+	}
+}
+
+//------------------------------------------------------
+
+void PrintPackOfResults(const JobType& job, const ApplicationOptions& options, const vector<ProbeAPI::ProbeInfo>& items, ApplicationStats& stats)
 {
 	bool bFirstIteration = (0 == stats.nSent);
 	for (const auto& info : items)
@@ -167,14 +281,17 @@ void PrintPackOfResults(const JobType& job, const vector<ProbeAPI::ProbeInfo>& i
 			if (g_bTerminateProgram)
 				throw PException("PrintPackOfResults: loop2: Terminate Program");
 
-			job.PrintHopStart(++iHop);
+			job.PrintHopStart(++iHop, hop);
 
 			for (const auto& ping : hop.vectResults)
 			{
 				if (g_bTerminateProgram)
 					throw PException("PrintPackOfResults: loop3: Terminate Program");
 
-				DoSleep(ping, bFirstIteration);
+				if (!options.bNoDelays)
+				{
+					DoSleep(info.ping, bFirstIteration);
+				}
 				job.PrintHopTry(ping);
 			}
 
@@ -193,7 +310,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 	const string sUrl = job.GetUrl(stats, sSearchArgument, options.sTarget);
 
 	ProbeApiRequester::Request request(sUrl);
-	request.nHttpTimeoutSec += options.nMaxTimeoutMs / 1000;
+	request.nHttpTimeoutSec += options.nTimeoutTotalMs / 1000;
 
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
@@ -212,7 +329,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 		throw PException("MakePackOfJobs: " + e.str(), eRetCode::ApiParsingFail);
 	}
 
-	PrintPackOfResults(job, items, stats);
+	PrintPackOfResults(job, options, items, stats);
 
 	// hack to have only one call to this function:
 	stats.nSent = options.nCount;
@@ -226,6 +343,8 @@ int DoJob(const ApplicationOptions& options)
 {
 	int res = eRetCode::OK;
 
+	ApplicationStats stats(options.sTarget);
+
 	const JobType job(options);
 	job.PrintHeaderBeforeSearchArg();
 
@@ -233,8 +352,6 @@ int DoJob(const ApplicationOptions& options)
 	const string sSearchArgument = job.CalculateSearchArgument(requester);
 
 	job.PrintHeaderAfterSearchArg(sSearchArgument);
-
-	ApplicationStats stats(options.sTarget);
 
 	try
 	{

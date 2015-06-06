@@ -8,9 +8,13 @@
 
 //------------------------------------------------------
 
+#if defined(RC_INVOKED) && !defined(WIN32)
+#define WIN32	// this is used during .rc file compilation in Windows
+#endif
+
 #if defined(__linux__)
 #define DEST_OS_LINUX
-#elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+#elif defined(WIN32)
 #define DEST_OS_WINDOWS
 #else
 #error Unsupported OS!
