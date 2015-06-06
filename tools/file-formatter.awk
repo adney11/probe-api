@@ -15,12 +15,12 @@ END{	# end section
 		# Catch macroses like:
 		# {{command/line/PROGRAM ARGUMENT1 ARGUMENT2}}
 
-		if(match(a[i], /^{{(.+)}}/, m))
+		if(match(a[i], "/^\{\{(.+)\}\}/", m))
 		{
 			# and replace them by results of executing external process:
 			cmd = m[1]
 			fflush()
-			system(cmd);
+			system(cmd)
 		}
 		else
 		{
