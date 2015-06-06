@@ -15,13 +15,13 @@
 #include <string.h>		// for memcmp
 #include <assert.h>
 #include <limits.h>		// for INT_MAX
-#include <time.h>		// for clock_t
 #include <stdlib.h>		// for strtoul
 
 #include <iostream>
 #include <iomanip>
 #include <memory>
 #include <algorithm>
+#include <chrono>
 
 #include <sstream>
 #define OSSFMT(expr)	(static_cast<std::ostringstream&>(std::ostringstream() << expr).str())

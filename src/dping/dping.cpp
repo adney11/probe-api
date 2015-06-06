@@ -222,11 +222,10 @@ public:
 		// --- 8.8.8.8 ping statistics ---
 		// 13 packets transmitted, 13 received, 0% packet loss, time 12025ms
 		// rtt min/avg/max/mdev = 13.521/14.979/18.114/1.232 ms
-		cout << endl;
 		cout << "--- " << options.sTarget << " ping statistics ---" << endl;
 		cout << stats.nSent << " packets transmitted, " << stats.nReceived << " received, "
 			<< ((stats.nSent - stats.nReceived) * 100 / (stats.nSent ? stats.nSent : 1)) << "% packet loss, time "
-			<< fixed << setprecision(3) << stats.GetTimeElapsedMs() << "ms" << endl;
+			<< stats.GetTimeElapsedMs() << "ms" << endl;
 
 		if (stats.nReceived > 0)
 		{

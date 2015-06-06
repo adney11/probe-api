@@ -78,7 +78,9 @@ void signal_handler(const int signal)
 	ostringstream buf;
 	buf << endl;
 	buf << "Caught signal " << decode_signal(signal) << ". Program terminated." << endl;
+#ifdef DEST_OS_WINDOWS
 	buf << endl;
+#endif
 
 	switch (signal)
 	{
@@ -104,6 +106,9 @@ void signal_handler(const int signal)
 	g_bTerminateProgram = true;
 	HttpRequester::bTerminateAllRequests = true;
 
+	// In Windows signal handler is called from another thread. So we can signal primary thread
+	// we want to exit and wait until program will be terminated in main thread softly.
+	// In Linux it looks like handler is executed in the same thread and waiting for main thread is just useless blocking.
 #ifdef DEST_OS_WINDOWS
 	MySleep(5000);
 	cout << flush;

@@ -103,14 +103,14 @@ struct ApplicationStats
 {
 	int64_t		nSent = 0;
 	int64_t		nReceived = 0;
-	clock_t		nStartTime = 0;
+	std::chrono::time_point<std::chrono::system_clock>	nStartTime;
 	MathCollection	pings;
 
 	std::string	sTarget;
 
 	ApplicationStats(const std::string& sTarget_) : sTarget(sTarget_)
 	{
-		nStartTime = clock();
+		nStartTime = std::chrono::system_clock::now();
 		g_pStats = this;
 	}
 	~ApplicationStats()
@@ -120,7 +120,7 @@ struct ApplicationStats
 
 	int64_t GetTimeElapsedMs() const
 	{
-		return int64_t(double(clock() - nStartTime) * 1000 / CLOCKS_PER_SEC);
+		return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - nStartTime).count();
 	}
 };
 
