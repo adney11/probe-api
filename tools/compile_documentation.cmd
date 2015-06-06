@@ -4,7 +4,7 @@ set path=%~dp0../Release;%PATH%
 pushd "%~dp0"
 
 echo Rebuilding documentation...
-echo Note! You need the following unix utils available via PATH variable:
+echo Note! You need the following unix utils available via PATH environment variable:
 echo - gawk
 REM pause
 echo.

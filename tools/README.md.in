@@ -102,5 +102,5 @@ sudo rpm -i probe-api-tools-******.x86_64.rpm
 ## Credits
 
 ```
-{{dping --version | gawk "BEGIN { desc = \"strip_first_line\" } { a[n++] = $0 } END { for (i=1; i<n; i++) print a[i] }" }}
+{{dping --version | gawk -f ./strip_first_line.awk}}
 ```

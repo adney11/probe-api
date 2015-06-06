@@ -4,7 +4,7 @@ PATH=$(dirname "$0")/../bin:$PATH
 pushd "$(dirname "$0")"
 
 echo Rebuilding documentation...
-echo Note! You need the following unix utils available via PATH variable:
+echo Note! You need the following unix utils available via PATH environment variable:
 echo - gawk
 echo 
 
