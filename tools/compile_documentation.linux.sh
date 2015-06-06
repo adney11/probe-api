@@ -11,7 +11,7 @@ echo
 # ======================================================
 echo README.md...
 
-gawk -f ./file-formatter.awk README.md.in > ../README2.md
+gawk -f ./file-formatter.awk README.md.in > ../README.md
 
 # ======================================================
 
