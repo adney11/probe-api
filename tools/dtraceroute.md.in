@@ -6,27 +6,27 @@
 ## Usage
 
 ```
-{{dtraceroute --help | awk "BEGIN { desc = "strip_first_two_lines" } { a[i++] = $0 } END { for (j=2; j<i; j++) print a[j] }"}}
+{{dtraceroute --help | gawk "BEGIN { desc = \"strip_first_two_lines\" } { a[n++] = $0 } END { for (i=2; i<n; i++) print a[i] }"}}
 ```
 
 ### Example
 
 #### --list-country
 ```
-{{dtraceroute --list-country | awk -v first=10 -v last=2 -v insert=1 "{ a[i++] = $0 } END { b=1; for (j=0; j<i; j++) if(j < first || j >= i-last) print a[j]; else if(b>0) { for(k=0; k<insert; k++) print \"...\"; b=0; } }"}}
+{{dtraceroute --list-country | gawk -v first=10 -v last=2 -v insert=1 "{ a[n++] = $0 } END { b=1; for (i=0; i<n; i++) if(i < first || i >= n-last) print a[i]; else if(b>0) { for(k=0; k<insert; k++) print \"...\"; b=0; } }"}}
 ```
 
 #### --list-asn
 ```
-{{dtraceroute --list-asn ES | awk -v first=10 -v last=2 -v insert=1 "{ a[i++] = $0 } END { b=1; for (j=0; j<i; j++) if(j < first || j >= i-last) print a[j]; else if(b>0) { for(k=0; k<insert; k++) print \"...\"; b=0; } }"}}
+{{dtraceroute --list-asn ES | gawk -v first=10 -v last=2 -v insert=1 "{ a[n++] = $0 } END { b=1; for (i=0; i<n; i++) if(i < first || i >= n-last) print a[i]; else if(b>0) { for(k=0; k<insert; k++) print \"...\"; b=0; } }"}}
 ```
 
 #### --country
 ```
-{{dtraceroute --no-delays --country US 8.8.8.8 | awk -v first=20 -v last=14 -v insert=3 "{ a[i++] = $0 } END { b=1; for (j=0; j<i; j++) if(j < first || j >= i-last) print a[j]; else if(b>0) { for(k=0; k<insert; k++) print \"...\"; b=0; } }"}}
+{{dtraceroute --no-delays --country US 8.8.8.8 | gawk -v first=20 -v last=14 -v insert=3 "{ a[n++] = $0 } END { b=1; for (i=0; i<n; i++) if(i < first || i >= n-last) print a[i]; else if(b>0) { for(k=0; k<insert; k++) print \"...\"; b=0; } }"}}
 ```
 
 #### --asn
 ```
-{{dtraceroute --no-delays --asn AS3320 8.8.8.8 | awk -v first=20 -v last=14 -v insert=3 "{ a[i++] = $0 } END { b=1; for (j=0; j<i; j++) if(j < first || j >= i-last) print a[j]; else if(b>0) { for(k=0; k<insert; k++) print \"...\"; b=0; } }"}}
+{{dtraceroute --no-delays --asn AS3320 8.8.8.8 | gawk -v first=20 -v last=14 -v insert=3 "{ a[n++] = $0 } END { b=1; for (i=0; i<n; i++) if(i < first || i >= n-last) print a[i]; else if(b>0) { for(k=0; k<insert; k++) print \"...\"; b=0; } }"}}
 ```
