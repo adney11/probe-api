@@ -91,16 +91,22 @@ public:
 
 	string GetUrl(const ApplicationStats& stats, const string& sSearchArgument, const string& sTarget) const
 	{
+		// Documentation:
+		// https://www.mashape.com/optimalsoftware/freeprobeapi/#starttracerttestbycountry
+		// https://www.mashape.com/optimalsoftware/freeprobeapi/#starttracerttestbyasn
 		const auto nRestJobs = options.nCount - stats.nSent;
-		const auto nDesiredProbeCount = nRestJobs * 4;
+		const auto nDesiredProbeCount = nRestJobs * 2;
 		const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
 
 		const string sUrl = OSSFMT(sMethod
 			<< "?" << sSearchArgName << "=" << sSearchArgument
-			<< "&destination=" << sTarget
+			<< "&destination=" << sTarget	// Comma-separated list of IP addresses or hostnames that will be tested
 			<< "&probeslimit=" << nRequestedProbeCount
-			<< "&ttl=" << options.nMaxHops
-			<< "&timeout=" << options.nTimeoutTotalMs);
+			<< "&count=3"					// Number of pings to each hop. Default: 3
+			<< "&ttl=" << options.nMaxHops	// Max number of hops.
+			<< "&sleep=100"					// Sleep between pings in milliseconds (default 300ms).
+			<< "&commandTimeout=" << options.nTimeoutPingMs	// Ping timeout in milliseconds that one ping can take (default 5000ms).
+			<< "&timeout=" << options.nTimeoutTotalMs);	// Maximum time available to probes for testing in milliseconds (default 6000). The whole test is most likely to last longer then this value.
 
 		return sUrl;
 	}
