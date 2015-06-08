@@ -104,7 +104,8 @@ void ApplicationOptions::Print() const
 	PrintOption("noDelays", bNoDelays);
 	PrintOption("ping timeout", nTimeoutPingMs);
 	PrintOption("total timeout", nTimeoutTotalMs);
-	PrintOption("count", nCount);
+	PrintOption("nProbesLimit", nProbesLimit);
+	PrintOption("nResultsLimit", nResultsLimit);
 	//PrintOption("packet size", nPacketSize);
 	PrintOption("ttl", nTTL);
 	PrintOption("mode", mode);
@@ -184,20 +185,21 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 			{
 				const string sNextArg = argv[++i];
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nCount = stoul(sNextArg);
+				nProbesLimit = stoui32(sNextArg);
+				nResultsLimit = stoui32(sNextArg);	// for list ASNs and list countries modes ONLY
 			}
 			else if (sArg == "-w" && !bLastArg)
 			{
 				const string sNextArg = argv[++i];
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nTimeoutPingMs = stoul(sNextArg);
+				nTimeoutPingMs = stoui32(sNextArg);
 				RecalculateTotalTimeout();
 			}
 			else if (sArg == "-wt" && !bLastArg)
 			{
 				const string sNextArg = argv[++i];
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nTimeoutTotalMs = stoul(sNextArg);
+				nTimeoutTotalMs = stoui32(sNextArg);
 			}
 			else if (sArg == "--country" && !bLastArg)
 			{
@@ -217,7 +219,6 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 			{
 				mode = MODE_GET_COUNTRIES;
 				sModeArgument.clear();
-				nCount = UINT_MAX;	// display ALL items from requested list
 			}
 			else if ((sArg == "--list-asn" || sArg == "--list-asns") && !bLastArg)
 			{
@@ -225,7 +226,6 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
 				mode = MODE_GET_ASNS;
 				sModeArgument = sNextArg;
-				nCount = UINT_MAX;	// display ALL items from requested list
 			}
 			else if ((
 #ifdef DO_BY_COUNTRY_BY_DEFAULT

@@ -217,6 +217,16 @@ void findandreplace(std::string& source, const std::string& find, const std::str
 
 //------------------------------------------------------
 
+inline uint32_t stoui32(const std::string& s)
+{
+	std::istringstream reader(s);
+	uint32_t val = 0;
+	reader >> val;
+	return val;
+}
+
+//------------------------------------------------------
+
 #ifdef __MINGW32__
 // MinGW gcc does not support conversion function from STL:
 // http://stackoverflow.com/questions/8542221/stdstoi-doesnt-exist-in-g-4-6-1-on-mingw
