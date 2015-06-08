@@ -181,7 +181,7 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 			{
 				bNoDelays = true;
 			}
-			else if (sArg == "-n" && !bLastArg)
+			else if ((sArg == "-n" || sArg == "--probes") && !bLastArg)
 			{
 				const string sNextArg = argv[++i];
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
