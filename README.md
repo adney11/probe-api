@@ -26,12 +26,11 @@ Tested environments and compilers:
 * gcc 4.9.2 (tested in Ubuntu 15.04)
 
 ### Compilation in Linux
-In Linux you will need to install some packets prior to building projects. Please run the following commands:
-Required packets:
+In Linux you will need to install some packages prior to building projects. Please run the following commands to install required packages:
 ```
 sudo apt-get install git cmake libcurl4-openssl-dev make gcc
 ```
-Optional packets:
+Installing optional packages (needed in case of building documentation, building and installing RPM):
 ```
 sudo apt-get install librpmbuild3 alien bash gawk
 ```
