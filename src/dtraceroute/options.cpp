@@ -28,9 +28,9 @@ Usage: )" FILE_INTERNAL_NAME R"( --help
     --version
     --list-country [-v] [--debug]
     --list-asn code [-v] [--debug]
-    --country code [-n count] [-w timeout] [-h max_hops] [-hf max_hops]
+    --country code [-n probes] [-w timeout] [-h max_hops] [-hf max_hops]
                    [-wa timeout] [--no-delays] [-v] [--debug] {target_name}
-    --asn id [-n count] [-w timeout] [-h max_hops] [-hf max_hops]
+    --asn id [-n probes] [-w timeout] [-h max_hops] [-hf max_hops]
              [-wa timeout] [--no-delays] [-v] [--debug] {target_name}
 
 Options:
@@ -48,7 +48,7 @@ R"(
 R"(
     --asn id        Use source addresses from specified ASN
                     (autonomous system number) network.
-    -n count        Number of probes: hosts to make network requests from.
+    -n probes       Probes limit: number of hosts to make requests from.
     -w timeout      Timeout in milliseconds to wait for single ping.
     -wa timeout     Timeout in milliseconds to wait for all probes.
     -h max_hops     Maximum number of hops to search for target (aka TTL).
