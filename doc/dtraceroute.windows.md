@@ -1,7 +1,7 @@
 # dtraceroute
 
 ## About
-`dtraceroute` is a tool which works almost the same as Windows and Linux built-in tool, but all network operations are going from different hosts in internet.
+`dtraceroute` is a tool for distributed trace route testing of specified destination host. This tool works almost the same as Windows and Linux built-in tools, but all network operations are going from different hosts in internet.
 
 ## Usage
 
