@@ -31,7 +31,8 @@ public:
 	bool		bNoDelays		= false;
 	uint32_t	nTimeoutPingMs	= 3000;
 	uint32_t	nTimeoutTotalMs	= nTimeoutPingMs;
-	uint32_t	nCount			= 4;
+	uint32_t	nProbesLimit	= 4;
+	uint32_t	nResultsLimit	= UINT32_MAX;		// for list ASNs and list countries modes; UINT32_MAX - display ALL items from requested list
 	uint16_t	nPacketSize		= 32;
 	uint32_t	nTTL			= 128;
 

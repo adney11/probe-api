@@ -91,8 +91,8 @@ public:
 
 	string GetUrl(const ApplicationStats& stats, const string& sSearchArgument, const string& sTarget) const
 	{
-		const auto nRestJobs = options.nCount - stats.nSent;
-		const auto nDesiredProbeCount = nRestJobs * 4;
+		const auto nRestProbes = options.nProbesLimit - stats.nSent;
+		const auto nDesiredProbeCount = nRestProbes * 4;
 		const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
 
 		const string sUrl = OSSFMT(sMethod
@@ -120,7 +120,7 @@ public:
 		string sSearchArgument = options.sModeArgument;
 		if (ApplicationOptions::MODE_DO_BY_COUNTRY == options.mode && DEFAULT_COUNTRY_META == sSearchArgument)
 		{
-			const CommonOptions options2(options.bDebug, options.bVerbose, options.sModeArgument, options.nCount);
+			const CommonOptions options2(options.bDebug, options.bVerbose, options.sModeArgument, options.nResultsLimit);
 			sSearchArgument = GetDefaultSourceCountry(requester, options2);
 		}
 		return sSearchArgument;
@@ -332,7 +332,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 	PrintPackOfResults(job, options, items, stats);
 
 	// hack to have only one call to this function:
-	stats.nSent = options.nCount;
+	stats.nSent = options.nProbesLimit;
 
 	return eRetCode::OK;
 }
@@ -355,7 +355,7 @@ int DoJob(const ApplicationOptions& options)
 
 	try
 	{
-		while (stats.nSent < options.nCount)
+		while (stats.nSent < options.nProbesLimit)
 		{
 			const auto nPreviousSend = stats.nSent;
 
@@ -390,7 +390,7 @@ int DoJob(const ApplicationOptions& options)
 
 int Application(const ApplicationOptions& options)
 {
-	const CommonOptions options2(options.bDebug, options.bVerbose, options.sModeArgument, options.nCount);
+	const CommonOptions options2(options.bDebug, options.bVerbose, options.sModeArgument, options.nResultsLimit);
 
 	switch (options.mode)
 	{
