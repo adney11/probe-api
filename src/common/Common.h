@@ -219,10 +219,13 @@ void findandreplace(std::string& source, const std::string& find, const std::str
 
 inline uint32_t stoui32(const std::string& s)
 {
-	std::istringstream reader(s);
-	uint32_t val = 0;
-	reader >> val;
-	return val;
+	const unsigned long lresult = stoul(s, 0, 10);
+	const uint32_t result = lresult;
+	if (result != lresult)
+	{
+		throw std::out_of_range("stoui32 got bad argument: " + s);
+	}
+	return result;
 }
 
 //------------------------------------------------------
