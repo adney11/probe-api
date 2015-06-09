@@ -55,7 +55,7 @@ set(PRODUCT_VERSION "1.3.29")
 #define FILE_INTERNAL_NAME				"dtraceroute"
 #endif
 #define MODVERSION						1
-#define MODREVISION						3
+#define MODREVISION						4
 #define MODSUBREVISION					PRODUCT_BUILD_VER
 #define MODRELEASE						0
 #endif
