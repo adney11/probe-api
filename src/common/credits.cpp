@@ -41,6 +41,7 @@ string FormatRetCode(const int nRetCode)
 string GetReturnCodeInfo()
 {
 	ostringstream buf;
+	buf << "Return Codes:" << endl;
 #undef DEF_RET_CODE
 #define DEF_RET_CODE(id)	buf << setw(5) << id << " - " <<  FormatRetCode(id)  << endl
 	DEF_RET_CODE(eRetCode::OK);
@@ -52,6 +53,17 @@ string GetReturnCodeInfo()
 	DEF_RET_CODE(eRetCode::OtherError);
 	DEF_RET_CODE(eRetCode::HardFailure);
 	return buf.str();
+}
+
+//------------------------------------------------------
+
+string GetDebugArgumentsHelp()
+{
+	const char* sHelpInfo = R"(
+    --api-url       Set Mashape API URL
+    --api-key       Set Mashape API key
+)";
+	return sHelpInfo;
 }
 
 //------------------------------------------------------

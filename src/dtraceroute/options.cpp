@@ -22,7 +22,7 @@ string GetPrintVersion()
 
 //------------------------------------------------------
 
-string GetPrintHelp()
+string GetPrintHelp(const ApplicationOptions& options)
 {
 	const string sHelpInfo = R"(
 Usage: )" FILE_INTERNAL_NAME R"( --help
@@ -59,9 +59,9 @@ R"(
     --no-delays     Disable delays during printing of results to console.
     -v              Verbose output
     --debug         Additional debug output
-
-Return Codes:
 )"
++ (options.bDebug ? GetDebugArgumentsHelp() : "")
++ "\n"
 + GetReturnCodeInfo()
 + R"(
 Examples:
@@ -157,27 +157,27 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 		for (int i = 1; i < argc; ++i)
 		{
 			const string sArg = argv[i];
-			const bool bFirstArg = (1 == i);
+			//const bool bFirstArg = (1 == i);
 			const bool bLastArg = (i + 1 == argc);
 
 			if (g_bTerminateProgram)
 				throw PException("ProcessCommandLine: Terminate Program");
 
-			if (bFirstArg && sArg == "--help")
+			if (sArg == "--help")
 			{
 				cout << GetPrintVersion();
-				cout << GetPrintHelp();
+				cout << GetPrintHelp(*this);
 				return eRetCode::OK;
 			}
 #ifdef DEST_OS_WINDOWS
-			if (bFirstArg && sArg == "/?")
+			if (sArg == "/?")
 			{
 				cout << GetPrintVersion();
-				cout << GetPrintHelp();
+				cout << GetPrintHelp(*this);
 				return eRetCode::OK;
 			}
 #endif
-			if (bFirstArg && sArg == "--version")
+			if (sArg == "--version")
 			{
 				cout << GetPrintVersion();
 				cout << GetPrintCredits();
@@ -231,6 +231,18 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
 				nMaxHopsFailed = stoui32(sNextArg);
 				RecalculateTotalTimeout();
+			}
+			else if (sArg == "--api-url" && !bLastArg)
+			{
+				const string sNextArg = argv[++i];
+				CheckArgumentParameterNotEmpty(sArg, sNextArg);
+				sMashapeUrl = sNextArg;
+			}
+			else if (sArg == "--api-key" && !bLastArg)
+			{
+				const string sNextArg = argv[++i];
+				CheckArgumentParameterNotEmpty(sArg, sNextArg);
+				sMashapeKey = sNextArg;
 			}
 			else if (sArg == "--country" && !bLastArg)
 			{

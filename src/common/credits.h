@@ -15,6 +15,8 @@ std::string GetPrintHelpSuggest();
 std::string FormatRetCode(const int nRetCode);
 std::string GetReturnCodeInfo();
 
+std::string GetDebugArgumentsHelp();
+
 std::string GetPrintCredits();
 
 //------------------------------------------------------
