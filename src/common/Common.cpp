@@ -87,6 +87,10 @@ ProbeApiRequester::Reply ProbeApiRequester::DoRequest(const ProbeApiRequester::R
 				if (parsedOK)
 				{
 					sMessage = root.get("message", "").asString();
+					if (sMessage.empty())
+					{
+						sMessage = root.get("Message", "").asString();
+					}
 				}
 			}
 
