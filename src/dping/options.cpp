@@ -133,7 +133,7 @@ void ApplicationOptions::Print() const
 
 void ApplicationOptions::RecalculateTotalTimeout()
 {
-	nTimeoutTotalMs = nTimeoutPingMs + 2000;
+	nTimeoutTotalMs = nTimeoutPingMs * nPingsPerProbe + nWaitBetweenPingsMs * (nPingsPerProbe - 1) + 2000;
 }
 
 //------------------------------------------------------
