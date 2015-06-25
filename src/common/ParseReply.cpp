@@ -83,7 +83,7 @@ ProbeAPI::PingResult::PingResult(const Json::Value& v)
 	else if (v.isString())
 	{
 		const string sVal = v.asString();
-		if (sVal == "-")
+		if (sVal == "-" || sVal == "TimedOut")
 		{
 			bTimeout = true;
 			nTimeMs = nDefaultVal;
