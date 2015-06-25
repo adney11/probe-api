@@ -60,8 +60,7 @@ string GetReturnCodeInfo()
 string GetDebugArgumentsHelp()
 {
 	const char* sHelpInfo = R"(
-    --api-url       Set Mashape API URL
-    --api-key       Set Mashape API key
+    --api-url       Set web API URL
 )";
 	return sHelpInfo;
 }

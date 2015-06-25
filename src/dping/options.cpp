@@ -55,6 +55,7 @@ R"(
     --list-country  List available countries.
     --list-asn code List ASNs for specified 2 letter country code.
     --no-delays     Disable delays during printing of results to console.
+    --api-key       Set web API key
     -v              Verbose output
     --debug         Additional debug output
 )"
