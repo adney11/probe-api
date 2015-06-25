@@ -95,19 +95,19 @@ public:
 		// https://www.mashape.com/optimalsoftware/freeprobeapi/#starttracerttestbycountry
 		// https://www.mashape.com/optimalsoftware/freeprobeapi/#starttracerttestbyasn
 		const auto nRestProbes = options.nProbesLimit - stats.nSent;
-		const auto nDesiredProbeCount = nRestProbes * 2;
-		const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
+		const auto nDesiredProbeCount = nRestProbes; // nRestProbes * 2;
+		const auto nRequestedProbeCount = nDesiredProbeCount; // nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
 
 		const string sUrl = OSSFMT(sMethod
 			<< "?" << sSearchArgName << "=" << sSearchArgument
-			<< "&destination=" << sTarget	// Comma-separated list of IP addresses or hostnames that will be tested
-			<< "&probeslimit=" << nRequestedProbeCount
-			<< "&count=3"					// Number of pings to each hop. Default: 3
-			<< "&ttl=" << options.nMaxHops	// Max number of hops.
-			<< "&sleep=100"					// Sleep between pings in milliseconds (default 300ms).
+			<< "&destination=" << sTarget					// Comma-separated list of IP addresses or hostnames that will be tested
+			<< "&probeslimit=" << nRequestedProbeCount		// Number of probes to use
+			<< "&count=" << options.nTriesPerHop			// Number of pings to each hop. Default: 3
+			<< "&ttl=" << options.nMaxHops					// Max number of hops.
+			<< "&sleep=" << options.nWaitBetweenPingsMs		// Sleep between pings in milliseconds (default 300ms).
 			<< "&maxFailedHops=" << options.nMaxHopsFailed	// max number of rows where all pings got timeout result
 			<< "&commandTimeout=" << options.nTimeoutPingMs	// Ping timeout in milliseconds that one ping can take (default 5000ms).
-			<< "&timeout=" << options.nTimeoutTotalMs);	// Maximum time available to probes for testing in milliseconds (default 6000). The whole test is most likely to last longer then this value.
+			<< "&timeout=" << options.nTimeoutTotalMs);		// Maximum time available to probes for testing in milliseconds (default 6000). The whole test is most likely to last longer then this value.
 
 		return sUrl;
 	}

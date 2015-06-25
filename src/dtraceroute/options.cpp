@@ -122,8 +122,8 @@ void ApplicationOptions::Print() const
 
 void ApplicationOptions::RecalculateTotalTimeout()
 {
-	const uint32_t nTriesPerHop = 3;
-	nTimeoutTotalMs = nTimeoutPingMs * nTriesPerHop * min(nMaxHopsFailed, nMaxHops) + 10 * nTriesPerHop * 500 + 2000;
+	nTimeoutTotalMs = (nTimeoutPingMs + nWaitBetweenPingsMs) * nTriesPerHop * min(nMaxHopsFailed, nMaxHops)
+		+ 10 * nTriesPerHop * (500 + nWaitBetweenPingsMs) + 2000;
 }
 
 //------------------------------------------------------
