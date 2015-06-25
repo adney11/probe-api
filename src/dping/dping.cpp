@@ -110,7 +110,7 @@ public:
 		// https://www.mashape.com/optimalsoftware/freeprobeapi/#startpingtestbyasn
 		const auto nRestProbes = options.nProbesLimit - stats.nSent;
 		const auto nDesiredProbeCount = nRestProbes; // nRestProbes * 2;
-		const auto nRequestedProbeCount = nDesiredProbeCount; // nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
+		const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
 
 		const string sUrl = OSSFMT(sMethod
 			<< "?" << sSearchArgName << "=" << sSearchArgument
