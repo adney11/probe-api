@@ -208,7 +208,24 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 
 		reply.bSucceeded = true;
 		reply.nHttpCode = curlpp::infos::ResponseCode::get(req);
-		reply.sContentType = curlpp::infos::ContentType::get(req);
+
+		// Unfortunately libcurl can return NULL value for CURLINFO_EFFECTIVE_URL and 
+		// currently curlpp does not support this and makes a crash.
+		// So here I used manual way to get content type:
+		//reply.sContentType = curlpp::infos::ContentType::get(req);
+		{
+			char * tmp = nullptr;
+			curlpp::InfoGetter::get<char*>(req, CURLINFO_CONTENT_TYPE, tmp);
+			if (tmp)
+			{
+				reply.sContentType = tmp;
+			}
+			else
+			{
+				reply.sContentType = "";
+			}
+		}
+
 		reply.sEffectiveUrl = curlpp::infos::EffectiveUrl::get(req);
 	}
 	catch (curlpp::LogicError& e)
