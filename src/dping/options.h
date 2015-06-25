@@ -6,14 +6,22 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "common/Common.h"			// for CommonOptions
+
 //------------------------------------------------------
 
 class ApplicationOptions
 {
 public:
+	ApplicationOptions();
 	void Print() const;
 	void RecalculateTotalTimeout();
 	int ProcessCommandLine(const int argc, const char* const argv[]);	// returns non-zero result if process exit required
+
+	CommonOptions GetCommonOptions() const
+	{
+		return CommonOptions(bDebug, bVerbose, sModeArgument, nResultsLimit, sMashapeUrl, sMashapeKey);
+	}
 
 public:
 	enum eMode
@@ -41,6 +49,9 @@ public:
 	eMode		mode			= MODE_UNKNOWN;
 	std::string	sModeArgument;
 	std::string	sTarget;
+
+	std::string sMashapeUrl;
+	std::string sMashapeKey;
 };
 
 //------------------------------------------------------

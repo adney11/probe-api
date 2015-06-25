@@ -14,12 +14,31 @@ extern volatile bool g_bTerminateProgram;
 
 //------------------------------------------------------
 
+struct CommonOptions
+{
+	const bool			bDebug;
+	const bool			bVerbose;
+	const std::string	sModeArgument;	// Country code in --list-asn mode
+	const uint32_t		nCount;
+
+	const std::string sMashapeUrl;
+	const std::string sMashapeKey;
+
+	CommonOptions(const bool bDebug_, const bool bVerbose_, const std::string& sModeArgument_, const uint32_t nCount_,
+		const std::string& sMashapeUrl_, const std::string& sMashapeKey_) :
+		bDebug(bDebug_), bVerbose(bVerbose_), sModeArgument(sModeArgument_), nCount(nCount_),
+		sMashapeUrl(sMashapeUrl_), sMashapeKey(sMashapeKey_)
+	{}
+};
+
+//------------------------------------------------------
+
 class ProbeApiRequester: protected HttpRequester
 {
 public:
 	struct Request : HttpRequester::Request
 	{
-		Request(const std::string& sRequestWithArgs);
+		Request(const std::string& sRequestWithArgs, const CommonOptions& options);
 	};
 
 	typedef HttpRequester::Reply Reply;

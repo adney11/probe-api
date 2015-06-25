@@ -2,7 +2,6 @@
 #include "stdafx.h"
 #include "Common.h"
 
-#include "config.h"					// for MASHAPE_API_URL, MASHAPE_API_ID
 #include "version.h"				// for VERSION_PRODUCT_NAME, MAIN_PRODUCT_VERSION_STR_A
 
 #include <json/json.h>
@@ -34,11 +33,11 @@ volatile bool g_bTerminateProgram = false;
 
 //------------------------------------------------------
 
-ProbeApiRequester::Request::Request(const std::string& sRequestWithArgs)
+ProbeApiRequester::Request::Request(const std::string& sRequestWithArgs, const CommonOptions& options)
 {
 	eMethod = HTTP_GET;
-	sUrl = MASHAPE_API_URL + sRequestWithArgs;
-	headers.emplace_back("X-Mashape-Key", MASHAPE_API_ID);
+	sUrl = options.sMashapeUrl + sRequestWithArgs;
+	headers.emplace_back("X-Mashape-Key", options.sMashapeKey);
 	headers.emplace_back("Accept", "application/json");
 
 	sUserAgent = VERSION_PRODUCT_NAME " HTTP client v." MAIN_PRODUCT_VERSION_STR_A;

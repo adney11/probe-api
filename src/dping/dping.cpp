@@ -138,7 +138,7 @@ public:
 		string sSearchArgument = options.sModeArgument;
 		if (ApplicationOptions::MODE_DO_BY_COUNTRY == options.mode && DEFAULT_COUNTRY_META == sSearchArgument)
 		{
-			const CommonOptions options2(options.bDebug, options.bVerbose, options.sModeArgument, options.nResultsLimit);
+			const CommonOptions options2 = options.GetCommonOptions();
 			sSearchArgument = GetDefaultSourceCountry(requester, options2);
 		}
 		return sSearchArgument;
@@ -292,7 +292,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 {
 	const string sUrl = job.GetUrl(stats, sSearchArgument, options.sTarget);
 
-	ProbeApiRequester::Request request(sUrl);
+	ProbeApiRequester::Request request(sUrl, options.GetCommonOptions());
 	request.nHttpTimeoutSec += options.nTimeoutTotalMs / 1000;
 
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
@@ -370,7 +370,7 @@ int DoJob(const ApplicationOptions& options)
 
 int Application(const ApplicationOptions& options)
 {
-	const CommonOptions options2(options.bDebug, options.bVerbose, options.sModeArgument, options.nResultsLimit);
+	const CommonOptions options2 = options.GetCommonOptions();
 
 	switch (options.mode)
 	{

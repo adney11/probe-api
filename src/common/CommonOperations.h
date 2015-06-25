@@ -18,20 +18,7 @@ namespace ProbeAPI
 {
 	struct PingResult;
 };
-
-//------------------------------------------------------
-
-struct CommonOptions
-{
-	const bool			bDebug;
-	const bool			bVerbose;
-	const std::string	sModeArgument;	// Country code in --list-asn mode
-	const uint32_t		nCount;
-
-	CommonOptions(const bool bDebug_, const bool bVerbose_, const std::string& sModeArgument_, const uint32_t nCount_) :
-		bDebug(bDebug_), bVerbose(bVerbose_), sModeArgument(sModeArgument_), nCount(nCount_)
-	{}
-};
+struct CommonOptions;
 
 //------------------------------------------------------
 

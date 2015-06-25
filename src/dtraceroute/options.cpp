@@ -3,6 +3,7 @@
 #include "options.h"
 
 #include "common/Common.h"
+#include "common/config.h"			// for MASHAPE_API_URL, MASHAPE_API_ID
 #include "common/credits.h"
 #include "common/version.h"			// for VERSION_PRODUCT_NAME, FILE_INTERNAL_NAME, MAIN_PRODUCT_VERSION_STR_A
 
@@ -94,6 +95,14 @@ void PrintOption(const char* name, const T& v)
 
 //------------------------------------------------------
 
+ApplicationOptions::ApplicationOptions()
+{
+	sMashapeUrl = MASHAPE_API_URL;
+	sMashapeKey = MASHAPE_API_ID;
+}
+
+//------------------------------------------------------
+
 void ApplicationOptions::Print() const
 {
 	if (!bVerbose && !bDebug)
@@ -106,6 +115,8 @@ void ApplicationOptions::Print() const
 	PrintOption("noDelays", bNoDelays);
 	PrintOption("ping timeout", nTimeoutPingMs);
 	PrintOption("total timeout", nTimeoutTotalMs);
+	PrintOption("WaitBetweenPings", nWaitBetweenPingsMs);
+	PrintOption("TriesPerHop", nTriesPerHop);
 	PrintOption("nProbesLimit", nProbesLimit);
 	PrintOption("nResultsLimit", nResultsLimit);
 	//PrintOption("packet size", nPacketSize);
@@ -116,6 +127,8 @@ void ApplicationOptions::Print() const
 		PrintOption("mode arg", sModeArgument);
 	if (!sTarget.empty())
 		PrintOption("target", sTarget);
+	PrintOption("MashapeUrl", sMashapeUrl);
+	PrintOption("MashapeKey", sMashapeKey);
 }
 
 //------------------------------------------------------

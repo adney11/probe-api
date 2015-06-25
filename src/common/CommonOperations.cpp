@@ -32,7 +32,7 @@ void DoSleep(const ProbeAPI::PingResult& ping, bool& bFirstSleep)
 
 string GetDefaultSourceCountry(ProbeApiRequester& requester, const CommonOptions& options)
 {
-	ProbeApiRequester::Request request("GetCountries");
+	ProbeApiRequester::Request request("GetCountries", options);
 
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
@@ -85,7 +85,7 @@ int ListCountries(const CommonOptions& options)
 
 	ProbeApiRequester requester;
 
-	ProbeApiRequester::Request request("GetCountries");
+	ProbeApiRequester::Request request("GetCountries", options);
 
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
@@ -169,7 +169,7 @@ int ListAsns(const CommonOptions& options)
 
 	const string sUrl = OSSFMT("GetProbesByCountry?countrycode=" << sCountryCode);
 
-	ProbeApiRequester::Request request(sUrl);
+	ProbeApiRequester::Request request(sUrl, options);
 
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
