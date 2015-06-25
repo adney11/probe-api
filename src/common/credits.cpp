@@ -60,7 +60,7 @@ string GetReturnCodeInfo()
 string GetDebugArgumentsHelp()
 {
 	const char* sHelpInfo = R"(
-    --api-url       Set web API URL
+    --api-url url   Set web API URL
 )";
 	return sHelpInfo;
 }
