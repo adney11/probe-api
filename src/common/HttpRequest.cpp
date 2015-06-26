@@ -150,9 +150,12 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 
 		using namespace curlpp::Options;
 
+		ostream& ostr = cout; // cout, cerr
+		ostream& ostrMore = cerr; // cout, cerr
+
 		if (bVerbose)
 		{
-			cout << "HttpRequester verbose mode ON!" << endl;
+			ostr << "HttpRequester verbose mode ON!" << endl;
 		}
 		else
 		{
@@ -160,7 +163,7 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 		}
 		req.setOpt(new Verbose(bVerbose));
 #if 1
-		req.setOpt(DebugFunction([](const curl_infotype type, const char *data, const size_t size) -> int
+		req.setOpt(DebugFunction([&ostrMore](const curl_infotype type, const char *data, const size_t size) -> int
 		{
 			string sData(data, size);
 
@@ -168,7 +171,7 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 			// And we don't need those "\r" in linux console too:
 			findandreplace(sData, "\r\n", "\n");
 
-			cout << GetDebugPrefix(type) << sData << flush;
+			ostrMore << GetDebugPrefix(type) << sData << flush;
 			return 0;
 		}));
 #endif

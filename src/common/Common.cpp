@@ -115,14 +115,17 @@ ProbeApiRequester::Reply ProbeApiRequester::DoRequest(const ProbeApiRequester::R
 
 void ProbeApiRequester::HttpReplyDebugPrint(const ProbeApiRequester::Reply &reply)
 {
-	cout << "request succeeded: " << reply.bSucceeded << endl;
-	cout << "request error desc: " << reply.sErrorDescription << endl;
-	cout << "reply HTTP code: " << reply.nHttpCode << endl;
-	cout << "reply EffectiveUrl: " << reply.sEffectiveUrl << endl;
-	cout << "reply Content-Type: " << reply.sContentType << endl;
-	cout << "reply body length: " << reply.sBody.length() << endl;
+	ostream& ostr = cout; // cout, cerr
+	ostream& ostrMore = cerr; // cout, cerr
 
-	cout << "REPLY BODY: [[[" << reply.sBody << "]]]" << endl;
+	ostr << "request succeeded: " << reply.bSucceeded << endl;
+	ostr << "request error desc: " << reply.sErrorDescription << endl;
+	ostr << "reply HTTP code: " << reply.nHttpCode << endl;
+	ostr << "reply EffectiveUrl: " << reply.sEffectiveUrl << endl;
+	ostr << "reply Content-Type: " << reply.sContentType << endl;
+	ostr << "reply body length: " << reply.sBody.length() << endl;
+
+	ostrMore << "REPLY BODY: [[[" << reply.sBody << "]]]" << endl;
 }
 
 //------------------------------------------------------
