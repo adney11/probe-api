@@ -7,88 +7,11 @@
 #endif // _MSC_VER > 1000
 
 #include "HttpRequest.h"
+#include "CommonOptions.h"
 
 //------------------------------------------------------
 
 extern volatile bool g_bTerminateProgram;
-
-//------------------------------------------------------
-
-template<class T>
-class Option
-{
-public:
-	// for initialization as member of another class:
-	Option(const T val, const T nMin, const T nMax, const std::vector<std::string>& vect)
-		: data(val), minVal(nMin), maxVal(nMax), vectAllowedArguments(vect)
-	{
-	}
-
-	// for initialization as member of another class:
-	Option(const T val, const std::vector<std::string>& vect)
-		: data(val), minVal(std::numeric_limits<T>::min()), maxVal(std::numeric_limits<T>::max()), vectAllowedArguments(vect)
-	{
-	}
-
-	operator T() const
-	{
-		return data;
-	}
-
-	Option& operator= (const T val)
-	{
-		data = val;
-		return *this;
-	}
-
-	bool CheckArgument(const std::string& str) const
-	{
-		auto iter = std::find(vectAllowedArguments.cbegin(), vectAllowedArguments.cend(), str);
-		return iter != vectAllowedArguments.cend();
-	}
-
-	void Parse(const std::string& str)
-	{
-		std::istringstream iss(str);
-		T x = defVal;
-		iss >> x;
-		if (iss.fail())
-		{
-			throw std::out_of_range("Parsing failed for value: " + str);
-		}
-		if (x < minVal || x > maxVal)
-		{
-			throw std::out_of_range("Value is out of allowed range: " + str + " should be between " + std::to_string(minVal) + " and " + std::to_string(maxVal));
-		}
-		data = x;
-	}
-
-protected:
-	const T defVal = 0;
-	T	data = defVal;
-	T	minVal = defVal;
-	T	maxVal = defVal;
-	std::vector<std::string>	vectAllowedArguments;
-};
-
-//------------------------------------------------------
-
-struct CommonOptions
-{
-	const bool			bDebug;
-	const bool			bVerbose;
-	const std::string	sModeArgument;	// Country code in --list-asn mode
-	const uint32_t		nCount;
-
-	const std::string sMashapeUrl;
-	const std::string sMashapeKey;
-
-	CommonOptions(const bool bDebug_, const bool bVerbose_, const std::string& sModeArgument_, const uint32_t nCount_,
-		const std::string& sMashapeUrl_, const std::string& sMashapeKey_) :
-		bDebug(bDebug_), bVerbose(bVerbose_), sModeArgument(sModeArgument_), nCount(nCount_),
-		sMashapeUrl(sMashapeUrl_), sMashapeKey(sMashapeKey_)
-	{}
-};
 
 //------------------------------------------------------
 

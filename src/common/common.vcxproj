@@ -24,6 +24,7 @@
   <ItemGroup>
     <ClInclude Include="Common.h" />
     <ClInclude Include="CommonOperations.h" />
+    <ClInclude Include="CommonOptions.h" />
     <ClInclude Include="compiler.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="credits.h" />
