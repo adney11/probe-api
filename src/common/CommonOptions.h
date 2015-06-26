@@ -14,17 +14,26 @@ public:
 	virtual ~OptionBase()
 	{
 	};
+
 	virtual bool ProcessCommandLineArg(const std::string& sArg, const bool bLastArg, const std::string& sNextArg, bool& bNextArgUsed) = 0;
+
+	virtual std::string GetValueAsString() const = 0;	// for verbose printing on screen
+
+	bool InfluencesOnTotalTimeot() const
+	{
+		return m_bChangesTotalTimeot;
+	}
 
 protected:
 	bool CheckArgument(const std::string& str) const
 	{
-		auto iter = std::find(vectAllowedArguments.cbegin(), vectAllowedArguments.cend(), str);
-		return iter != vectAllowedArguments.cend();
+		auto iter = std::find(m_vectArgumentNames.cbegin(), m_vectArgumentNames.cend(), str);
+		return iter != m_vectArgumentNames.cend();
 	}
 
 protected:
-	std::vector<std::string>	vectAllowedArguments;
+	bool						m_bChangesTotalTimeot = false;
+	std::vector<std::string>	m_vectArgumentNames;
 };
 
 //------------------------------------------------------
@@ -37,63 +46,71 @@ class Option : public OptionBase
 {
 public:
 	// for initialization as member of another class:
-	Option(const T val, const T nMin, const T nMax, const std::vector<std::string>& vect)
-		: data(val), minVal(nMin), maxVal(nMax)
+	Option(const T val, const T nMin, const T nMax, const std::vector<std::string>& vect, const bool bChangesTotalTimeot = false)
+		: m_data(val), m_minVal(nMin), m_maxVal(nMax)
 	{
-		vectAllowedArguments = vect;
+		m_vectArgumentNames = vect;
+		m_bChangesTotalTimeot = bChangesTotalTimeot;
 	}
 
 	// for initialization as member of another class:
-	Option(const T val, const std::vector<std::string>& vect)
-		: data(val), minVal(std::numeric_limits<T>::min()), maxVal(std::numeric_limits<T>::max())
+	Option(const T val, const std::vector<std::string>& vect, const bool bChangesTotalTimeot = false)
+		: m_data(val), m_minVal(std::numeric_limits<T>::min()), m_maxVal(std::numeric_limits<T>::max())
 	{
-		vectAllowedArguments = vect;
+		m_vectArgumentNames = vect;
+		m_bChangesTotalTimeot = bChangesTotalTimeot;
 	}
 
 	operator T() const
 	{
-		return data;
+		return m_data;
 	}
 
 	Option& operator= (const T val)
 	{
-		data = val;
+		m_data = val;
 		return *this;
 	}
 
-	bool ProcessCommandLineArg(const std::string& sArg, const bool bLastArg, const std::string& sNextArg, bool& bNextArgUsed) override
+	virtual bool ProcessCommandLineArg(const std::string& sArg, const bool bLastArg, const std::string& sNextArg, bool& bNextArgUsed) override
 	{
 		if (!bLastArg && CheckArgument(sArg))
 		{
-			Parse(sNextArg);
+			Parse(sNextArg, sArg);
 			bNextArgUsed = true;
 			return true;
 		}
 		return false;
 	}
 
-protected:
-	void Parse(const std::string& str)
+	virtual std::string GetValueAsString() const override	// for verbose printing on screen
 	{
-		std::istringstream iss(str);
-		T x = defVal;
-		iss >> x;
-		if (iss.fail())
-		{
-			throw std::out_of_range("Parsing failed for value: " + str);
-		}
-		if (x < minVal || x > maxVal)
-		{
-			throw std::out_of_range("Value is out of allowed range: " + str + " should be between " + std::to_string(minVal) + " and " + std::to_string(maxVal));
-		}
-		data = x;
+		return std::to_string(m_data);
 	}
 
 protected:
-	const T defVal = 0;
-	T	data = defVal;
-	T	minVal = defVal;
-	T	maxVal = defVal;
+	void Parse(const std::string& str, const std::string& sArgName)
+	{
+		std::istringstream iss(str);
+		T x = 0;
+		iss >> x;
+		if (iss.fail())
+		{
+			throw std::out_of_range("Argument \"" + sArgName + "\": Parsing failed for value: " + str
+				+ ". Value should be between " + std::to_string(m_minVal) + " and " + std::to_string(m_maxVal));
+		}
+		if (x < m_minVal || x > m_maxVal)
+		{
+			throw std::out_of_range("Value for \"" + sArgName + "\" argument is out of allowed range: " + str
+				+ ". Value should be between " + std::to_string(m_minVal) + " and " + std::to_string(m_maxVal));
+		}
+		m_data = x;
+	}
+
+protected:
+	T	m_data = 0;
+	T	m_minVal = 0;
+	T	m_maxVal = 0;
 };
 
 //------------------------------------------------------
@@ -108,36 +125,42 @@ public:
 	typedef bool T;
 
 	// for initialization as member of another class:
-	Option(const T val, const std::vector<std::string>& vect)
-		: defVal(val), data(val)
+	Option(const T val, const std::vector<std::string>& vect, const bool bChangesTotalTimeot = false)
+		: m_defVal(val), m_data(val)
 	{
-		vectAllowedArguments = vect;
+		m_vectArgumentNames = vect;
+		m_bChangesTotalTimeot = bChangesTotalTimeot;
 	}
 
 	operator T() const
 	{
-		return data;
+		return m_data;
 	}
 
 	Option& operator= (const T val)
 	{
-		data = val;
+		m_data = val;
 		return *this;
 	}
 
-	bool ProcessCommandLineArg(const std::string& sArg, const bool bLastArg, const std::string& sNextArg, bool& bNextArgUsed) override
+	virtual bool ProcessCommandLineArg(const std::string& sArg, const bool bLastArg, const std::string& sNextArg, bool& bNextArgUsed) override
 	{
 		if (CheckArgument(sArg))
 		{
-			data = !defVal;
+			m_data = !m_defVal;
 			return true;
 		}
 		return false;
 	}
 
+	virtual std::string GetValueAsString() const override	// for verbose printing on screen
+	{
+		return m_data ? "ON" : "OFF";
+	}
+
 protected:
-	T	defVal = false;
-	T	data = false;
+	T	m_defVal = false;
+	T	m_data = false;
 };
 
 //------------------------------------------------------

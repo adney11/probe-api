@@ -98,9 +98,9 @@ void CheckArgumentParameterNotEmpty(const string& sArg, const string& sParam)
 //------------------------------------------------------
 
 template<class T>
-void PrintOption(const char* name, const T& v)
+void PrintOption(const string& name, const T& v)
 {
-	cout << "options: " << setw(10) << left << name << resetiosflags(ios_base::adjustfield) << " = " << v << endl;
+	cout << "options: " << setw(15) << left << name << resetiosflags(ios_base::adjustfield) << " = " << v << endl;
 }
 
 //------------------------------------------------------
@@ -113,24 +113,24 @@ ApplicationOptions::ApplicationOptions()
 
 //------------------------------------------------------
 
-void ApplicationOptions::Print() const
+void ApplicationOptions::Print()
 {
 	if (!bVerbose && !bDebug)
 	{
 		return;
 	}
 
-	PrintOption("verbose", bVerbose);
-	PrintOption("debug", bDebug);
-	PrintOption("noDelays", bNoDelays);
-	PrintOption("ping timeout", nTimeoutPingMs);
-	PrintOption("total timeout", nTimeoutTotalMs);
-	PrintOption("WaitBetweenPings", nWaitBetweenPingsMs);
-	PrintOption("PingsPerProbe", nPingsPerProbe);
-	PrintOption("nProbesLimit", nProbesLimit);
-	PrintOption("nResultsLimit", nResultsLimit);
-	//PrintOption("packet size", nPacketSize);
-	PrintOption("ttl", nTTL);
+	const OptionCol options = GetAllOptions();
+
+	for (auto it : options)
+	{
+		const OptionBase* pOption = it.first;
+		const string& sOptionName = it.second;
+		const string sOptionValue = pOption->GetValueAsString();
+
+		PrintOption(sOptionName, sOptionValue);
+	}
+
 	PrintOption("mode", mode);
 	if (!sModeArgument.empty())
 		PrintOption("mode arg", sModeArgument);
@@ -144,7 +144,10 @@ void ApplicationOptions::Print() const
 
 void ApplicationOptions::RecalculateTotalTimeout()
 {
-	nTimeoutTotalMs = nTimeoutPingMs * nPingsPerProbe + nWaitBetweenPingsMs * (nPingsPerProbe - 1) + 2000;
+	nTimeoutTotalMs =
+		nTimeoutPingMs * nPingsPerProbe + nWaitBetweenPingsMs * (nPingsPerProbe - 1)	// time for one probe to ping
+		+ (bResolveIp2Name ? 1000 : 0)	// time for probe to resolve IP to address
+		+ 2000;	// time for server to send all jobs and gather all results
 }
 
 //------------------------------------------------------
@@ -162,10 +165,11 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 		bool bTargetSet = false;
 		RecalculateTotalTimeout();
 
+		const OptionCol options = GetAllOptions();
+
 		for (int i = 1; i < argc; ++i)
 		{
 			const string sArg = argv[i];
-			//const bool bFirstArg = (1 == i);
 			const bool bLastArg = (i + 1 == argc);
 
 			if (g_bTerminateProgram)
@@ -192,39 +196,35 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 				return eRetCode::OK;
 			}
 
-			if (sArg == "-v")
+			bool bKnownArgument = false;
+
+			// Try parse simple option declared by members derived from OptionBase class:
 			{
-				bVerbose = true;
-				cout << "Verbose mode ON" << endl;
+				const string sNextArg = i + 1 < argc ? argv[i + 1] : "";
+				bool bNextArgUsed = false;
+
+				for (auto it : options)
+				{
+					OptionBase* pOption = it.first;
+					const bool bProcessed = pOption->ProcessCommandLineArg(sArg, bLastArg, sNextArg, bNextArgUsed);
+
+					if (bProcessed && pOption->InfluencesOnTotalTimeot())
+					{
+						RecalculateTotalTimeout();
+					}
+
+					bKnownArgument = bKnownArgument || bProcessed;
+				}
+
+				if (bNextArgUsed)
+				{
+					++i;
+				}
 			}
-			else if (sArg == "--debug")
+
+			if (bKnownArgument)
 			{
-				bDebug = true;
-				cout << "Debug mode ON" << endl;
-			}
-			else if (sArg == "--no-delay" || sArg == "--no-delays" || sArg == "--no-wait")
-			{
-				bNoDelays = true;
-			}
-			else if ((sArg == "-n" || sArg == "--probes") && !bLastArg)
-			{
-				const string sNextArg = argv[++i];
-				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nProbesLimit = stoui32(sNextArg);
-				nResultsLimit = stoui32(sNextArg);	// for list ASNs and list countries modes ONLY
-			}
-			else if (sArg == "-w" && !bLastArg)
-			{
-				const string sNextArg = argv[++i];
-				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nTimeoutPingMs = stoui32(sNextArg);
-				RecalculateTotalTimeout();
-			}
-			else if (sArg == "-wt" && !bLastArg)
-			{
-				const string sNextArg = argv[++i];
-				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nTimeoutTotalMs = stoui32(sNextArg);
+				// do nothing - we already parsed it
 			}
 			else if (sArg == "--api-url" && !bLastArg)
 			{
@@ -281,6 +281,16 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 			{
 				throw PException(eRetCode::BadArguments) << "Unknown command line argument \"" << sArg << "\" or command line is missing required parameter.";
 			}
+		}
+
+		if (bVerbose)
+		{
+			cout << "Verbose mode ON" << endl;
+		}
+
+		if (bDebug)
+		{
+			cout << "Debug mode ON" << endl;
 		}
 
 		if (MODE_UNKNOWN == mode)

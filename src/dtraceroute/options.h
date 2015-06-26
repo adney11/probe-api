@@ -14,7 +14,7 @@ class ApplicationOptions
 {
 public:
 	ApplicationOptions();
-	void Print() const;
+	void Print();
 	void RecalculateTotalTimeout();
 	int ProcessCommandLine(const int argc, const char* const argv[]);	// returns non-zero result if process exit required
 
@@ -34,24 +34,28 @@ public:
 	};
 
 public:
-	bool		bVerbose		= false;
-	bool		bDebug			= false;
-	bool		bNoDelays		= false;
+	Option<bool>	bVerbose		= { false, { "-v" } };
+	Option<bool>	bDebug			= { false, { "--debug" } };
+	Option<bool>	bNoDelays		= { false, { "--no-delay", "--no-delays", "--no-wait" } };
 
-	bool		bResolveIp2Name	= true;		// this is true in Windows by default
-	bool		bUseIpv4Only	= false;
-	bool		bUseIpv6Only	= false;
-	bool		bDontFragment	= false;
+	Option<bool>	bResolveIp2Name	= { true,  { "-d" },	true };	// this is true by default in Windows
+	Option<bool>	bUseIpv4Only	= { false, { "-4" } };
+	Option<bool>	bUseIpv6Only	= { false, { "-6" } };
+	Option<bool>	bDontFragment	= { false, { "-f" } };
 
-	uint32_t	nTimeoutPingMs	= 1000;
-	uint32_t	nTimeoutTotalMs	= 30 * 1000;
-	uint32_t	nWaitBetweenPingsMs = 100;
-	uint32_t	nTriesPerHop	= 3;
-	uint32_t	nProbesLimit	= 10;
-	uint32_t	nResultsLimit	= std::numeric_limits<uint32_t>::max();		// for list ASNs and list countries modes; UINT32_MAX - display ALL items from requested list
-	uint16_t	nPacketSize		= 32;
-	uint32_t	nMaxHops		= 30;
-	uint32_t	nMaxHopsFailed	= 3;
+	// initialization sequence: { defaultValue, minValue, maxValue, {"--cmdArg"}, bChangesTimeoutTotalMs }
+	Option<uint32_t>	nTimeoutPingMs		= { 1000,	100,	10000,		{ "-w" },	true };
+	Option<uint32_t>	nTimeoutTotalMs		= { 0,		5000,	10*60*1000,	{ "-wt" } };
+	Option<uint32_t>	nWaitBetweenPingsMs	= { 100,	1,		10000,		{ },		true };
+	Option<uint32_t>	nTriesPerHop		= { 3,		1,		10,			{ },		true };
+	// following two options share the same command line argument; This is expected
+	// since they have different limitations and they are used in different program run modes.
+	Option<uint32_t>	nProbesLimit		= { 5,		10,		1000,		{ "-n", "--probes" } };
+	Option<uint32_t>	nResultsLimit		= { std::numeric_limits<uint32_t>::max(), { "-n" } };		// for list ASNs and list countries modes; UINT32_MAX - display ALL items from requested list
+	Option<uint16_t>	nPacketSize			= { 32,		0,		65500,		{ "-l" } };
+	Option<uint8_t>		nStartHop			= { 1,		1,		255,		{ "-hs" },	true };
+	Option<uint8_t>		nMaxHop				= { 30,		1,		255,		{ "-h" },	true };
+	Option<uint8_t>		nMaxFailedHops		= { 3,		1,		255,		{ "-hf" },	true };
 
 	eMode		mode			= MODE_UNKNOWN;
 	std::string	sModeArgument;
@@ -59,6 +63,32 @@ public:
 
 	std::string sMashapeUrl;
 	std::string sMashapeKey;
+
+protected:
+	typedef std::vector<std::pair<OptionBase*, std::string>> OptionCol;
+	OptionCol GetAllOptions()
+	{
+		OptionCol col;
+		col.reserve(32);
+		col.emplace_back(&bVerbose, "bVerbose");
+		col.emplace_back(&bDebug, "bDebug");
+		col.emplace_back(&bNoDelays, "bNoDelays");
+		col.emplace_back(&bResolveIp2Name, "bResolveIp2Name");
+		col.emplace_back(&bUseIpv4Only, "bUseIpv4Only");
+		col.emplace_back(&bUseIpv6Only, "bUseIpv6Only");
+		col.emplace_back(&bDontFragment, "bDontFragment");
+
+		col.emplace_back(&nTimeoutPingMs, "nTimeoutPingMs");
+		col.emplace_back(&nTimeoutTotalMs, "nTimeoutTotalMs");
+		col.emplace_back(&nWaitBetweenPingsMs, "nWaitBetweenPingsMs");
+		col.emplace_back(&nTriesPerHop, "nTriesPerHop");
+		col.emplace_back(&nProbesLimit, "nProbesLimit");
+		col.emplace_back(&nResultsLimit, "nResultsLimit");
+		col.emplace_back(&nPacketSize, "nPacketSize");
+		col.emplace_back(&nMaxHop, "nMaxHops");
+		col.emplace_back(&nMaxFailedHops, "nMaxHopsFailed");
+		return col;
+	}
 };
 
 //------------------------------------------------------
