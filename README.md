@@ -154,3 +154,6 @@ JsonCpp     : 0.10.2
     Repo    : https://github.com/open-source-parsers/jsoncpp.git
     License : Public Domain, MIT; https://github.com/open-source-parsers/jsoncpp/blob/master/LICENSE
 ```
+
+## ChangeLog
+[History of changes of ProbeAPI Tools](ChangeLog.md)

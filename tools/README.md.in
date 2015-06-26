@@ -103,3 +103,6 @@ sudo rpm -i probe-api-tools-******.x86_64.rpm
 ```
 {{dping --version | gawk -f ./strip_first_line.awk}}
 ```
+
+## ChangeLog
+[History of changes of ProbeAPI Tools](ChangeLog.md)
