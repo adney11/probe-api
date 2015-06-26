@@ -114,8 +114,8 @@ public:
 			<< "?" << sSearchArgName << "=" << sSearchArgument
 			<< "&destination=" << sTarget				// An IP address or hostname that will be pinged
 			<< "&probeslimit=" << nRequestedProbeCount	// Number of probes to use
-			<< "&count=" << options.nWaitBetweenPingsMs	// Number of pings to run (default 3). (per each probe)
-			<< "&sleep=" << options.nPingsPerProbe		// Sleep between pings in milliseconds (default 1000ms).
+			<< "&count=" << options.nPingsPerProbe		// Number of pings to run (default 3). (per each probe)
+			<< "&sleep=" << options.nWaitBetweenPingsMs	// Sleep between pings in milliseconds (default 1000ms).
 			<< "&timeout=" << options.nTimeoutTotalMs	// Maximum time available to probes for testing in milliseconds (default 6000). The whole test is most likely to last longer then this value.
 			<< "&ttl=" << options.nTTL					// Max number of hops for ping
 			<< "&bufferSize=" << options.nPacketSize	// buffer size filled with 'A' char to send, default=32, max=65500
