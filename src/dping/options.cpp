@@ -264,11 +264,14 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 				mode = MODE_GET_ASNS;
 				sModeArgument = sNextArg;
 			}
+			// Target is parsed for BY_COUNTRY and BY_ASN modes only if
+			// target was not set before AND argument does not start from "-":
 			else if ((
 #ifdef DO_BY_COUNTRY_BY_DEFAULT
 				MODE_UNKNOWN == mode ||
 #endif
-				MODE_DO_BY_COUNTRY == mode || MODE_DO_BY_ASN == mode) && bLastArg)
+				MODE_DO_BY_COUNTRY == mode || MODE_DO_BY_ASN == mode)
+				&& !bTargetSet && !begins(sArg, "-"))
 			{
 				CheckArgumentParameterNotEmpty("{target}", sArg);
 				sTarget = sArg;
