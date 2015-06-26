@@ -29,16 +29,16 @@ Usage: )" FILE_INTERNAL_NAME R"( --help
     --version
     --list-country [-v] [--debug]
     --list-asn code [-v] [--debug]
-    --country code [-n probes] [-w timeout] [-h max_hops] [-hf max_hops]
-                   [-wa timeout] [--no-delays] [-v] [--debug] {target_name}
-    --asn id [-n probes] [-w timeout] [-h max_hops] [-hf max_hops]
-             [-wa timeout] [--no-delays] [-v] [--debug] {target_name}
+    --country code [-n probes] [-w timeout] [-h max_hops] [-v] {target_name}
+    --asn id [-n probes] [-w timeout] [-h max_hops] [-v] {target_name}
 
 Options:
     {target_name}  Destination host IP or domain name.
 
     --help          Display this help.
     --version       Display detailed program version, copyright notices.
+    --list-country  List available countries.
+    --list-asn code List ASNs for specified 2 letter country code.
     --country code  Specify source addresses 2 letter country code
                     (ISO 3166-1 alpha-2).)"
 #ifdef DO_BY_COUNTRY_BY_DEFAULT
@@ -50,19 +50,26 @@ R"(
     --asn id        Use source addresses from specified ASN
                     (autonomous system number) network.
     -n probes       Probes limit: number of hosts to make requests from.
+                    This option has an alias: --probes probes
     -w timeout      Timeout in milliseconds to wait for single ping.
-    -wa timeout     Timeout in milliseconds to wait for all probes.
     -h max_hops     Maximum number of hops to search for target (aka TTL).
-    -hf max_hops    Maximum number of failed hops in a row to stop.
-    --list-country  List available countries.
-    --list-asn code List ASNs for specified 2 letter country code.
+    -v              Verbose output.
+
+Advanced options:
+    -wa timeout     Timeout in milliseconds to wait for all probes.
+    -d              Do not resolve addresses to hostnames.
+    -hf max_hops    Maximum number of failed hops in a row to stop
+                    (default: 3).
+    -l size         Send buffer size.
+    -f              Set Don't Fragment flag in packet (IPv4-only).
+    -4              Force using IPv4.
+    -6              Force using IPv6.
+    --api-key key   Set web API key.
+    --api-url url   Set web API URL.
     --no-delays     Disable delays during printing of results to console.
-    --api-key key   Set web API key
-    -v              Verbose output
-    --debug         Additional debug output
+    --debug         Additional debug output.
+
 )"
-+ (options.bDebug ? GetDebugArgumentsHelp() : "")
-+ "\n"
 + GetReturnCodeInfo()
 + R"(
 Examples:

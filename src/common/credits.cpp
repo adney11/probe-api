@@ -57,16 +57,6 @@ string GetReturnCodeInfo()
 
 //------------------------------------------------------
 
-string GetDebugArgumentsHelp()
-{
-	const char* sHelpInfo = R"(
-    --api-url url   Set web API URL
-)";
-	return sHelpInfo;
-}
-
-//------------------------------------------------------
-
 string GetCurlFullVersion()
 {
 	string res = curlpp::libcurlVersion();

@@ -3,7 +3,27 @@
 ## Next version
 
 Changes:
-
+* updated code to use and parse latest web API changes: more command line options, more control and etc.
+* added command line options for both dping and dtracert:
+  * -l size         Send buffer size.
+  * -f              Set Don't Fragment flag in packet (IPv4-only).
+  * -4              Force using IPv4.
+  * -6              Force using IPv6.
+  * --api-key key   Set web API key.
+  * --api-url url   Set web API URL.
+* added command line options for dping: -t, -a, -np, -i
+  * -t              Ping the specified host until stopped. To see statistics and continue - type Control-Break; To stop - type Control-C.
+  * -a              Resolve addresses to hostnames.
+  * -np count       Number of pings per probe to send (default: 1).
+  * -i TTL          Time To Live.
+* added command line options for dtracert:
+  * -d              Do not resolve addresses to hostnames.
+  * -hf max_hops    Maximum number of failed hops in a row to stop (default: 3).
+* changed default dping TTL from 128 to 55 (like in Windows 8)
+* TODO: fill changes in default timeout and other values
+* don't exit if Control+Break is catched during dping. Print statistics and continue (like Windows ping does)
+* added --probes command line switch as an alias for -n (both dping and dtracert)
+* minor fixes
 
 
 ## Version 1.3.28 (6 June 2015)

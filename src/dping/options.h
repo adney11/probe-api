@@ -37,10 +37,17 @@ public:
 	bool		bVerbose		= false;
 	bool		bDebug			= false;
 	bool		bNoDelays		= false;
+
+	bool		bResolveIp2Name = false;	// this is false in Windows by default
+	bool		bUseIpv4Only	= false;
+	bool		bUseIpv6Only	= false;
+	bool		bDontFragment	= false;
+	bool		bInfinitePing	= false;
+
 	uint32_t	nTimeoutPingMs	= 3000;
 	uint32_t	nTimeoutTotalMs	= nTimeoutPingMs;
-	const uint32_t nWaitBetweenPingsMs = 100;
-	const uint32_t nPingsPerProbe = 1;
+	uint32_t	nWaitBetweenPingsMs = 100;
+	uint32_t	nPingsPerProbe	= 1;
 	uint32_t	nProbesLimit	= 4;
 	uint32_t	nResultsLimit	= UINT32_MAX;		// for list ASNs and list countries modes; UINT32_MAX - display ALL items from requested list
 	uint16_t	nPacketSize		= 32;
