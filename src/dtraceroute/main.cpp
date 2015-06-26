@@ -32,7 +32,7 @@ string decode_signal(const int signal)
 	switch (signal)
 	{
 	case SIGINT:
-		name = "SIGINT";
+		name = "SIGINT";	// Control-C
 		break;
 	case SIGILL:
 		name = "SIGILL";
@@ -53,7 +53,7 @@ string decode_signal(const int signal)
 		break;
 #ifdef SIGBREAK
 	case SIGBREAK:
-		name = "SIGBREAK";
+		name = "SIGBREAK";	// Control-Break
 		break;
 #endif
 	case SIGABRT:

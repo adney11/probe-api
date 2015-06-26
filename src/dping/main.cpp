@@ -32,7 +32,7 @@ string decode_signal(const int signal)
 	switch (signal)
 	{
 	case SIGINT:
-		name = "SIGINT";
+		name = "SIGINT";	// Control-C
 		break;
 	case SIGILL:
 		name = "SIGILL";
@@ -53,7 +53,7 @@ string decode_signal(const int signal)
 		break;
 #ifdef SIGBREAK
 	case SIGBREAK:
-		name = "SIGBREAK";
+		name = "SIGBREAK";	// Control-Break
 		break;
 #endif
 	case SIGABRT:
@@ -69,6 +69,18 @@ string decode_signal(const int signal)
 
 void signal_handler(const int signal)
 {
+#ifdef SIGBREAK
+	if (SIGBREAK == signal)
+	{
+		cout << flush;
+		PrintFinalStats();
+		cout << "Control-Break" << endl << flush;
+		// set signal to be catched again:
+		::signal(SIGBREAK, signal_handler);
+		return;
+	}
+#endif
+
 	if (g_bSignalCatched)
 	{
 		cerr << endl << endl << "DUPLICATED SIGNAL " << decode_signal(signal) << endl << flush;

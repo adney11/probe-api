@@ -15,8 +15,8 @@ using namespace std;
 //------------------------------------------------------
 
 class JobType;
-JobType* g_pJob = nullptr;
-ApplicationStats* g_pStats = nullptr;
+shared_ptr<JobType> g_ptrJob = nullptr;
+shared_ptr<ApplicationStats> g_ptrStats = nullptr;
 
 //------------------------------------------------------
 // Windows sample: (Win 8.1)
@@ -82,11 +82,9 @@ public:
 			sSearchDetails = "{ARG}";
 			break;
 		}
-		g_pJob = this;
 	}
 	~JobType()
 	{
-		g_pJob = nullptr;
 	}
 
 	string GetUrl(const ApplicationStats& stats, const string& sSearchArgument, const string& sTarget) const
@@ -268,9 +266,12 @@ protected:
 
 void PrintFinalStats()
 {
-	if (g_pJob && g_pStats)
+	shared_ptr<ApplicationStats> ptrStats = g_ptrStats;
+	shared_ptr<JobType> ptrJob = g_ptrJob;
+
+	if (ptrJob && ptrStats)
 	{
-		g_pJob->PrintFooter(*g_pStats);
+		ptrJob->PrintFooter(*ptrStats);
 	}
 }
 
@@ -354,9 +355,14 @@ int DoJob(const ApplicationOptions& options)
 {
 	int res = eRetCode::OK;
 
-	ApplicationStats stats(options.sTarget);
+	shared_ptr<ApplicationStats> ptrStats = make_shared<ApplicationStats>(options.sTarget);
+	ApplicationStats& stats = *ptrStats;
+	g_ptrStats = ptrStats;
 
-	const JobType job(options);
+	shared_ptr<JobType> ptrJob = make_shared<JobType>(options);
+	const JobType& job = *ptrJob;
+	g_ptrJob = ptrJob;
+
 	job.PrintHeaderBeforeSearchArg();
 
 	ProbeApiRequester requester;
@@ -389,10 +395,14 @@ int DoJob(const ApplicationOptions& options)
 	catch (...)
 	{
 		job.PrintFooter(stats);
+		g_ptrStats.reset();
+		g_ptrJob.reset();
 		throw;
 	}
 
 	job.PrintFooter(stats);
+	g_ptrStats.reset();
+	g_ptrJob.reset();
 
 	return res;
 }
