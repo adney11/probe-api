@@ -14,6 +14,65 @@ extern volatile bool g_bTerminateProgram;
 
 //------------------------------------------------------
 
+template<class T>
+class Option
+{
+public:
+	// for initialization as member of another class:
+	Option(const T val, const T nMin, const T nMax, const std::vector<std::string>& vect)
+		: data(val), minVal(nMin), maxVal(nMax), vectAllowedArguments(vect)
+	{
+	}
+
+	// for initialization as member of another class:
+	Option(const T val, const std::vector<std::string>& vect)
+		: data(val), minVal(std::numeric_limits<T>::min()), maxVal(std::numeric_limits<T>::max()), vectAllowedArguments(vect)
+	{
+	}
+
+	operator T() const
+	{
+		return data;
+	}
+
+	Option& operator= (const T val)
+	{
+		data = val;
+		return *this;
+	}
+
+	bool CheckArgument(const std::string& str) const
+	{
+		auto iter = std::find(vectAllowedArguments.cbegin(), vectAllowedArguments.cend(), str);
+		return iter != vectAllowedArguments.cend();
+	}
+
+	void Parse(const std::string& str)
+	{
+		std::istringstream iss(str);
+		T x = defVal;
+		iss >> x;
+		if (iss.fail())
+		{
+			throw std::out_of_range("Parsing failed for value: " + str);
+		}
+		if (x < minVal || x > maxVal)
+		{
+			throw std::out_of_range("Value is out of allowed range: " + str + " should be between " + std::to_string(minVal) + " and " + std::to_string(maxVal));
+		}
+		data = x;
+	}
+
+protected:
+	const T defVal = 0;
+	T	data = defVal;
+	T	minVal = defVal;
+	T	maxVal = defVal;
+	std::vector<std::string>	vectAllowedArguments;
+};
+
+//------------------------------------------------------
+
 struct CommonOptions
 {
 	const bool			bDebug;

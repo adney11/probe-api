@@ -48,7 +48,7 @@ public:
 	uint32_t	nWaitBetweenPingsMs = 100;
 	uint32_t	nTriesPerHop	= 3;
 	uint32_t	nProbesLimit	= 10;
-	uint32_t	nResultsLimit	= UINT32_MAX;		// for list ASNs and list countries modes; UINT32_MAX - display ALL items from requested list
+	uint32_t	nResultsLimit	= std::numeric_limits<uint32_t>::max();		// for list ASNs and list countries modes; UINT32_MAX - display ALL items from requested list
 	uint16_t	nPacketSize		= 32;
 	uint32_t	nMaxHops		= 30;
 	uint32_t	nMaxHopsFailed	= 3;

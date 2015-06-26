@@ -54,7 +54,7 @@ double GetMedianAbsoluteDeviation(const std::multiset<T>& data)
 struct MathCollection
 {
 	std::multiset<int>	data;
-	int			nMin = INT_MAX;
+	int			nMin = std::numeric_limits<int>::max();
 	int			nMax = 0;
 	int64_t		nSum = 0;
 
