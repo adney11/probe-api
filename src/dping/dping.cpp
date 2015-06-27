@@ -303,7 +303,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
 	{
-		throw PException("MakePackOfJobs: " + reply.sErrorDescription, eRetCode::ApiFailure);
+		throw PException("MakePackOfJobs: requester.DoRequest: " + reply.sErrorDescription, eRetCode::ApiFailure);
 	}
 
 	vector<ProbeAPI::ProbeInfo> items;
@@ -314,7 +314,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 	}
 	catch (PException& e)
 	{
-		throw PException("MakePackOfJobs: " + e.str(), eRetCode::ApiParsingFail);
+		throw PException("MakePackOfJobs: ProbeAPI::ParsePingResults: " + e.str(), eRetCode::ApiParsingFail);
 	}
 
 	PrintPackOfResults(job, options, items, stats);

@@ -94,12 +94,12 @@ ProbeApiRequester::Reply ProbeApiRequester::DoRequest(const ProbeApiRequester::R
 			}
 
 			reply.bSucceeded = false;
-			reply.sErrorDescription = OSSFMT("Bad HTTP reply code: " << reply.nHttpCode << "; message: " << sMessage);
+			reply.sErrorDescription = OSSFMT("Bad HTTP reply code: " << reply.nHttpCode << " " << reply.sHttpStatusText << "; message: " << sMessage);
 		}
 		else if (!bJsonReply)
 		{
 			reply.bSucceeded = false;
-			reply.sErrorDescription = OSSFMT("Bad reply format. HTTP code: " << reply.nHttpCode << "; Content-Type: " << reply.sContentType);
+			reply.sErrorDescription = OSSFMT("Bad reply format. HTTP code: " << reply.nHttpCode << " " << reply.sHttpStatusText << "; Content-Type: " << reply.sContentType);
 		}
 	}
 
@@ -121,6 +121,7 @@ void ProbeApiRequester::HttpReplyDebugPrint(const ProbeApiRequester::Reply &repl
 	ostr << "request succeeded: " << reply.bSucceeded << endl;
 	ostr << "request error desc: " << reply.sErrorDescription << endl;
 	ostr << "reply HTTP code: " << reply.nHttpCode << endl;
+	ostr << "reply HTTP code text: " << reply.sHttpStatusText << endl;
 	ostr << "reply EffectiveUrl: " << reply.sEffectiveUrl << endl;
 	ostr << "reply Content-Type: " << reply.sContentType << endl;
 	ostr << "reply body length: " << reply.sBody.length() << endl;
