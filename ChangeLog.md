@@ -2,6 +2,9 @@
 
 ## Next version
 
+
+## Version 1.4.30 (29 June 2015)
+
 * updated code to use and parse latest web API changes: more command line options, more control and etc.
 * added command line options for both dping and dtracert:
   * -l size         - Send buffer size.

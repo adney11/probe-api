@@ -14,6 +14,9 @@ All these tools are working almost the same as Windows and Linux built-in tools,
 * [d**ping**](doc/dping.linux.md)
 * [d**traceroute**](doc/dtraceroute.linux.md)
 
+## ChangeLog
+[History of changes of ProbeAPI Tools](ChangeLog.md)
+
 ## Compilation
 
 Two main ways to build tools are supported:
@@ -154,6 +157,3 @@ JsonCpp     : 0.10.2
     Repo    : https://github.com/open-source-parsers/jsoncpp.git
     License : Public Domain, MIT; https://github.com/open-source-parsers/jsoncpp/blob/master/LICENSE
 ```
-
-## ChangeLog
-[History of changes of ProbeAPI Tools](ChangeLog.md)

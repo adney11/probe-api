@@ -14,6 +14,9 @@ All these tools are working almost the same as Windows and Linux built-in tools,
 * [d**ping**](doc/dping.linux.md)
 * [d**traceroute**](doc/dtraceroute.linux.md)
 
+## ChangeLog
+[History of changes of ProbeAPI Tools](ChangeLog.md)
+
 ## Compilation
 
 Two main ways to build tools are supported:
@@ -103,6 +106,3 @@ sudo rpm -i probe-api-tools-******.x86_64.rpm
 ```
 {{dping --version | gawk -f ./strip_first_line.awk}}
 ```
-
-## ChangeLog
-[History of changes of ProbeAPI Tools](ChangeLog.md)

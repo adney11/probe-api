@@ -25,12 +25,12 @@ $ dping --list-asn ES
 
 #### --country
 ```
-$ dping --country US 8.8.8.8
-{{dping --no-delays --country US 8.8.8.8 | gawk -v first=10 -v last=7 -v insert=1 -f ./strip_middle_lines.awk}}
+$ dping --country US -a 8.8.8.8
+{{dping --no-delays --country US -a 8.8.8.8 | gawk -v first=10 -v last=7 -v insert=1 -f ./strip_middle_lines.awk}}
 ```
 
 #### --asn
 ```
-$ dping --asn AS3352 8.8.8.8
-{{dping --no-delays --asn AS3352 8.8.8.8 | gawk -v first=10 -v last=7 -v insert=1 -f ./strip_middle_lines.awk}}
+$ dping --asn AS3352 -a 8.8.8.8
+{{dping --no-delays --asn AS3352 -a 8.8.8.8 | gawk -v first=10 -v last=7 -v insert=1 -f ./strip_middle_lines.awk}}
 ```
