@@ -19,12 +19,23 @@
   * -d              - Do not resolve addresses to hostnames.
   * -hf max_hops    - Maximum number of failed hops in a row to stop (default: 3).
 * changed default dping TTL from 128 to 55 (like in Windows 8)
-* TODO: fill changes in default timeout and other values
+* Changed default values in dping:
+  * single ping timeout: 5000 ms -> 3000 ms
+  * pings per probe: 3 -> 1
+  * wait between pings: 1000ms -> 100 ms
+  * TTL: 128 -> 55
+  * total time for API call: 5000ms (unchanged)
+  * probe count: 10 (unchanged)
+* Changed default values in dtracert:
+  * single ping timeout: 3000 ms -> 1000 ms
+  * wait between pings: 1000ms -> 100 ms
+  * total time for API call: 44 sec -> 47 sec
+  * probe count: 40 (default 10 * factor 4) -> 10
 * fixed bug with delays during dtraceroute print. Printing is much faster now
 * don't exit if Control+Break is catched during dping. Print statistics and continue (like Windows ping does)
 * allow target host to be specified at any position of command line (not necessary to have it at the end of command line any more)
 * added --probes command line switch as an alias for -n (both dping and dtracert)
-* minor fixes
+* other fixes
 
 
 ## Version 1.3.28 (6 June 2015)
