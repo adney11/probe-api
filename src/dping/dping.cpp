@@ -153,10 +153,12 @@ public:
 #ifdef PRINT_AS_WINDOWS
 		// 
 		// Pinging 8.8.8.8 with 32 bytes of data:
+		// Pinging google-public-dns-a.google.com [8.8.8.8] with 32 bytes of data:
 		cout << endl;
 		cout << "Pinging " << options.sTarget << " with " << options.nPacketSize << " bytes of data";
 #else
 		// PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+		// PING ya.ru (213.180.193.3) 56(84) bytes of data.
 		const int nHeadersSize = 20 + 8; // IP + ICMP headers size
 		cout << "PING " << options.sTarget << " (" << options.sTarget << ") " << options.nPacketSize << "(" << (options.nPacketSize + nHeadersSize) << ") bytes of data";
 #endif
@@ -171,36 +173,38 @@ public:
 #endif
 	}
 
-	void PrintJobResult(const ProbeAPI::ProbeInfo& info) const
+	void PrintJobResult(const ProbeAPI::ProbeInfo& info, const ProbeAPI::PingResult& pingResult) const
 	{
 #ifdef PRINT_AS_WINDOWS
 		// Reply from 8.8.8.8: bytes=32 time=13ms TTL=55
-		if (info.ping.bTimeout)
+		if (pingResult.bTimeout)
 		{
 			cout << "Request timed out.";
 		}
 		else
 		{
-			cout << "Reply from " << options.sTarget << ": bytes=" << options.nPacketSize << " time=" << info.ping.nTimeMs << "ms TTL=" << options.nTTL + 0;
+			const string sTargetInfo = options.sTarget == info.ping.sTargetHost ? info.ping.sTargetIp : info.ping.sTargetHost + " [" + info.ping.sTargetIp + "]";
+			cout << "Reply from " << sTargetInfo << ": bytes=" << options.nPacketSize << " time=" << pingResult.nTimeMs << "ms TTL=" << options.nTTL + 0;
 		}
 
 		if (options.bVerbose)
 		{
-			cout << " to " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
+			cout << " for " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
 		}
 
 		cout << endl;
 #else
 		// 64 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=13.7 ms
-		if (info.ping.bTimeout)
+		if (pingResult.bTimeout)
 		{
 		}
 		else
 		{
-			cout << options.nPacketSize << " bytes from " << options.sTarget << ": icmp_seq=1 ttl=" << options.nTTL + 0 << " time=" << info.ping.nTimeMs << ".0 ms";
+			const string sTargetInfo = options.sTarget == info.ping.sTargetHost ? info.ping.sTarget : info.ping.sTargetHost + " (" + info.ping.sTargetIp + ")";
+			cout << options.nPacketSize << " bytes from " << sTargetInfo << ": icmp_seq=1 ttl=" << options.nTTL + 0 << " time=" << pingResult.nTimeMs << ".0 ms";
 			if (options.bVerbose)
 			{
-				cout << " to " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
+				cout << " for " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
 			}
 			cout << endl;
 		}
@@ -275,21 +279,24 @@ void PrintPackOfResults(const JobType& job, const ApplicationOptions& options, c
 	bool bFirstIteration = true;
 	for (const auto& info : items)
 	{
-		if (g_bTerminateProgram)
-			throw PException("PrintPackOfResults: Terminate Program");
-
-		++stats.nSent;
-		if (!info.ping.bTimeout)
+		for (const auto& pingResult : info.ping.vectResults)
 		{
-			++stats.nReceived;
-			stats.pings.AddItem(info.ping.nTimeMs);
-		}
+			if (g_bTerminateProgram)
+				throw PException("PrintPackOfResults: Terminate Program");
 
-		if (!options.bNoDelays)
-		{
-			DoSleep(info.ping, bFirstIteration);
+			++stats.nSent;
+			if (!pingResult.bTimeout)
+			{
+				++stats.nReceived;
+				stats.pings.AddItem(pingResult.nTimeMs);
+			}
+
+			if (!options.bNoDelays)
+			{
+				DoSleep(pingResult, bFirstIteration);
+			}
+			job.PrintJobResult(info, pingResult);
 		}
-		job.PrintJobResult(info);
 	}
 }
 

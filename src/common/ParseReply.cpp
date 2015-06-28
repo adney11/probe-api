@@ -106,14 +106,65 @@ ProbeAPI::PingResult::PingResult(const Json::Value& v)
 
 //------------------------------------------------------
 
+ProbeAPI::PingInfo::PingInfo(const Json::Value& v)
+{
+	// 	{
+	// 		"Status":"OK",
+	// 		"Destination":null,			// or "google-public-dns-a.google.com"
+	// 		"Hostname":null,			// or "google-public-dns-a.google.com"
+	// 		"IP":"8.8.8.8",
+	// 		"PingTime":35,				// average
+	// 		"PingTimeArray":[
+	// 			"35",
+	// 			"34",
+	// 			"36"
+	// 		]
+	// 	}
+
+	if (!v.isArray() || v.size() < 1)
+		return;
+
+	const Json::Value v2 = v[0];
+
+	sTargetHost = v2.get("Hostname", "").asString();
+	sTargetIp = v2.get("IP", "").asString();
+
+	const Json::Value v3 = v2.get("PingTimeArray", "");
+
+	const Json::ArrayIndex n = v3.size();
+	assert(v3.isArray());
+	vectResults.reserve(n);
+
+	for (Json::ArrayIndex i = 0; i < n; ++i)
+	{
+		vectResults.emplace_back(v3[i]);	// creating PingResult()
+	}
+}
+
+//------------------------------------------------------
+
 ProbeAPI::TracertHopResults::TracertHopResults(const Json::Value& v)
 {
-	// {"Ping1":"26","Ping2":"34","Ping3":"29","Url":"78.254.249.170"},
-	sReplyHost = v.get("Url", "").asString();
+	// {"HostName":"google-public-dns-a.google.com","IP":"8.8.8.8","PingTimeArray":"[\"50\",\"49\",\"50\"]","Ping1":"26","Ping2":"34","Ping3":"29","Status":"OK"},
 
+	sReplyHost = v.get("HostName", "").asString();
+	sReplyIp = v.get("IP", "").asString();
+
+#if 0 // this code is broken by web API
+	const Json::Value v2 = v.get("PingTimeArray", "");
+
+	const Json::ArrayIndex n = v2.size();
+	assert(v2.isArray());
+	vectResults.reserve(n);
+
+	for (Json::ArrayIndex i = 0; i < n; ++i)
+	{
+		vectResults.emplace_back(v2[i]);	// creating PingResult()
+	}
+#else
 	for (int i = 0;; ++i)
 	{
-		const string sName = OSSFMT("Ping" << (i+1));
+		const string sName = OSSFMT("Ping" << (i + 1));
 		if (!v.isMember(sName))
 		{
 			break;
@@ -122,37 +173,49 @@ ProbeAPI::TracertHopResults::TracertHopResults(const Json::Value& v)
 		{
 			vectResults.reserve(3);
 		}
-		vectResults.emplace_back(v.get(sName, Json::Value::null));
+		vectResults.emplace_back(v.get(sName, Json::Value::null));	// creating PingResult()
 	}
+#endif
 }
 
 //------------------------------------------------------
 
 ProbeAPI::TracerouteInfo::TracerouteInfo(const Json::Value& v)
 {
-	// [
+	// "TRACERoute":[
+	// 
 	// 	{
-	// 		"Destination": "www.onet.pl",
-	// 		"Tracert" :
-	// 		[
+	// 		"Destination":"8.8.8.8",
+	// 		"HostName":"google-public-dns-a.google.com",
+	// 		"IP":"8.8.8.8",
+	// 		"Tracert":[
 	// 			{
-	// 				"Ping1": "12",
-	// 					"Ping2" : "2",
-	// 					"Ping3" : "3",
-	// 					"Url" : "192.168.0.254"
+	// 				"HostName":"WER-FG-ABC.lo",
+	// 				"IP":"192.168.1.1",
+	// 				"PingTimeArray":"[\"0\",\"0\",\"0\"]",
+	// 				"Ping1":"0",
+	// 				"Ping2":"0",
+	// 				"Ping3":"0",
+	// 				"Status":"OK"
+	// 			},
+	// ....
+	// 			{
+	// 				"HostName":"",
+	// 				"IP":"216.239.47.147",
+	// 				"PingTimeArray":"[null,null,null]",
+	// 				"Ping1":null,
+	// 				"Ping2":null,
+	// 				"Ping3":null,
+	// 				"Status":"Timeout"
 	// 			},
 	// 			{
-	// 				"Ping1": "123",
-	// 				"Ping2" : "59",
-	// 				"Ping3" : "50",
-	// 				"Url" : "82.245.112.254"
-	// 			},
-	// 			.............
-	// 			{
-	// 				"Ping1": "100",
-	// 					"Ping2" : "99",
-	// 					"Ping3" : "103",
-	// 					"Url" : "213.180.141.140"
+	// 				"HostName":"google-public-dns-a.google.com",
+	// 				"IP":"8.8.8.8",
+	// 				"PingTimeArray":"[\"50\",\"49\",\"50\"]",
+	// 				"Ping1":"50",
+	// 				"Ping2":"49",
+	// 				"Ping3":"50",
+	// 				"Status":"OK"
 	// 			}
 	// 		]
 	// 	}
@@ -163,7 +226,9 @@ ProbeAPI::TracerouteInfo::TracerouteInfo(const Json::Value& v)
 
 	const Json::Value v2 = v[0];
 
-	sTarget = v2.get("Destination", "").asString();
+	sTargetHost = v2.get("HostName", "").asString();
+	sTargetIp = v2.get("IP", "").asString();
+
 	const Json::Value v3 = v2.get("Tracert", "");
 
 	const Json::ArrayIndex n = v3.size();
@@ -180,29 +245,46 @@ ProbeAPI::TracerouteInfo::TracerouteInfo(const Json::Value& v)
 
 ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 {
-	//     {
-	//       "ASN": {
-	//         "AsnID": "AS6830",
-	//         "AsnName": "Liberty Global Operations B.V."
-	//       },
-	//       "Country": {
-	//         "CountryCode": "CZ",
-	//         "CountryFlag": "http://speedcheckerapi.blob.core.windows.net/bsc-img-country-logos/cz.png",
-	//         "CountryName": "Czech Republic"
-	//       },
-	//       "DateTimeStamp": "/Date(1429519784633+0000)/",
-	//       "ID": 57904,
-	//       "Location": {
-	//         "Latitude": 50.130981,
-	//         "Longitude": 14.466462
-	//       },
-	//       "Network": {
-	//         "LogoURL": null,
-	//         "NetworkID": 31,
-	//         "NetworkName": "UPC Ceska Republica, s.r.o."
-	//       },
-	//       "PingTime": 35
-	//     },
+	// 	{
+	// 		"ASN": {
+	// 		"AsnID": "AS6830",
+	// 		"AsnName": "Liberty Global Operations B.V."
+	// 		},
+	// 		"Country": {
+	// 		"CountryCode": "CZ",
+	// 		"CountryFlag": "http://speedcheckerapi.blob.core.windows.net/bsc-img-country-logos/cz.png",
+	// 		"CountryName": "Czech Republic"
+	// 		},
+	// 		"DateTimeStamp": "/Date(1429519784633+0000)/",
+	// 		"ID": 57904,
+	// 		"Location": {
+	// 		"Latitude": 50.130981,
+	// 		"Longitude": 14.466462
+	// 		},
+	// 		"Network": {
+	// 		"LogoURL": null,
+	// 		"NetworkID": 31,
+	// 		"NetworkName": "UPC Ceska Republica, s.r.o."
+	// 		},
+	// 		"Ping":[
+	// 			{
+	// 				"Status":"OK",
+	// 				"Destination":null,			// or "google-public-dns-a.google.com"
+	// 				"Hostname":null,			// or "google-public-dns-a.google.com"
+	// 				"IP":"8.8.8.8",
+	// 				"PingTime":35,				// average
+	// 				"PingTimeArray":[
+	// 					"35",
+	// 					"34",
+	// 					"36"
+	// 				]
+	// 			}
+	// 		],
+	// 		"PingTime": 35				// average
+	//		"TRACERoute":[
+	// ....
+	//		]
+	// 	},
 
 	if (ProbeList_AsnOnly == mode)
 	{
@@ -210,13 +292,16 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 		return;
 	}
 
-	ping = PingResult(v.get("PingTime", Json::Value::null));
-
 	nId = v.get("ID", 0).asInt64();
 
 	country = CountryInfo(v.get("Country", ""));
 	asn = AsnInfo(v.get("ASN", ""));
 	network = NetworkInfo(v.get("Network", ""));
+
+	if (ProbeList_PingResults == mode)
+	{
+		ping = PingInfo(v.get("Ping", ""));
+	}
 
 	if (ProbeList_TracertResults == mode)
 	{

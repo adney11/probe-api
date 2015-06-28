@@ -64,9 +64,21 @@ namespace ProbeAPI
 		PingResult(const Json::Value& v);
 	};
 
+	struct PingInfo
+	{
+		std::string		sTargetHost;
+		std::string		sTargetIp;
+		std::vector<PingResult>	vectResults;
+
+		PingInfo()
+		{}
+		PingInfo(const Json::Value& v);
+	};
+
 	struct TracertHopResults
 	{
 		std::string		sReplyHost;
+		std::string		sReplyIp;
 		std::vector<PingResult>	vectResults;
 
 		TracertHopResults()
@@ -76,7 +88,8 @@ namespace ProbeAPI
 
 	struct TracerouteInfo
 	{
-		std::string		sTarget;
+		std::string		sTargetHost;
+		std::string		sTargetIp;
 		std::vector<TracertHopResults>	vectHops;
 
 		TracerouteInfo()
@@ -86,12 +99,14 @@ namespace ProbeAPI
 
 	struct ProbeInfo
 	{
-		PingResult		ping;
 		int64_t			nId = 0;
 
 		CountryInfo		country;
 		AsnInfo			asn;
 		NetworkInfo		network;
+
+		PingInfo		ping;
+
 		TracerouteInfo	tracert;
 
 		ProbeInfo()

@@ -177,7 +177,8 @@ public:
 		// over a maximum of 30 hops:
 		//if (options.bVerbose)
 		{
-			cout << "Tracing route to " << info.tracert.sTarget << " from " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
+			const string sTargetInfo = (info.tracert.sTargetHost.empty() ? options.sTarget : info.tracert.sTargetHost) + " [" + info.tracert.sTargetIp + "]";
+			cout << "Tracing route to " << sTargetInfo << " from " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
 			cout << "over a maximum of " << options.nMaxHop + 0 << " hops:" << endl;
 		}
 #else
@@ -185,7 +186,8 @@ public:
 		// over a maximum of 30 hops:
 		//if (options.bVerbose)
 		{
-			cout << "traceroute to " << options.sTarget << " (" << options.sTarget << ")";
+			const string sTargetInfo = (info.tracert.sTargetHost.empty() ? options.sTarget : info.tracert.sTargetHost) + " (" + info.tracert.sTargetIp + ")";
+			cout << "traceroute to " << sTargetInfo << " (" << options.sTarget << ")";
 			cout << " from " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << ", " << options.nMaxHop + 0 << " hops max, " << options.nPacketSize << " byte packets" << endl;
 		}
 #endif
@@ -201,7 +203,7 @@ public:
 #else
 		//  1  192.168.163.2 (192.168.163.2)  0.160 ms  0.109 ms  0.068 ms
 		//  2  * * *
-		cout << setw(2) << nHop << "  " << hop.sReplyHost << " (" << hop.sReplyHost << ")";
+		cout << setw(2) << nHop << "  " << hop.sReplyHost << " (" << hop.sReplyIp << ")";
 #endif
 	}
 
@@ -236,7 +238,8 @@ public:
 	void PrintHopFinish(const ProbeAPI::TracertHopResults& hop) const
 	{
 #ifdef PRINT_AS_WINDOWS
-		cout << "  " << hop.sReplyHost << endl;
+		const string sReplyHostInfo = hop.sReplyHost.empty() ? hop.sReplyIp : hop.sReplyHost + " [" + hop.sReplyIp + "]";
+		cout << "  " << sReplyHostInfo << endl;
 #else
 		cout << endl;
 #endif
