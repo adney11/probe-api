@@ -302,7 +302,7 @@ void PrintPackOfResults(const JobType& job, const ApplicationOptions& options, c
 
 				if (!options.bNoDelays)
 				{
-					DoSleep(info.ping, bFirstIteration);
+					DoSleep(ping, bFirstIteration);
 				}
 				job.PrintHopTry(ping);
 			}

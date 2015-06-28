@@ -20,6 +20,7 @@
   * -hf max_hops    - Maximum number of failed hops in a row to stop (default: 3).
 * changed default dping TTL from 128 to 55 (like in Windows 8)
 * TODO: fill changes in default timeout and other values
+* fixed bug with delays during dtraceroute print. Printing is much faster now
 * don't exit if Control+Break is catched during dping. Print statistics and continue (like Windows ping does)
 * allow target host to be specified at any position of command line (not necessary to have it at the end of command line any more)
 * added --probes command line switch as an alias for -n (both dping and dtracert)
