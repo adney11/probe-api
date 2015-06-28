@@ -293,6 +293,11 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 			cout << "Debug mode ON" << endl;
 		}
 
+		if (bInfinitePing)
+		{
+			nProbesLimit = std::numeric_limits<uint32_t>::max();
+		}
+
 		if (MODE_UNKNOWN == mode)
 		{
 #ifdef DO_BY_COUNTRY_BY_DEFAULT
