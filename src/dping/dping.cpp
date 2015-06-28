@@ -106,8 +106,8 @@ public:
 		// Documentation:
 		// https://www.mashape.com/optimalsoftware/freeprobeapi/#startpingtestbycountry
 		// https://www.mashape.com/optimalsoftware/freeprobeapi/#startpingtestbyasn
-		const auto nRestProbes = options.nProbesLimit - stats.nSent;
-		const auto nRequestedProbeCount = (std::max)(options.nMinProbesToRequest + 0LL, nRestProbes);
+		const int64_t nRestProbes = options.nProbesLimit - stats.nSent;
+		const auto nRequestedProbeCount = (std::max)(static_cast<int64_t>(options.nMinProbesToRequest), nRestProbes);
 
 		const string sUrl = OSSFMT(sMethod
 			<< "?" << sSearchArgName << "=" << sSearchArgument
@@ -200,7 +200,7 @@ public:
 		}
 		else
 		{
-			const string sTargetInfo = options.sTarget == info.ping.sTargetHost ? info.ping.sTarget : info.ping.sTargetHost + " (" + info.ping.sTargetIp + ")";
+			const string sTargetInfo = options.sTarget == info.ping.sTargetHost ? info.ping.sTargetIp : info.ping.sTargetHost + " (" + info.ping.sTargetIp + ")";
 			cout << options.nPacketSize << " bytes from " << sTargetInfo << ": icmp_seq=1 ttl=" << options.nTTL + 0 << " time=" << pingResult.nTimeMs << ".0 ms";
 			if (options.bVerbose)
 			{

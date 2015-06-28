@@ -92,8 +92,8 @@ public:
 		// Documentation:
 		// https://www.mashape.com/optimalsoftware/freeprobeapi/#starttracerttestbycountry
 		// https://www.mashape.com/optimalsoftware/freeprobeapi/#starttracerttestbyasn
-		const auto nRestProbes = options.nProbesLimit - stats.nSent;
-		const auto nRequestedProbeCount = (std::max)(options.nMinProbesToRequest + 0LL, nRestProbes);
+		const int64_t nRestProbes = options.nProbesLimit - stats.nSent;
+		const auto nRequestedProbeCount = (std::max)(static_cast<int64_t>(options.nMinProbesToRequest), nRestProbes);
 
 		const string sUrl = OSSFMT(sMethod
 			<< "?" << sSearchArgName << "=" << sSearchArgument
