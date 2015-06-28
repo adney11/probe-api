@@ -177,7 +177,7 @@ public:
 		// over a maximum of 30 hops:
 		//if (options.bVerbose)
 		{
-			cout << "Tracing route to " << info.tracert.sTarget << " from " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
+			cout << "Tracing route to " << info.tracert.sTarget << " from " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
 			cout << "over a maximum of " << options.nMaxHop + 0 << " hops:" << endl;
 		}
 #else
@@ -186,7 +186,7 @@ public:
 		//if (options.bVerbose)
 		{
 			cout << "traceroute to " << options.sTarget << " (" << options.sTarget << ")";
-			cout << " from " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << ", " << options.nMaxHop + 0 << " hops max, " << options.nPacketSize << " byte packets" << endl;
+			cout << " from " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << ", " << options.nMaxHop + 0 << " hops max, " << options.nPacketSize << " byte packets" << endl;
 		}
 #endif
 	}

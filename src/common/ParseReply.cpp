@@ -62,7 +62,8 @@ ProbeAPI::PingResult::PingResult(const Json::Value& v)
 {
 	// Ping results:
 	// "PingTime": 35,
-	// "PingTime": null,
+	// "PingTime": null, (OLD)
+	// "PingTime": "TimedOut", (NEW)
 	// Tracert results:
 	// "Ping2":"1",
 	// "Ping3":"-",
@@ -171,7 +172,7 @@ ProbeAPI::TracerouteInfo::TracerouteInfo(const Json::Value& v)
 
 	for (Json::ArrayIndex i = 0; i < n; ++i)
 	{
-		vectHops.emplace_back(v3[i]);
+		vectHops.emplace_back(v3[i]);	// create TracertHopResults()
 	}
 }
 
@@ -216,7 +217,8 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 	country = CountryInfo(v.get("Country", ""));
 	asn = AsnInfo(v.get("ASN", ""));
 	network = NetworkInfo(v.get("Network", ""));
-	if (ProbeList_All_Tracert == mode)
+
+	if (ProbeList_TracertResults == mode)
 	{
 		tracert = TracerouteInfo(v.get("TRACERoute", ""));
 	}
@@ -224,7 +226,7 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 
 //------------------------------------------------------
 
-std::string ProbeAPI::ProbeInfo::GetPeerInfo(const bool bAsnIsKnown) const
+std::string ProbeAPI::ProbeInfo::GetProbeInfo(const bool bAsnIsKnown) const
 {
 #if 1
 	if (bAsnIsKnown)
@@ -285,7 +287,7 @@ std::vector<ProbeAPI::CountryInfo> ProbeAPI::ParseCountries(const std::string& s
 	for (Json::ArrayIndex index = 0; index < n; ++index)
 	{
 		const Json::Value item = items[index];
-		res.emplace_back(item);
+		res.emplace_back(item);		// create CountryInfo()
 	}
 
 	return res;
@@ -353,7 +355,7 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseProbeList(const std::string& sJs
 	for (Json::ArrayIndex index = 0; index < n; ++index)
 	{
 		const Json::Value item = items[index];
-		res.emplace_back(item, mode);
+		res.emplace_back(item, mode);	// create ProbeInfo
 		if (g_bTerminateProgram)
 		{
 			throw PException("ParseProbeList: Terminate program");
@@ -374,14 +376,14 @@ std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseGetProbesByCountryResult_AsnOnly
 
 std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParsePingResults(const std::string& sJson, const std::string& sJsonRootItemName)
 {
-	return ParseProbeList(sJson, sJsonRootItemName, ProbeList_All);
+	return ParseProbeList(sJson, sJsonRootItemName, ProbeList_PingResults);
 }
 
 //------------------------------------------------------
 
 std::vector<ProbeAPI::ProbeInfo> ProbeAPI::ParseTracertResults(const std::string& sJson, const std::string& sJsonRootItemName)
 {
-	return ParseProbeList(sJson, sJsonRootItemName, ProbeList_All_Tracert);
+	return ParseProbeList(sJson, sJsonRootItemName, ProbeList_TracertResults);
 }
 
 //------------------------------------------------------

@@ -19,8 +19,8 @@ namespace ProbeAPI
 {
 	enum eParseMode
 	{
-		ProbeList_All,
-		ProbeList_All_Tracert,
+		ProbeList_PingResults,
+		ProbeList_TracertResults,
 		ProbeList_AsnOnly,
 	};
 
@@ -98,7 +98,7 @@ namespace ProbeAPI
 		{}
 		ProbeInfo(const Json::Value& v, const eParseMode mode);
 
-		std::string GetPeerInfo(const bool bAsnIsKnown) const;
+		std::string GetProbeInfo(const bool bAsnIsKnown) const;
 	};
 
 	std::vector<ProbeAPI::CountryInfo> ParseCountries(const std::string& sJson);

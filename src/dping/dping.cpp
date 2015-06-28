@@ -186,7 +186,7 @@ public:
 
 		if (options.bVerbose)
 		{
-			cout << " to " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
+			cout << " to " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
 		}
 
 		cout << endl;
@@ -200,7 +200,7 @@ public:
 			cout << options.nPacketSize << " bytes from " << options.sTarget << ": icmp_seq=1 ttl=" << options.nTTL + 0 << " time=" << info.ping.nTimeMs << ".0 ms";
 			if (options.bVerbose)
 			{
-				cout << " to " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
+				cout << " to " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
 			}
 			cout << endl;
 		}
