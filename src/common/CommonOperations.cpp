@@ -25,7 +25,7 @@ void DoSleep(const ProbeAPI::PingResult& ping, bool& bFirstSleep)
 	cout << flush;
 	const int nMaxDelay = 500;
 	const int nDelayMs = ping.bTimeout ? 500 : ping.nTimeMs;
-	MySleep((min)(nDelayMs, nMaxDelay));
+	MySleep((std::min)(nDelayMs, nMaxDelay));
 }
 
 //------------------------------------------------------

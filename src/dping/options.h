@@ -51,7 +51,8 @@ public:
 	Option<uint32_t>	nPingsPerProbe		= { 1,		1,		10,			{ "-np" },	true };
 	// following two options share the same command line argument; This is expected
 	// since they have different limitations and they are used in different program run modes.
-	Option<uint32_t>	nProbesLimit		= { 4,		10,		1000,		{ "-n", "--probes" } };
+	const uint32_t nMinProbesToRequest = 10;
+	Option<uint32_t>	nProbesLimit		= { 10,		10,		1000,		{ "-n", "--probes" } };
 	Option<uint32_t>	nResultsLimit		= { std::numeric_limits<uint32_t>::max(), { "-n" } };		// for list ASNs and list countries modes; UINT32_MAX - display ALL items from requested list
 	Option<uint16_t>	nPacketSize			= { 32,		0,		65500,		{ "-l" } };
 	Option<uint8_t>		nTTL				= { 55,		1,		255,		{ "-i" } };

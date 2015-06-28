@@ -66,6 +66,11 @@ public:
 		return m_data;
 	}
 
+	T GetValue() const
+	{
+		return m_data;
+	}
+
 	Option& operator= (const T val)
 	{
 		m_data = val;

@@ -142,7 +142,7 @@ void ApplicationOptions::Print()
 
 void ApplicationOptions::RecalculateTotalTimeout()
 {
-	const unsigned nMaxFailedHopsEffective = min(nMaxFailedHops + 0, nMaxHop - nStartHop + 1);
+	const unsigned nMaxFailedHopsEffective = (std::min)(nMaxFailedHops + 0, nMaxHop - nStartHop + 1);
 	const auto nAdditionalRowTime = nTriesPerHop * nWaitBetweenPingsMs + (bResolveIp2Name ? 500 : 0);
 
 	nTimeoutTotalMs =
