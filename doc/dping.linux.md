@@ -10,28 +10,41 @@ Usage: dping --help
     --version
     --list-country [-v] [--debug]
     --list-asn code [-v] [--debug]
-    --country code [-n probes] [-w timeout] [-wa timeout] [--no-delays] [-v]
-                   [--debug] {target_name}
-    --asn id [-n probes] [-w timeout] [-wa timeout] [--no-delays] [-v]
-             [--debug] {target_name}
+    --country code [-n probes] [-w timeout] [-t] [-v] {target_name}
+    --asn id [-n probes] [-w timeout] [-t] [-v] {target_name}
 
 Options:
     {target_name}  Destination host IP or domain name.
 
     --help          Display this help.
     --version       Display detailed program version, copyright notices.
-    --country code  Specify source addresses 2 letter country code
-                    (ISO 3166-1 alpha-2).
-    --asn id        Use source addresses from specified ASN
-                    (autonomous system number) network.
-    -n probes       Probes limit: number of hosts to make requests from.
-    -w timeout      Timeout in milliseconds to wait for single ping.
-    -wa timeout     Timeout in milliseconds to wait for all probes.
     --list-country  List available countries.
     --list-asn code List ASNs for specified 2 letter country code.
+    --country code  Specify source addresses 2 letter country code
+                    (ISO 3166-1 alpha-2).
+    --asn id        Use source addresses from specified ASN.
+                    (autonomous system number) network.
+    -n probes       Probes limit: number of hosts to make requests from.
+                    This option has an alias: --probes probes
+    -w timeout      Timeout in milliseconds to wait for single ping.
+    -t              Ping the specified host until stopped.
+                    To see statistics and continue - type Control-Break;
+                    To stop - type Control-C.
+    -v              Verbose output.
+
+Advanced options:
+    -wa timeout     Timeout in milliseconds to wait for all probes.
+    -a              Resolve addresses to hostnames.
+    -np count       Number of pings per probe to send (default: 1).
+    -i TTL          Time To Live.
+    -l size         Send buffer size.
+    -f              Set Don't Fragment flag in packet (IPv4-only).
+    -4              Force using IPv4.
+    -6              Force using IPv6.
+    --api-key key   Set web API key.
+    --api-url url   Set web API URL.
     --no-delays     Disable delays during printing of results to console.
-    -v              Verbose output
-    --debug         Additional debug output
+    --debug         Additional debug output.
 
 Return Codes:
     0 - eRetCode::OK
@@ -91,29 +104,26 @@ AS199435      1 Wimax On Line, S.L.
 
 #### --country
 ```
-$ dping --country US 8.8.8.8
+$ dping --country US -a 8.8.8.8
 PING 8.8.8.8 (8.8.8.8) 32(60) bytes of data from country code US.
-32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=30.0 ms
-32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=35.0 ms
-32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=666.0 ms
-32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=62.0 ms
+32 bytes from google-public-dns-a.google.com (8.8.8.8): icmp_seq=1 ttl=55 time=17.0 ms
+32 bytes from google-public-dns-a.google.com (8.8.8.8): icmp_seq=1 ttl=55 time=31.0 ms
+32 bytes from google-public-dns-a.google.com (8.8.8.8): icmp_seq=1 ttl=55 time=41.0 ms
+32 bytes from google-public-dns-a.google.com (8.8.8.8): icmp_seq=1 ttl=55 time=41.0 ms
 --- 8.8.8.8 ping statistics ---
-10 packets transmitted, 4 received, 60% packet loss, time 7103ms
-rtt min/avg/max/mdev = 30.000/198.250/666.000/16.000 ms
+4 packets transmitted, 4 received, 0% packet loss, time 6588ms
+rtt min/avg/max/mdev = 17.000/32.500/41.000/5.000 ms
 ```
 
 #### --asn
 ```
-$ dping --asn AS3352 8.8.8.8
+$ dping --asn AS3352 -a 8.8.8.8
 PING 8.8.8.8 (8.8.8.8) 32(60) bytes of data from AS3352.
-32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=81.0 ms
-32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=30.0 ms
-32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=35.0 ms
-32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=666.0 ms
-32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=13.0 ms
-32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=40.0 ms
-32 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=62.0 ms
+32 bytes from google-public-dns-a.google.com (8.8.8.8): icmp_seq=1 ttl=55 time=64.0 ms
+32 bytes from google-public-dns-a.google.com (8.8.8.8): icmp_seq=1 ttl=55 time=20.0 ms
+32 bytes from google-public-dns-a.google.com (8.8.8.8): icmp_seq=1 ttl=55 time=55.0 ms
+32 bytes from google-public-dns-a.google.com (8.8.8.8): icmp_seq=1 ttl=55 time=3.0 ms
 --- 8.8.8.8 ping statistics ---
-10 packets transmitted, 7 received, 30% packet loss, time 5978ms
-rtt min/avg/max/mdev = 13.000/132.429/666.000/22.000 ms
+5 packets transmitted, 4 received, 20% packet loss, time 7209ms
+rtt min/avg/max/mdev = 3.000/35.500/64.000/22.000 ms
 ```
