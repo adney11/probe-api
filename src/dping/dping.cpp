@@ -111,14 +111,17 @@ public:
 
 		const string sUrl = OSSFMT(sMethod
 			<< "?" << sSearchArgName << "=" << sSearchArgument
-			<< "&destination=" << sTarget				// An IP address or hostname that will be pinged
-			<< "&probeslimit=" << nRequestedProbeCount	// Number of probes to use
-			<< "&count=" << options.nPingsPerProbe		// Number of pings to run (default 3). (per each probe)
-			<< "&sleep=" << options.nWaitBetweenPingsMs	// Sleep between pings in milliseconds (default 1000ms).
-			<< "&timeout=" << options.nTimeoutTotalMs	// Maximum time available to probes for testing in milliseconds (default 6000). The whole test is most likely to last longer then this value.
-			<< "&ttl=" << options.nTTL + 0				// Max number of hops for ping
-			<< "&bufferSize=" << options.nPacketSize	// buffer size filled with 'A' char to send, default=32, max=65500
-			<< "&resolve=1"								// if IP was given, try to resolve it, default=0
+			<< "&destination=" << sTarget					// An IP address or hostname that will be pinged
+			<< "&probeslimit=" << nRequestedProbeCount		// Number of probes to use
+			<< "&count=" << options.nPingsPerProbe			// Number of pings to run (default 3). (per each probe)
+			<< "&sleep=" << options.nWaitBetweenPingsMs		// Sleep between pings in milliseconds (default 1000ms).
+			<< "&timeout=" << options.nTimeoutTotalMs		// Maximum time available to probes for testing in milliseconds (default 6000). The whole test is most likely to last longer then this value.
+			<< "&ttl=" << options.nTTL + 0					// Max number of hops for ping
+			<< "&bufferSize=" << options.nPacketSize		// buffer size filled with 'A' char to send, default=32, max=65500
+			<< "&fragment=" << !options.bDontFragment		// opposite of "dontFragment" flag, default=1 => dontFragment=0
+			<< "&resolve=" << options.bResolveIp2Name		// if IP was given, try to resolve it, default=0
+			<< "&ipv4only=" << options.bUseIpv4Only			// force using IPv4 (if no IPv4 IP address is returned, return error), default=0
+			<< "&ipv6only=" << options.bUseIpv6Only			// force using IPv6 (if no IPv6 IP address is returned, return error), default=0
 			);
 
 		return sUrl;

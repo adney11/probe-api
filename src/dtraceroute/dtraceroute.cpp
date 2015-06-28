@@ -100,14 +100,17 @@ public:
 			<< "&destination=" << sTarget					// Comma-separated list of IP addresses or hostnames that will be tested
 			<< "&probeslimit=" << nRequestedProbeCount		// Number of probes to use
 			<< "&count=" << options.nTriesPerHop			// Number of pings to each hop. Default: 3
-			<< "&ttlStart=1"								// aka "First Hop", TTL from which the trace route should start, default=1
+			<< "&ttlStart=" << options.nStartHop			// aka "First Hop", TTL from which the trace route should start, default=1
 			<< "&ttl=" << options.nMaxHop + 0				// Max number of hops.
 			<< "&sleep=" << options.nWaitBetweenPingsMs		// Sleep between pings in milliseconds (default 300ms).
 			<< "&maxFailedHops=" << options.nMaxFailedHops + 0 // max number of rows where all pings got timeout result
 			<< "&commandTimeout=" << options.nTimeoutPingMs	// Ping timeout in milliseconds that one ping can take (default 5000ms).
 			<< "&timeout=" << options.nTimeoutTotalMs		// Maximum time available to probes for testing in milliseconds (default 6000). The whole test is most likely to last longer then this value.
 			<< "&bufferSize=" << options.nPacketSize		// buffer size filled with 'A' char to send, default=32, max=65500
-			<< "&resolve=1"									// if IP was given, try to resolve it + try to resolve each hop, default=1
+			<< "&fragment=" << !options.bDontFragment		// opposite of "dontFragment" flag, default=1 => dontFragment=0
+			<< "&resolve=" << options.bResolveIp2Name		// if IP was given, try to resolve it, default=0
+			<< "&ipv4only=" << options.bUseIpv4Only			// force using IPv4 (if no IPv4 IP address is returned, return error), default=0
+			<< "&ipv6only=" << options.bUseIpv6Only			// force using IPv6 (if no IPv6 IP address is returned, return error), default=0
 			);
 
 		return sUrl;
