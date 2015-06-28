@@ -279,7 +279,8 @@ void PrintFinalStats()
 
 void PrintPackOfResults(const JobType& job, const ApplicationOptions& options, const vector<ProbeAPI::ProbeInfo>& items, ApplicationStats& stats)
 {
-	bool bFirstIteration = (0 == stats.nSent);
+	//bool bFirstIteration = (0 == stats.nSent);
+	bool bFirstIteration = true;
 	for (const auto& info : items)
 	{
 		if (g_bTerminateProgram)
