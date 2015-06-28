@@ -116,7 +116,7 @@ public:
 			<< "&count=" << options.nPingsPerProbe		// Number of pings to run (default 3). (per each probe)
 			<< "&sleep=" << options.nWaitBetweenPingsMs	// Sleep between pings in milliseconds (default 1000ms).
 			<< "&timeout=" << options.nTimeoutTotalMs	// Maximum time available to probes for testing in milliseconds (default 6000). The whole test is most likely to last longer then this value.
-			<< "&ttl=" << (unsigned)options.nTTL		// Max number of hops for ping
+			<< "&ttl=" << options.nTTL + 0				// Max number of hops for ping
 			<< "&bufferSize=" << options.nPacketSize	// buffer size filled with 'A' char to send, default=32, max=65500
 			<< "&resolve=1"								// if IP was given, try to resolve it, default=0
 			);
@@ -178,7 +178,7 @@ public:
 		}
 		else
 		{
-			cout << "Reply from " << options.sTarget << ": bytes=" << options.nPacketSize << " time=" << info.ping.nTimeMs << "ms TTL=" << (unsigned)options.nTTL;
+			cout << "Reply from " << options.sTarget << ": bytes=" << options.nPacketSize << " time=" << info.ping.nTimeMs << "ms TTL=" << options.nTTL + 0;
 		}
 
 		if (options.bVerbose)
@@ -194,7 +194,7 @@ public:
 		}
 		else
 		{
-			cout << options.nPacketSize << " bytes from " << options.sTarget << ": icmp_seq=1 ttl=" << (unsigned)options.nTTL << " time=" << info.ping.nTimeMs << ".0 ms";
+			cout << options.nPacketSize << " bytes from " << options.sTarget << ": icmp_seq=1 ttl=" << options.nTTL + 0 << " time=" << info.ping.nTimeMs << ".0 ms";
 			if (options.bVerbose)
 			{
 				cout << " to " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
