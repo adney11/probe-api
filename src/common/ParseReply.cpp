@@ -150,7 +150,7 @@ ProbeAPI::TracertHopResults::TracertHopResults(const Json::Value& v)
 	sReplyHost = v.get("HostName", "").asString();
 	sReplyIp = v.get("IP", "").asString();
 
-#if 0 // this code is broken by web API
+#if 0 // TODO: this code is broken by web API
 	const Json::Value v2 = v.get("PingTimeArray", "");
 
 	const Json::ArrayIndex n = v2.size();
