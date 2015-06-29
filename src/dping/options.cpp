@@ -126,7 +126,7 @@ void ApplicationOptions::Print()
 	{
 		const OptionBase* pOption = it.first;
 		const string& sOptionName = it.second;
-		const string sOptionValue = pOption->GetValueAsString();
+		const string sOptionValue = pOption->FormatForHuman();
 
 		PrintOption(sOptionName, sOptionValue);
 	}

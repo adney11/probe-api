@@ -17,7 +17,8 @@ public:
 
 	virtual bool ProcessCommandLineArg(const std::string& sArg, const bool bLastArg, const std::string& sNextArg, bool& bNextArgUsed) = 0;
 
-	virtual std::string GetValueAsString() const = 0;	// for verbose printing on screen
+	virtual std::string FormatForHuman() const = 0;	// for verbose printing on screen
+	virtual std::string FormatForComputer() const = 0;	// for web API URL
 
 	bool InfluencesOnTotalTimeot() const
 	{
@@ -88,7 +89,11 @@ public:
 		return false;
 	}
 
-	virtual std::string GetValueAsString() const override	// for verbose printing on screen
+	virtual std::string FormatForHuman() const override	// for verbose printing on screen
+	{
+		return std::to_string(m_data);
+	}
+	virtual std::string FormatForComputer() const override	// for web API URL
 	{
 		return std::to_string(m_data);
 	}
@@ -158,9 +163,13 @@ public:
 		return false;
 	}
 
-	virtual std::string GetValueAsString() const override	// for verbose printing on screen
+	virtual std::string FormatForHuman() const override	// for verbose printing on screen
 	{
 		return m_data ? "ON" : "OFF";
+	}
+	virtual std::string FormatForComputer() const override	// for web API URL
+	{
+		return m_data ? "1" : "0";
 	}
 
 protected:
@@ -173,7 +182,7 @@ protected:
 
 inline std::ostream& operator<<(std::ostream &os, const OptionBase& option)
 {
-	return os << option.GetValueAsString();
+	return os << option.FormatForComputer();
 }
 
 //------------------------------------------------------
