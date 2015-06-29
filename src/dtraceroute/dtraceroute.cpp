@@ -32,7 +32,7 @@ shared_ptr<ApplicationStats> g_ptrStats = nullptr;
 //   4     2 ms     2 ms     2 ms  172.30.65.25
 //   5    43 ms     2 ms     2 ms  185.32.224.156
 //   6    13 ms    12 ms    12 ms  188.254.103.221
-//   7    28 ms    15 ms    12 ms  95.167.95.222
+//   7     *        *        *     Request timed out.
 //   8    47 ms    44 ms    44 ms  79.133.94.86
 //   9    13 ms    13 ms    14 ms  216.239.47.143
 //  10    13 ms    13 ms    13 ms  google-public-dns-a.google.com [8.8.8.8]
@@ -238,7 +238,12 @@ public:
 	void PrintHopFinish(const ProbeAPI::TracertHopResults& hop) const
 	{
 #ifdef PRINT_AS_WINDOWS
-		const string sReplyHostInfo = hop.sReplyHost.empty() ? hop.sReplyIp : hop.sReplyHost + " [" + hop.sReplyIp + "]";
+		const bool bAllFailed = hop.vectResults.cend() == std::find_if(hop.vectResults.cbegin(), hop.vectResults.cend(),
+			[](const ProbeAPI::PingResult& p){ return !p.bTimeout; });
+
+		const string sReplyHostInfo = (bAllFailed && hop.sReplyIp.empty()) ? "Request timed out." :
+			hop.sReplyHost.empty() ? hop.sReplyIp : hop.sReplyHost + " [" + hop.sReplyIp + "]";
+
 		cout << "  " << sReplyHostInfo << endl;
 #else
 		cout << endl;

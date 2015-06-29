@@ -111,7 +111,7 @@ over a maximum of 30 hops:
 Tracing route to google-public-dns-a.google.com [8.8.8.8] from probe ID 34805658 net "Optimum Online" (AS6128)
 over a maximum of 30 hops:
   1    <1 ms     1 ms     1 ms  local.home [192.168.1.1]
-  2     *        *        *     
+  2     *        *        *     Request timed out.
   3    11 ms     9 ms     9 ms  ool-4353df19.dyn.optonline.net [67.83.223.25]
   4    22 ms    10 ms    13 ms  dstswr1-ge3-7.rh.rslyny.cv.net [167.206.34.9]
   5    13 ms    23 ms    10 ms  451be075.cst.lightpath.net [65.19.107.117]
@@ -130,7 +130,7 @@ over a maximum of 30 hops:
 over a maximum of 30 hops:
   1     2 ms     3 ms     1 ms  10.0.0.1
   2    10 ms     9 ms    15 ms  c-73-3-98-1.hsd1.ut.comcast.net [73.3.98.1]
-  3     *        *        *     
+  3     *        *        *     Request timed out.
   4    18 ms    13 ms    10 ms  he-0-18-0-0-ar01.saltlakecity.ut.utah.comcast.net [162.151.49.197]
   5    24 ms    23 ms    26 ms  be-33660-cr02.denver.co.ibone.comcast.net [68.86.90.225]
   6    22 ms    22 ms    23 ms  ae-17-0-pe01.910fifteenth.co.ibone.comcast.net [68.86.84.126]
