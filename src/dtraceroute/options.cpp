@@ -58,6 +58,7 @@ R"(
 Advanced options:
     -wa timeout     Timeout in milliseconds to wait for all probes.
     -d              Do not resolve addresses to hostnames.
+    -hs hop_number  First hop number to start from.
     -hf max_hops    Maximum number of failed hops in a row to stop
                     (default: 3).
     -l size         Send buffer size.
