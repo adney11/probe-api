@@ -293,13 +293,13 @@ void PrintPackOfResults(const JobType& job, const ApplicationOptions& options, c
 
 		job.PrintJobStart(info);
 
-		size_t iHop = 0;
+		size_t iHop = options.nStartHop;
 		for (const auto& hop : info.tracert.vectHops)
 		{
 			if (g_bTerminateProgram)
 				throw PException("PrintPackOfResults: loop2: Terminate Program");
 
-			job.PrintHopStart(++iHop, hop);
+			job.PrintHopStart(iHop++, hop);
 
 			for (const auto& ping : hop.vectResults)
 			{

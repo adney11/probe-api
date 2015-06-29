@@ -106,6 +106,7 @@ protected:
 		col.emplace_back(&nProbesLimit, "nProbesLimit");
 		col.emplace_back(&nResultsLimit, "nResultsLimit");
 		col.emplace_back(&nPacketSize, "nPacketSize");
+		col.emplace_back(&nStartHop, "nStartHop");
 		col.emplace_back(&nMaxHop, "nMaxHops");
 		col.emplace_back(&nMaxFailedHops, "nMaxHopsFailed");
 		return col;
