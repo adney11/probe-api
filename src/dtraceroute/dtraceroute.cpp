@@ -101,9 +101,9 @@ public:
 			<< "&probeslimit=" << nRequestedProbeCount		// Number of probes to use
 			<< "&count=" << options.nTriesPerHop			// Number of pings to each hop. Default: 3
 			<< "&ttlStart=" << options.nStartHop			// aka "First Hop", TTL from which the trace route should start, default=1
-			<< "&ttl=" << options.nMaxHop + 0				// Max number of hops.
+			<< "&ttl=" << options.nMaxHop					// Max number of hops.
 			<< "&sleep=" << options.nWaitBetweenPingsMs		// Sleep between pings in milliseconds (default 300ms).
-			<< "&maxFailedHops=" << options.nMaxFailedHops + 0 // max number of rows where all pings got timeout result
+			<< "&maxFailedHops=" << options.nMaxFailedHops	// max number of rows where all pings got timeout result
 			<< "&commandTimeout=" << options.nTimeoutPingMs	// Ping timeout in milliseconds that one ping can take (default 5000ms).
 			<< "&timeout=" << options.nTimeoutTotalMs		// Maximum time available to probes for testing in milliseconds (default 6000). The whole test is most likely to last longer then this value.
 			<< "&bufferSize=" << options.nPacketSize		// buffer size filled with 'A' char to send, default=32, max=65500
@@ -162,11 +162,11 @@ public:
 		// over a maximum of 30 hops:
 		// 
 		cout << " from " << FormatSearchDetails(sSearchArgument) << ":" << endl;
-		cout << "over a maximum of " << options.nMaxHop + 0 << " hops:" << endl;
+		cout << "over a maximum of " << options.nMaxHop << " hops:" << endl;
 		cout << endl;
 #else
 		// traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
-		cout << " from " << FormatSearchDetails(sSearchArgument) << ", " << options.nMaxHop + 0 << " hops max, " << options.nPacketSize << " byte packets" << endl;
+		cout << " from " << FormatSearchDetails(sSearchArgument) << ", " << options.nMaxHop << " hops max, " << options.nPacketSize << " byte packets" << endl;
 #endif
 	}
 
@@ -179,7 +179,7 @@ public:
 		{
 			const string sTargetInfo = (info.tracert.sTargetHost.empty() ? options.sTarget : info.tracert.sTargetHost) + " [" + info.tracert.sTargetIp + "]";
 			cout << "Tracing route to " << sTargetInfo << " from " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
-			cout << "over a maximum of " << options.nMaxHop + 0 << " hops:" << endl;
+			cout << "over a maximum of " << options.nMaxHop << " hops:" << endl;
 		}
 #else
 		// Tracing route to google-public-dns-a.google.com [8.8.8.8]
@@ -188,7 +188,7 @@ public:
 		{
 			const string sTargetInfo = (info.tracert.sTargetHost.empty() ? options.sTarget : info.tracert.sTargetHost) + " (" + info.tracert.sTargetIp + ")";
 			cout << "traceroute to " << sTargetInfo << " (" << options.sTarget << ")";
-			cout << " from " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << ", " << options.nMaxHop + 0 << " hops max, " << options.nPacketSize << " byte packets" << endl;
+			cout << " from " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << ", " << options.nMaxHop << " hops max, " << options.nPacketSize << " byte packets" << endl;
 		}
 #endif
 	}

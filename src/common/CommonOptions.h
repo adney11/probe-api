@@ -97,7 +97,7 @@ protected:
 	void Parse(const std::string& str, const std::string& sArgName)
 	{
 		std::istringstream iss(str);
-		T x = 0;
+		auto x = T(0) + 0;	// hack for sizeof(T)==1 types: increase size of type to int so it is parsed as a number by istringstream
 		iss >> x;
 		if (iss.fail())
 		{
@@ -167,6 +167,14 @@ protected:
 	T	m_defVal = false;
 	T	m_data = false;
 };
+
+//------------------------------------------------------
+// Allow correct printing to streams:
+
+inline std::ostream& operator<<(std::ostream &os, const OptionBase& option)
+{
+	return os << option.GetValueAsString();
+}
 
 //------------------------------------------------------
 
