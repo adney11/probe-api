@@ -33,6 +33,25 @@ public:
 		MODE_DO_BY_ASN,
 	};
 
+	static std::string ModeAsString(const eMode m)
+	{
+		switch (m)
+		{
+		case MODE_UNKNOWN:
+			return "UNKNOWN";
+		case MODE_GET_COUNTRIES:
+			return "GET_COUNTRIES";
+		case MODE_GET_ASNS:
+			return "GET_ASNS";
+		case MODE_DO_BY_COUNTRY:
+			return "BY_COUNTRY";
+		case MODE_DO_BY_ASN:
+			return "BY_ASN";
+		default:
+			return "TOTALLY_UNKNOWN";
+		}
+	}
+
 public:
 	Option<bool>	bVerbose		= { false, { "-v" } };
 	Option<bool>	bDebug			= { false, { "--debug" } };

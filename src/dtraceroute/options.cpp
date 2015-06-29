@@ -129,7 +129,7 @@ void ApplicationOptions::Print()
 		PrintOption(sOptionName, sOptionValue);
 	}
 
-	PrintOption("mode", mode);
+	PrintOption("mode", ModeAsString(mode));
 	if (!sModeArgument.empty())
 		PrintOption("mode arg", sModeArgument);
 	if (!sTarget.empty())
@@ -294,12 +294,6 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 			cout << "Debug mode ON" << endl;
 		}
 
-		// Check arguments consistency:
-		if (nStartHop > nMaxHop)
-		{
-			throw PException("Maximum hop number can't be less than starting hop number!", eRetCode::BadArguments);
-		}
-	
 		if (MODE_UNKNOWN == mode)
 		{
 #ifdef DO_BY_COUNTRY_BY_DEFAULT
@@ -308,6 +302,12 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 #else
 			throw PException("Program mode is not specified.", eRetCode::BadArguments);
 #endif
+		}
+
+		// Check arguments consistency:
+		if (nStartHop > nMaxHop)
+		{
+			throw PException(eRetCode::BadArguments) << "Maximum hop number (" << nMaxHop << ") can't be less than starting hop number (" << nStartHop << ")!";
 		}
 
 		if ((MODE_DO_BY_COUNTRY == mode || MODE_DO_BY_ASN == mode) && !bTargetSet)

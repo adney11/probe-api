@@ -102,8 +102,8 @@ public:
 			<< "&count=" << options.nTriesPerHop			// Number of pings to each hop. Default: 3
 			<< "&ttlStart=" << options.nStartHop			// aka "First Hop", TTL from which the trace route should start, default=1
 			<< "&ttl=" << options.nMaxHop					// Max number of hops.
+			<< "&maxFailedHops=" << options.nMaxFailedHops	// max number of hop rows where all pings got timeout result
 			<< "&sleep=" << options.nWaitBetweenPingsMs		// Sleep between pings in milliseconds (default 300ms).
-			<< "&maxFailedHops=" << options.nMaxFailedHops	// max number of rows where all pings got timeout result
 			<< "&commandTimeout=" << options.nTimeoutPingMs	// Ping timeout in milliseconds that one ping can take (default 5000ms).
 			<< "&timeout=" << options.nTimeoutTotalMs		// Maximum time available to probes for testing in milliseconds (default 6000). The whole test is most likely to last longer then this value.
 			<< "&bufferSize=" << options.nPacketSize		// buffer size filled with 'A' char to send, default=32, max=65500

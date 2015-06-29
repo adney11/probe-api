@@ -131,7 +131,7 @@ void ApplicationOptions::Print()
 		PrintOption(sOptionName, sOptionValue);
 	}
 
-	PrintOption("mode", mode);
+	PrintOption("mode", ModeAsString(mode));
 	if (!sModeArgument.empty())
 		PrintOption("mode arg", sModeArgument);
 	if (!sTarget.empty())
@@ -308,6 +308,7 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 #endif
 		}
 
+		// Check arguments consistency:
 		if ((MODE_DO_BY_COUNTRY == mode || MODE_DO_BY_ASN == mode) && !bTargetSet)
 		{
 			throw PException("Target host is not specified!", eRetCode::BadArguments);
