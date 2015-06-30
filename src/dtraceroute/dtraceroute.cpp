@@ -177,7 +177,10 @@ public:
 		// over a maximum of 30 hops:
 		//if (options.bVerbose)
 		{
-			const string sTargetInfo = (info.tracert.sTargetHost.empty() ? options.sTarget : info.tracert.sTargetHost) + " [" + info.tracert.sTargetIp + "]";
+			const auto& remote = info.tracert;
+			const string sTargetHost = (remote.sTargetHost.empty() && options.sTarget != remote.sTargetIp) ? options.sTarget : remote.sTargetHost;
+			const string sTargetInfo = sTargetHost.empty() ? remote.sTargetIp : sTargetHost + " [" + remote.sTargetIp + "]";
+
 			cout << "Tracing route to " << sTargetInfo << " from " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
 			cout << "over a maximum of " << options.nMaxHop << " hops:" << endl;
 		}
@@ -186,7 +189,10 @@ public:
 		// over a maximum of 30 hops:
 		//if (options.bVerbose)
 		{
-			const string sTargetInfo = (info.tracert.sTargetHost.empty() ? options.sTarget : info.tracert.sTargetHost) + " (" + info.tracert.sTargetIp + ")";
+			const auto& remote = info.tracert;
+			const string sTargetHost = (remote.sTargetHost.empty() && options.sTarget != remote.sTargetIp) ? options.sTarget : remote.sTargetHost;
+			const string sTargetInfo = sTargetHost.empty() ? remote.sTargetIp : sTargetHost + " (" + remote.sTargetIp + ")";
+
 			cout << "traceroute to " << sTargetInfo << " (" << options.sTarget << ")";
 			cout << " from " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << ", " << options.nMaxHop << " hops max, " << options.nPacketSize << " byte packets" << endl;
 		}

@@ -183,7 +183,9 @@ public:
 		}
 		else
 		{
-			const string sTargetInfo = options.sTarget == info.ping.sTargetHost ? info.ping.sTargetIp : info.ping.sTargetHost + " [" + info.ping.sTargetIp + "]";
+			const auto& remote = info.ping;
+			const string sTargetInfo = options.sTarget == remote.sTargetHost ? remote.sTargetIp : remote.sTargetHost + " [" + remote.sTargetIp + "]";
+
 			cout << "Reply from " << sTargetInfo << ": bytes=" << options.nPacketSize << " time=" << pingResult.nTimeMs << "ms TTL=" << options.nTTL;
 		}
 
@@ -200,7 +202,9 @@ public:
 		}
 		else
 		{
-			const string sTargetInfo = options.sTarget == info.ping.sTargetHost ? info.ping.sTargetIp : info.ping.sTargetHost + " (" + info.ping.sTargetIp + ")";
+			const auto& remote = info.ping;
+			const string sTargetInfo = options.sTarget == remote.sTargetHost ? remote.sTargetIp : remote.sTargetHost + " (" + remote.sTargetIp + ")";
+
 			cout << options.nPacketSize << " bytes from " << sTargetInfo << ": icmp_seq=1 ttl=" << options.nTTL << " time=" << pingResult.nTimeMs << ".0 ms";
 			if (options.bVerbose)
 			{
