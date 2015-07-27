@@ -54,7 +54,7 @@ double GetMedianAbsoluteDeviation(const std::multiset<T>& data)
 struct MathCollection
 {
 	std::multiset<int>	data;
-	int			nMin = INT_MAX;
+	int			nMin = std::numeric_limits<int>::max();
 	int			nMax = 0;
 	int64_t		nSum = 0;
 
@@ -95,7 +95,7 @@ struct MathCollection
 //------------------------------------------------------
 
 struct ApplicationStats;
-extern ApplicationStats* g_pStats;
+extern std::shared_ptr<ApplicationStats> g_ptrStats;
 
 //------------------------------------------------------
 
@@ -111,11 +111,9 @@ struct ApplicationStats
 	ApplicationStats(const std::string& sTarget_) : sTarget(sTarget_)
 	{
 		nStartTime = std::chrono::system_clock::now();
-		g_pStats = this;
 	}
 	~ApplicationStats()
 	{
-		g_pStats = nullptr;
 	}
 
 	int64_t GetTimeElapsedMs() const

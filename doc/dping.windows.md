@@ -10,28 +10,41 @@ Usage: dping --help
     --version
     --list-country [-v] [--debug]
     --list-asn code [-v] [--debug]
-    --country code [-n probes] [-w timeout] [-wa timeout] [--no-delays] [-v]
-                   [--debug] {target_name}
-    --asn id [-n probes] [-w timeout] [-wa timeout] [--no-delays] [-v]
-             [--debug] {target_name}
+    --country code [-n probes] [-w timeout] [-t] [-v] {target_name}
+    --asn id [-n probes] [-w timeout] [-t] [-v] {target_name}
 
 Options:
     {target_name}  Destination host IP or domain name.
 
     --help          Display this help.
     --version       Display detailed program version, copyright notices.
-    --country code  Specify source addresses 2 letter country code
-                    (ISO 3166-1 alpha-2).
-    --asn id        Use source addresses from specified ASN
-                    (autonomous system number) network.
-    -n probes       Probes limit: number of hosts to make requests from.
-    -w timeout      Timeout in milliseconds to wait for single ping.
-    -wa timeout     Timeout in milliseconds to wait for all probes.
     --list-country  List available countries.
     --list-asn code List ASNs for specified 2 letter country code.
+    --country code  Specify source addresses 2 letter country code
+                    (ISO 3166-1 alpha-2).
+    --asn id        Use source addresses from specified ASN.
+                    (autonomous system number) network.
+    -n probes       Probes limit: number of hosts to make requests from.
+                    This option has an alias: --probes probes
+    -w timeout      Timeout in milliseconds to wait for single ping.
+    -t              Ping the specified host until stopped.
+                    To see statistics and continue - type Control-Break;
+                    To stop - type Control-C.
+    -v              Verbose output.
+
+Advanced options:
+    -wa timeout     Timeout in milliseconds to wait for all probes.
+    -a              Resolve addresses to hostnames.
+    -np count       Number of pings per probe to send (default: 1).
+    -i TTL          Time To Live.
+    -l size         Send buffer size.
+    -f              Set Don't Fragment flag in packet (IPv4-only).
+    -4              Force using IPv4.
+    -6              Force using IPv6.
+    --api-key key   Set web API key.
+    --api-url url   Set web API URL.
     --no-delays     Disable delays during printing of results to console.
-    -v              Verbose output
-    --debug         Additional debug output
+    --debug         Additional debug output.
 
 Return Codes:
     0 - eRetCode::OK
@@ -91,43 +104,34 @@ AS199435      1 Wimax On Line, S.L.
 
 #### --country
 ```
-$ dping --country US 8.8.8.8
+$ dping --country US -a 8.8.8.8
 
 Pinging 8.8.8.8 with 32 bytes of data from country code US:
-Reply from 8.8.8.8: bytes=32 time=29ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=30ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=18ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=25ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=23ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=32ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=47ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=59ms TTL=128
+Request timed out.
+Reply from google-public-dns-a.google.com [8.8.8.8]: bytes=32 time=18ms TTL=55
+Reply from google-public-dns-a.google.com [8.8.8.8]: bytes=32 time=10ms TTL=55
+Reply from google-public-dns-a.google.com [8.8.8.8]: bytes=32 time=23ms TTL=55
+Reply from google-public-dns-a.google.com [8.8.8.8]: bytes=32 time=24ms TTL=55
+Reply from google-public-dns-a.google.com [8.8.8.8]: bytes=32 time=181ms TTL=55
 
 Ping statistics for 8.8.8.8
-    Packets : Sent = 8, Received = 8, Lost = 0 (0% loss),
+    Packets : Sent = 6, Received = 5, Lost = 1 (16% loss),
 Approximate round trip times in milli-seconds:
-    Minimum = 18ms, Maximum = 59ms, Average = 32ms
+    Minimum = 10ms, Maximum = 181ms, Average = 51ms
 ```
 
 #### --asn
 ```
-$ dping --asn AS3352 8.8.8.8
+$ dping --asn AS3352 -a 8.8.8.8
 
 Pinging 8.8.8.8 with 32 bytes of data from AS3352:
-Reply from 8.8.8.8: bytes=32 time=29ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=30ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=18ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=25ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=11ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=51ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=23ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=32ms TTL=128
-...
-Reply from 8.8.8.8: bytes=32 time=48ms TTL=128
-Reply from 8.8.8.8: bytes=32 time=44ms TTL=128
+Reply from google-public-dns-a.google.com [8.8.8.8]: bytes=32 time=53ms TTL=55
+Reply from google-public-dns-a.google.com [8.8.8.8]: bytes=32 time=61ms TTL=55
+Reply from google-public-dns-a.google.com [8.8.8.8]: bytes=32 time=59ms TTL=55
+Reply from google-public-dns-a.google.com [8.8.8.8]: bytes=32 time=92ms TTL=55
 
 Ping statistics for 8.8.8.8
-    Packets : Sent = 16, Received = 16, Lost = 0 (0% loss),
+    Packets : Sent = 4, Received = 4, Lost = 0 (0% loss),
 Approximate round trip times in milli-seconds:
-    Minimum = 11ms, Maximum = 113ms, Average = 38ms
+    Minimum = 53ms, Maximum = 92ms, Average = 66ms
 ```

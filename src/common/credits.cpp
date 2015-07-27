@@ -41,6 +41,7 @@ string FormatRetCode(const int nRetCode)
 string GetReturnCodeInfo()
 {
 	ostringstream buf;
+	buf << "Return Codes:" << endl;
 #undef DEF_RET_CODE
 #define DEF_RET_CODE(id)	buf << setw(5) << id << " - " <<  FormatRetCode(id)  << endl
 	DEF_RET_CODE(eRetCode::OK);

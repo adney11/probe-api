@@ -40,6 +40,7 @@ public:
 		std::string		sErrorDescription;
 
 		int				nHttpCode = 0;
+		std::string		sHttpStatusText;
 		std::string		sEffectiveUrl;
 		std::string		sContentType;
 

@@ -15,8 +15,8 @@ using namespace std;
 //------------------------------------------------------
 
 class JobType;
-JobType* g_pJob = nullptr;
-ApplicationStats* g_pStats = nullptr;
+shared_ptr<JobType> g_ptrJob = nullptr;
+shared_ptr<ApplicationStats> g_ptrStats = nullptr;
 
 //------------------------------------------------------
 // Windows sample: (Win 8.1)
@@ -96,24 +96,33 @@ public:
 			sSearchDetails = "{ARG}";
 			break;
 		}
-		g_pJob = this;
 	}
 	~JobType()
 	{
-		g_pJob = nullptr;
 	}
 
 	string GetUrl(const ApplicationStats& stats, const string& sSearchArgument, const string& sTarget) const
 	{
-		const auto nRestJobs = options.nCount - stats.nSent;
-		const auto nDesiredProbeCount = nRestJobs * 2;
-		const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
+		// Documentation:
+		// https://www.mashape.com/optimalsoftware/freeprobeapi/#startpingtestbycountry
+		// https://www.mashape.com/optimalsoftware/freeprobeapi/#startpingtestbyasn
+		const int64_t nRestProbes = options.nProbesLimit - stats.nSent;
+		const auto nRequestedProbeCount = (std::min)(options.nMaxProbesToRequest, (std::max)(options.nMinProbesToRequest, nRestProbes));
 
 		const string sUrl = OSSFMT(sMethod
 			<< "?" << sSearchArgName << "=" << sSearchArgument
-			<< "&destination=" << sTarget
-			<< "&probeslimit=" << nRequestedProbeCount
-			<< "&timeout=" << options.nTimeoutTotalMs);
+			<< "&destination=" << sTarget					// An IP address or hostname that will be pinged
+			<< "&probeslimit=" << nRequestedProbeCount		// Number of probes to use
+			<< "&count=" << options.nPingsPerProbe			// Number of pings to run (default 3). (per each probe)
+			<< "&ttl=" << options.nTTL						// Max number of hops for ping
+			<< "&sleep=" << options.nWaitBetweenPingsMs		// Sleep between pings in milliseconds (default 1000ms).
+			<< "&timeout=" << options.nTimeoutTotalMs		// Maximum time available to probes for testing in milliseconds (default 6000). The whole test is most likely to last longer then this value.
+			<< "&bufferSize=" << options.nPacketSize		// buffer size filled with 'A' char to send, default=32, max=65500
+			<< "&fragment=" << !options.bDontFragment		// opposite of "dontFragment" flag, default=1 => dontFragment=0
+			<< "&resolve=" << options.bResolveIp2Name		// if IP was given, try to resolve it, default=0
+			<< "&ipv4only=" << options.bUseIpv4Only			// force using IPv4 (if no IPv4 IP address is returned, return error), default=0
+			<< "&ipv6only=" << options.bUseIpv6Only			// force using IPv6 (if no IPv6 IP address is returned, return error), default=0
+			);
 
 		return sUrl;
 	}
@@ -133,7 +142,7 @@ public:
 		string sSearchArgument = options.sModeArgument;
 		if (ApplicationOptions::MODE_DO_BY_COUNTRY == options.mode && DEFAULT_COUNTRY_META == sSearchArgument)
 		{
-			const CommonOptions options2(options.bDebug, options.bVerbose, options.sModeArgument, options.nCount);
+			const CommonOptions options2 = options.GetCommonOptions();
 			sSearchArgument = GetDefaultSourceCountry(requester, options2);
 		}
 		return sSearchArgument;
@@ -144,10 +153,12 @@ public:
 #ifdef PRINT_AS_WINDOWS
 		// 
 		// Pinging 8.8.8.8 with 32 bytes of data:
+		// Pinging google-public-dns-a.google.com [8.8.8.8] with 32 bytes of data:
 		cout << endl;
 		cout << "Pinging " << options.sTarget << " with " << options.nPacketSize << " bytes of data";
 #else
 		// PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+		// PING ya.ru (213.180.193.3) 56(84) bytes of data.
 		const int nHeadersSize = 20 + 8; // IP + ICMP headers size
 		cout << "PING " << options.sTarget << " (" << options.sTarget << ") " << options.nPacketSize << "(" << (options.nPacketSize + nHeadersSize) << ") bytes of data";
 #endif
@@ -162,36 +173,42 @@ public:
 #endif
 	}
 
-	void PrintJobResult(const ProbeAPI::ProbeInfo& info) const
+	void PrintJobResult(const ProbeAPI::ProbeInfo& info, const ProbeAPI::PingResult& pingResult) const
 	{
 #ifdef PRINT_AS_WINDOWS
 		// Reply from 8.8.8.8: bytes=32 time=13ms TTL=55
-		if (info.ping.bTimeout)
+		if (pingResult.bTimeout)
 		{
 			cout << "Request timed out.";
 		}
 		else
 		{
-			cout << "Reply from " << options.sTarget << ": bytes=" << options.nPacketSize << " time=" << info.ping.nTimeMs << "ms TTL=" << options.nTTL;
+			const auto& remote = info.ping;
+			const string sTargetInfo = options.sTarget == remote.sTargetHost ? remote.sTargetIp : remote.sTargetHost + " [" + remote.sTargetIp + "]";
+
+			cout << "Reply from " << sTargetInfo << ": bytes=" << options.nPacketSize << " time=" << pingResult.nTimeMs << "ms TTL=" << options.nTTL;
 		}
 
 		if (options.bVerbose)
 		{
-			cout << " to " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
+			cout << " for " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
 		}
 
 		cout << endl;
 #else
 		// 64 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=13.7 ms
-		if (info.ping.bTimeout)
+		if (pingResult.bTimeout)
 		{
 		}
 		else
 		{
-			cout << options.nPacketSize << " bytes from " << options.sTarget << ": icmp_seq=1 ttl=" << options.nTTL << " time=" << info.ping.nTimeMs << ".0 ms";
+			const auto& remote = info.ping;
+			const string sTargetInfo = options.sTarget == remote.sTargetHost ? remote.sTargetIp : remote.sTargetHost + " (" + remote.sTargetIp + ")";
+
+			cout << options.nPacketSize << " bytes from " << sTargetInfo << ": icmp_seq=1 ttl=" << options.nTTL << " time=" << pingResult.nTimeMs << ".0 ms";
 			if (options.bVerbose)
 			{
-				cout << " to " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
+				cout << " for " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN);
 			}
 			cout << endl;
 		}
@@ -249,9 +266,12 @@ protected:
 
 void PrintFinalStats()
 {
-	if (g_pJob && g_pStats)
+	shared_ptr<ApplicationStats> ptrStats = g_ptrStats;
+	shared_ptr<JobType> ptrJob = g_ptrJob;
+
+	if (ptrJob && ptrStats)
 	{
-		g_pJob->PrintFooter(*g_pStats);
+		ptrJob->PrintFooter(*ptrStats);
 	}
 }
 
@@ -259,24 +279,28 @@ void PrintFinalStats()
 
 void PrintPackOfResults(const JobType& job, const ApplicationOptions& options, const vector<ProbeAPI::ProbeInfo>& items, ApplicationStats& stats)
 {
-	bool bFirstIteration = (0 == stats.nSent);
+	//bool bFirstIteration = (0 == stats.nSent);
+	bool bFirstIteration = true;
 	for (const auto& info : items)
 	{
-		if (g_bTerminateProgram)
-			throw PException("PrintPackOfResults: Terminate Program");
-
-		++stats.nSent;
-		if (!info.ping.bTimeout)
+		for (const auto& pingResult : info.ping.vectResults)
 		{
-			++stats.nReceived;
-			stats.pings.AddItem(info.ping.nTimeMs);
-		}
+			if (g_bTerminateProgram)
+				throw PException("PrintPackOfResults: Terminate Program");
 
-		if (!options.bNoDelays)
-		{
-			DoSleep(info.ping, bFirstIteration);
+			++stats.nSent;
+			if (!pingResult.bTimeout)
+			{
+				++stats.nReceived;
+				stats.pings.AddItem(pingResult.nTimeMs);
+			}
+
+			if (!options.bNoDelays)
+			{
+				DoSleep(pingResult, bFirstIteration);
+			}
+			job.PrintJobResult(info, pingResult);
 		}
-		job.PrintJobResult(info);
 	}
 }
 
@@ -287,13 +311,13 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 {
 	const string sUrl = job.GetUrl(stats, sSearchArgument, options.sTarget);
 
-	ProbeApiRequester::Request request(sUrl);
+	ProbeApiRequester::Request request(sUrl, options.GetCommonOptions());
 	request.nHttpTimeoutSec += options.nTimeoutTotalMs / 1000;
 
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
 	{
-		throw PException("MakePackOfJobs: " + reply.sErrorDescription, eRetCode::ApiFailure);
+		throw PException("MakePackOfJobs: requester.DoRequest: " + reply.sErrorDescription, eRetCode::ApiFailure);
 	}
 
 	vector<ProbeAPI::ProbeInfo> items;
@@ -304,7 +328,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 	}
 	catch (PException& e)
 	{
-		throw PException("MakePackOfJobs: " + e.str(), eRetCode::ApiParsingFail);
+		throw PException("MakePackOfJobs: ProbeAPI::ParsePingResults: " + e.str(), eRetCode::ApiParsingFail);
 	}
 
 	PrintPackOfResults(job, options, items, stats);
@@ -318,9 +342,14 @@ int DoJob(const ApplicationOptions& options)
 {
 	int res = eRetCode::OK;
 
-	ApplicationStats stats(options.sTarget);
+	shared_ptr<ApplicationStats> ptrStats = make_shared<ApplicationStats>(options.sTarget);
+	ApplicationStats& stats = *ptrStats;
+	g_ptrStats = ptrStats;
 
-	const JobType job(options);
+	shared_ptr<JobType> ptrJob = make_shared<JobType>(options);
+	const JobType& job = *ptrJob;
+	g_ptrJob = ptrJob;
+
 	job.PrintHeaderBeforeSearchArg();
 
 	ProbeApiRequester requester;
@@ -330,7 +359,7 @@ int DoJob(const ApplicationOptions& options)
 
 	try
 	{
-		while (stats.nSent < options.nCount)
+		while (stats.nSent < options.nProbesLimit)
 		{
 			const auto nPreviousSend = stats.nSent;
 
@@ -353,10 +382,14 @@ int DoJob(const ApplicationOptions& options)
 	catch (...)
 	{
 		job.PrintFooter(stats);
+		g_ptrStats.reset();
+		g_ptrJob.reset();
 		throw;
 	}
 
 	job.PrintFooter(stats);
+	g_ptrStats.reset();
+	g_ptrJob.reset();
 
 	return res;
 }
@@ -365,7 +398,7 @@ int DoJob(const ApplicationOptions& options)
 
 int Application(const ApplicationOptions& options)
 {
-	const CommonOptions options2(options.bDebug, options.bVerbose, options.sModeArgument, options.nCount);
+	const CommonOptions options2 = options.GetCommonOptions();
 
 	switch (options.mode)
 	{

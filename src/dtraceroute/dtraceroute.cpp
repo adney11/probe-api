@@ -15,8 +15,8 @@ using namespace std;
 //------------------------------------------------------
 
 class JobType;
-JobType* g_pJob = nullptr;
-ApplicationStats* g_pStats = nullptr;
+shared_ptr<JobType> g_ptrJob = nullptr;
+shared_ptr<ApplicationStats> g_ptrStats = nullptr;
 
 //------------------------------------------------------
 // Windows sample: (Win 8.1)
@@ -32,7 +32,7 @@ ApplicationStats* g_pStats = nullptr;
 //   4     2 ms     2 ms     2 ms  172.30.65.25
 //   5    43 ms     2 ms     2 ms  185.32.224.156
 //   6    13 ms    12 ms    12 ms  188.254.103.221
-//   7    28 ms    15 ms    12 ms  95.167.95.222
+//   7     *        *        *     Request timed out.
 //   8    47 ms    44 ms    44 ms  79.133.94.86
 //   9    13 ms    13 ms    14 ms  216.239.47.143
 //  10    13 ms    13 ms    13 ms  google-public-dns-a.google.com [8.8.8.8]
@@ -82,25 +82,36 @@ public:
 			sSearchDetails = "{ARG}";
 			break;
 		}
-		g_pJob = this;
 	}
 	~JobType()
 	{
-		g_pJob = nullptr;
 	}
 
 	string GetUrl(const ApplicationStats& stats, const string& sSearchArgument, const string& sTarget) const
 	{
-		const auto nRestJobs = options.nCount - stats.nSent;
-		const auto nDesiredProbeCount = nRestJobs * 4;
-		const auto nRequestedProbeCount = nDesiredProbeCount > 10 ? nDesiredProbeCount : 10;
+		// Documentation:
+		// https://www.mashape.com/optimalsoftware/freeprobeapi/#starttracerttestbycountry
+		// https://www.mashape.com/optimalsoftware/freeprobeapi/#starttracerttestbyasn
+		const int64_t nRestProbes = options.nProbesLimit - stats.nSent;
+		const auto nRequestedProbeCount = (std::min)(options.nMaxProbesToRequest, (std::max)(options.nMinProbesToRequest, nRestProbes));
 
 		const string sUrl = OSSFMT(sMethod
 			<< "?" << sSearchArgName << "=" << sSearchArgument
-			<< "&destination=" << sTarget
-			<< "&probeslimit=" << nRequestedProbeCount
-			<< "&ttl=" << options.nMaxHops
-			<< "&timeout=" << options.nTimeoutTotalMs);
+			<< "&destination=" << sTarget					// Comma-separated list of IP addresses or hostnames that will be tested
+			<< "&probeslimit=" << nRequestedProbeCount		// Number of probes to use
+			<< "&count=" << options.nTriesPerHop			// Number of pings to each hop. Default: 3
+			<< "&ttlStart=" << options.nStartHop			// aka "First Hop", TTL from which the trace route should start, default=1
+			<< "&ttl=" << options.nMaxHop					// Max number of hops.
+			<< "&maxFailedHops=" << options.nMaxFailedHops	// max number of hop rows where all pings got timeout result
+			<< "&sleep=" << options.nWaitBetweenPingsMs		// Sleep between pings in milliseconds (default 300ms).
+			<< "&commandTimeout=" << options.nTimeoutPingMs	// Ping timeout in milliseconds that one ping can take (default 5000ms).
+			<< "&timeout=" << options.nTimeoutTotalMs		// Maximum time available to probes for testing in milliseconds (default 6000). The whole test is most likely to last longer then this value.
+			<< "&bufferSize=" << options.nPacketSize		// buffer size filled with 'A' char to send, default=32, max=65500
+			<< "&fragment=" << !options.bDontFragment		// opposite of "dontFragment" flag, default=1 => dontFragment=0
+			<< "&resolve=" << options.bResolveIp2Name		// if IP was given, try to resolve it, default=0
+			<< "&ipv4only=" << options.bUseIpv4Only			// force using IPv4 (if no IPv4 IP address is returned, return error), default=0
+			<< "&ipv6only=" << options.bUseIpv6Only			// force using IPv6 (if no IPv6 IP address is returned, return error), default=0
+			);
 
 		return sUrl;
 	}
@@ -120,7 +131,7 @@ public:
 		string sSearchArgument = options.sModeArgument;
 		if (ApplicationOptions::MODE_DO_BY_COUNTRY == options.mode && DEFAULT_COUNTRY_META == sSearchArgument)
 		{
-			const CommonOptions options2(options.bDebug, options.bVerbose, options.sModeArgument, options.nCount);
+			const CommonOptions options2 = options.GetCommonOptions();
 			sSearchArgument = GetDefaultSourceCountry(requester, options2);
 		}
 		return sSearchArgument;
@@ -151,11 +162,11 @@ public:
 		// over a maximum of 30 hops:
 		// 
 		cout << " from " << FormatSearchDetails(sSearchArgument) << ":" << endl;
-		cout << "over a maximum of " << options.nMaxHops << " hops:" << endl;
+		cout << "over a maximum of " << options.nMaxHop << " hops:" << endl;
 		cout << endl;
 #else
 		// traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
-		cout << " from " << FormatSearchDetails(sSearchArgument) << ", " << options.nMaxHops << " hops max, " << options.nPacketSize << " byte packets" << endl;
+		cout << " from " << FormatSearchDetails(sSearchArgument) << ", " << options.nMaxHop << " hops max, " << options.nPacketSize << " byte packets" << endl;
 #endif
 	}
 
@@ -166,16 +177,24 @@ public:
 		// over a maximum of 30 hops:
 		//if (options.bVerbose)
 		{
-			cout << "Tracing route to " << info.tracert.sTarget << " from " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
-			cout << "over a maximum of " << options.nMaxHops << " hops:" << endl;
+			const auto& remote = info.tracert;
+			const string sTargetHost = (remote.sTargetHost.empty() && options.sTarget != remote.sTargetIp) ? options.sTarget : remote.sTargetHost;
+			const string sTargetInfo = sTargetHost.empty() ? remote.sTargetIp : sTargetHost + " [" + remote.sTargetIp + "]";
+
+			cout << "Tracing route to " << sTargetInfo << " from " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << endl;
+			cout << "over a maximum of " << options.nMaxHop << " hops:" << endl;
 		}
 #else
 		// Tracing route to google-public-dns-a.google.com [8.8.8.8]
 		// over a maximum of 30 hops:
 		//if (options.bVerbose)
 		{
-			cout << "traceroute to " << options.sTarget << " (" << options.sTarget << ")";
-			cout << " from " << info.GetPeerInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << ", " << options.nMaxHops << " hops max, " << options.nPacketSize << " byte packets" << endl;
+			const auto& remote = info.tracert;
+			const string sTargetHost = (remote.sTargetHost.empty() && options.sTarget != remote.sTargetIp) ? options.sTarget : remote.sTargetHost;
+			const string sTargetInfo = sTargetHost.empty() ? remote.sTargetIp : sTargetHost + " (" + remote.sTargetIp + ")";
+
+			cout << "traceroute to " << sTargetInfo << " (" << options.sTarget << ")";
+			cout << " from " << info.GetProbeInfo(options.mode == ApplicationOptions::MODE_DO_BY_ASN) << ", " << options.nMaxHop << " hops max, " << options.nPacketSize << " byte packets" << endl;
 		}
 #endif
 	}
@@ -190,7 +209,7 @@ public:
 #else
 		//  1  192.168.163.2 (192.168.163.2)  0.160 ms  0.109 ms  0.068 ms
 		//  2  * * *
-		cout << setw(2) << nHop << "  " << hop.sReplyHost << " (" << hop.sReplyHost << ")";
+		cout << setw(2) << nHop << "  " << hop.sReplyHost << " (" << hop.sReplyIp << ")";
 #endif
 	}
 
@@ -225,7 +244,13 @@ public:
 	void PrintHopFinish(const ProbeAPI::TracertHopResults& hop) const
 	{
 #ifdef PRINT_AS_WINDOWS
-		cout << "  " << hop.sReplyHost << endl;
+		const bool bAllFailed = hop.vectResults.cend() == std::find_if(hop.vectResults.cbegin(), hop.vectResults.cend(),
+			[](const ProbeAPI::PingResult& p){ return !p.bTimeout; });
+
+		const string sReplyHostInfo = (bAllFailed && hop.sReplyIp.empty()) ? "Request timed out." :
+			hop.sReplyHost.empty() ? hop.sReplyIp : hop.sReplyHost + " [" + hop.sReplyIp + "]";
+
+		cout << "  " << sReplyHostInfo << endl;
 #else
 		cout << endl;
 #endif
@@ -257,9 +282,12 @@ protected:
 
 void PrintFinalStats()
 {
-	if (g_pJob && g_pStats)
+	shared_ptr<ApplicationStats> ptrStats = g_ptrStats;
+	shared_ptr<JobType> ptrJob = g_ptrJob;
+
+	if (ptrJob && ptrStats)
 	{
-		g_pJob->PrintFooter(*g_pStats);
+		ptrJob->PrintFooter(*ptrStats);
 	}
 }
 
@@ -267,7 +295,8 @@ void PrintFinalStats()
 
 void PrintPackOfResults(const JobType& job, const ApplicationOptions& options, const vector<ProbeAPI::ProbeInfo>& items, ApplicationStats& stats)
 {
-	bool bFirstIteration = (0 == stats.nSent);
+	//bool bFirstIteration = (0 == stats.nSent);
+	bool bFirstIteration = true;
 	for (const auto& info : items)
 	{
 		if (g_bTerminateProgram)
@@ -275,13 +304,13 @@ void PrintPackOfResults(const JobType& job, const ApplicationOptions& options, c
 
 		job.PrintJobStart(info);
 
-		size_t iHop = 0;
+		size_t iHop = options.nStartHop;
 		for (const auto& hop : info.tracert.vectHops)
 		{
 			if (g_bTerminateProgram)
 				throw PException("PrintPackOfResults: loop2: Terminate Program");
 
-			job.PrintHopStart(++iHop, hop);
+			job.PrintHopStart(iHop++, hop);
 
 			for (const auto& ping : hop.vectResults)
 			{
@@ -290,7 +319,7 @@ void PrintPackOfResults(const JobType& job, const ApplicationOptions& options, c
 
 				if (!options.bNoDelays)
 				{
-					DoSleep(info.ping, bFirstIteration);
+					DoSleep(ping, bFirstIteration);
 				}
 				job.PrintHopTry(ping);
 			}
@@ -309,7 +338,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 {
 	const string sUrl = job.GetUrl(stats, sSearchArgument, options.sTarget);
 
-	ProbeApiRequester::Request request(sUrl);
+	ProbeApiRequester::Request request(sUrl, options.GetCommonOptions());
 	request.nHttpTimeoutSec += options.nTimeoutTotalMs / 1000;
 
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
@@ -332,7 +361,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 	PrintPackOfResults(job, options, items, stats);
 
 	// hack to have only one call to this function:
-	stats.nSent = options.nCount;
+	stats.nSent = options.nProbesLimit;
 
 	return eRetCode::OK;
 }
@@ -343,9 +372,14 @@ int DoJob(const ApplicationOptions& options)
 {
 	int res = eRetCode::OK;
 
-	ApplicationStats stats(options.sTarget);
+	shared_ptr<ApplicationStats> ptrStats = make_shared<ApplicationStats>(options.sTarget);
+	ApplicationStats& stats = *ptrStats;
+	g_ptrStats = ptrStats;
 
-	const JobType job(options);
+	shared_ptr<JobType> ptrJob = make_shared<JobType>(options);
+	const JobType& job = *ptrJob;
+	g_ptrJob = ptrJob;
+
 	job.PrintHeaderBeforeSearchArg();
 
 	ProbeApiRequester requester;
@@ -355,7 +389,7 @@ int DoJob(const ApplicationOptions& options)
 
 	try
 	{
-		while (stats.nSent < options.nCount)
+		while (stats.nSent < options.nProbesLimit)
 		{
 			const auto nPreviousSend = stats.nSent;
 
@@ -378,10 +412,14 @@ int DoJob(const ApplicationOptions& options)
 	catch (...)
 	{
 		job.PrintFooter(stats);
+		g_ptrStats.reset();
+		g_ptrJob.reset();
 		throw;
 	}
 
 	job.PrintFooter(stats);
+	g_ptrStats.reset();
+	g_ptrJob.reset();
 
 	return res;
 }
@@ -390,7 +428,7 @@ int DoJob(const ApplicationOptions& options)
 
 int Application(const ApplicationOptions& options)
 {
-	const CommonOptions options2(options.bDebug, options.bVerbose, options.sModeArgument, options.nCount);
+	const CommonOptions options2 = options.GetCommonOptions();
 
 	switch (options.mode)
 	{

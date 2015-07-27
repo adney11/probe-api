@@ -2,7 +2,6 @@
 #include "stdafx.h"
 #include "Common.h"
 
-#include "config.h"					// for MASHAPE_API_URL, MASHAPE_API_ID
 #include "version.h"				// for VERSION_PRODUCT_NAME, MAIN_PRODUCT_VERSION_STR_A
 
 #include <json/json.h>
@@ -34,11 +33,11 @@ volatile bool g_bTerminateProgram = false;
 
 //------------------------------------------------------
 
-ProbeApiRequester::Request::Request(const std::string& sRequestWithArgs)
+ProbeApiRequester::Request::Request(const std::string& sRequestWithArgs, const CommonOptions& options)
 {
 	eMethod = HTTP_GET;
-	sUrl = MASHAPE_API_URL + sRequestWithArgs;
-	headers.emplace_back("X-Mashape-Key", MASHAPE_API_ID);
+	sUrl = options.sMashapeUrl + sRequestWithArgs;
+	headers.emplace_back("X-Mashape-Key", options.sMashapeKey);
 	headers.emplace_back("Accept", "application/json");
 
 	sUserAgent = VERSION_PRODUCT_NAME " HTTP client v." MAIN_PRODUCT_VERSION_STR_A;
@@ -87,16 +86,20 @@ ProbeApiRequester::Reply ProbeApiRequester::DoRequest(const ProbeApiRequester::R
 				if (parsedOK)
 				{
 					sMessage = root.get("message", "").asString();
+					if (sMessage.empty())
+					{
+						sMessage = root.get("Message", "").asString();
+					}
 				}
 			}
 
 			reply.bSucceeded = false;
-			reply.sErrorDescription = OSSFMT("Bad HTTP reply code: " << reply.nHttpCode << "; message: " << sMessage);
+			reply.sErrorDescription = OSSFMT("Bad HTTP reply code: " << reply.nHttpCode << " " << reply.sHttpStatusText << "; message: " << sMessage);
 		}
 		else if (!bJsonReply)
 		{
 			reply.bSucceeded = false;
-			reply.sErrorDescription = OSSFMT("Bad reply format. HTTP code: " << reply.nHttpCode << "; Content-Type: " << reply.sContentType);
+			reply.sErrorDescription = OSSFMT("Bad reply format. HTTP code: " << reply.nHttpCode << " " << reply.sHttpStatusText << "; Content-Type: " << reply.sContentType);
 		}
 	}
 
@@ -112,14 +115,18 @@ ProbeApiRequester::Reply ProbeApiRequester::DoRequest(const ProbeApiRequester::R
 
 void ProbeApiRequester::HttpReplyDebugPrint(const ProbeApiRequester::Reply &reply)
 {
-	cout << "request succeeded: " << reply.bSucceeded << endl;
-	cout << "request error desc: " << reply.sErrorDescription << endl;
-	cout << "reply HTTP code: " << reply.nHttpCode << endl;
-	cout << "reply EffectiveUrl: " << reply.sEffectiveUrl << endl;
-	cout << "reply Content-Type: " << reply.sContentType << endl;
-	cout << "reply body length: " << reply.sBody.length() << endl;
+	ostream& ostr = cout; // cout, cerr
+	ostream& ostrMore = cerr; // cout, cerr
 
-	cout << "REPLY BODY: [[[" << reply.sBody << "]]]" << endl;
+	ostr << "request succeeded: " << reply.bSucceeded << endl;
+	ostr << "request error desc: " << reply.sErrorDescription << endl;
+	ostr << "reply HTTP code: " << reply.nHttpCode << endl;
+	ostr << "reply HTTP code text: " << reply.sHttpStatusText << endl;
+	ostr << "reply EffectiveUrl: " << reply.sEffectiveUrl << endl;
+	ostr << "reply Content-Type: " << reply.sContentType << endl;
+	ostr << "reply body length: " << reply.sBody.length() << endl;
+
+	ostrMore << "REPLY BODY: [[[" << reply.sBody << "]]]" << endl;
 }
 
 //------------------------------------------------------

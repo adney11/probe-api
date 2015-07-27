@@ -3,6 +3,7 @@
 #include "options.h"
 
 #include "common/Common.h"
+#include "common/config.h"			// for MASHAPE_API_URL, MASHAPE_API_ID
 #include "common/credits.h"
 #include "common/version.h"			// for VERSION_PRODUCT_NAME, FILE_INTERNAL_NAME, MAIN_PRODUCT_VERSION_STR_A
 
@@ -21,23 +22,23 @@ string GetPrintVersion()
 
 //------------------------------------------------------
 
-string GetPrintHelp()
+string GetPrintHelp(const ApplicationOptions& options)
 {
 	const string sHelpInfo = R"(
 Usage: )" FILE_INTERNAL_NAME R"( --help
     --version
     --list-country [-v] [--debug]
     --list-asn code [-v] [--debug]
-    --country code [-n probes] [-w timeout] [-h max_hops] [-hf max_hops]
-                   [-wa timeout] [--no-delays] [-v] [--debug] {target_name}
-    --asn id [-n probes] [-w timeout] [-h max_hops] [-hf max_hops]
-             [-wa timeout] [--no-delays] [-v] [--debug] {target_name}
+    --country code [-n probes] [-w timeout] [-h max_hops] [-v] {target_name}
+    --asn id [-n probes] [-w timeout] [-h max_hops] [-v] {target_name}
 
 Options:
     {target_name}  Destination host IP or domain name.
 
     --help          Display this help.
     --version       Display detailed program version, copyright notices.
+    --list-country  List available countries.
+    --list-asn code List ASNs for specified 2 letter country code.
     --country code  Specify source addresses 2 letter country code
                     (ISO 3166-1 alpha-2).)"
 #ifdef DO_BY_COUNTRY_BY_DEFAULT
@@ -49,17 +50,26 @@ R"(
     --asn id        Use source addresses from specified ASN
                     (autonomous system number) network.
     -n probes       Probes limit: number of hosts to make requests from.
+                    This option has an alias: --probes probes
     -w timeout      Timeout in milliseconds to wait for single ping.
-    -wa timeout     Timeout in milliseconds to wait for all probes.
-    -h max_hops     Maximum number of hops to search for target (aka TTL).
-    -hf max_hops    Maximum number of failed hops in a row to stop.
-    --list-country  List available countries.
-    --list-asn code List ASNs for specified 2 letter country code.
-    --no-delays     Disable delays during printing of results to console.
-    -v              Verbose output
-    --debug         Additional debug output
+    -h max_hops     Maximum number of hops to search for target (aka max TTL).
+    -v              Verbose output.
 
-Return Codes:
+Advanced options:
+    -wa timeout     Timeout in milliseconds to wait for all probes.
+    -d              Do not resolve addresses to hostnames.
+    -hs hop_number  First hop number to start from.
+    -hf max_hops    Maximum number of failed hops in a row to stop
+                    (default: 3).
+    -l size         Send buffer size.
+    -f              Set Don't Fragment flag in packet (IPv4-only).
+    -4              Force using IPv4.
+    -6              Force using IPv6.
+    --api-key key   Set web API key.
+    --api-url url   Set web API URL.
+    --no-delays     Disable delays during printing of results to console.
+    --debug         Additional debug output.
+
 )"
 + GetReturnCodeInfo()
 + R"(
@@ -87,41 +97,59 @@ void CheckArgumentParameterNotEmpty(const string& sArg, const string& sParam)
 //------------------------------------------------------
 
 template<class T>
-void PrintOption(const char* name, const T& v)
+void PrintOption(const string& name, const T& v)
 {
-	cout << "options: " << setw(10) << left << name << resetiosflags(ios_base::adjustfield) << " = " << v << endl;
+	cout << "options: " << setw(15) << left << name << resetiosflags(ios_base::adjustfield) << " = " << v << endl;
 }
 
 //------------------------------------------------------
 
-void ApplicationOptions::Print() const
+ApplicationOptions::ApplicationOptions()
+{
+	sMashapeUrl = MASHAPE_API_URL;
+	sMashapeKey = MASHAPE_API_ID;
+}
+
+//------------------------------------------------------
+
+void ApplicationOptions::Print()
 {
 	if (!bVerbose && !bDebug)
 	{
 		return;
 	}
 
-	PrintOption("verbose", bVerbose);
-	PrintOption("debug", bDebug);
-	PrintOption("noDelays", bNoDelays);
-	PrintOption("ping timeout", nTimeoutPingMs);
-	PrintOption("total timeout", nTimeoutTotalMs);
-	PrintOption("count", nCount);
-	//PrintOption("packet size", nPacketSize);
-	PrintOption("max hops", nMaxHops);
-	PrintOption("max hops without answer", nMaxHopsFailed);
-	PrintOption("mode", mode);
+	const OptionCol options = GetAllOptions();
+
+	for (auto it : options)
+	{
+		const OptionBase* pOption = it.first;
+		const string& sOptionName = it.second;
+		const string sOptionValue = pOption->FormatForHuman();
+
+		PrintOption(sOptionName, sOptionValue);
+	}
+
+	PrintOption("mode", ModeAsString(mode));
 	if (!sModeArgument.empty())
 		PrintOption("mode arg", sModeArgument);
 	if (!sTarget.empty())
 		PrintOption("target", sTarget);
+	PrintOption("MashapeUrl", sMashapeUrl);
+	PrintOption("MashapeKey", sMashapeKey);
 }
 
 //------------------------------------------------------
 
 void ApplicationOptions::RecalculateTotalTimeout()
 {
-	nTimeoutTotalMs = nTimeoutPingMs * 3 * min(nMaxHopsFailed, nMaxHops) + 10 * 3 * 500 + 2000;
+	const unsigned nMaxFailedHopsEffective = (std::min)(nMaxFailedHops + 0, nMaxHop - nStartHop + 1);
+	const auto nAdditionalRowTime = nTriesPerHop * nWaitBetweenPingsMs + (bResolveIp2Name ? 500 : 0);
+
+	nTimeoutTotalMs =
+		nMaxFailedHopsEffective * (nTimeoutPingMs * nTriesPerHop + nAdditionalRowTime) // max time for continuous sequence of rows full of timeouts
+		+ 10 * (nTimeoutPingMs * (nTriesPerHop - 1) + 500 + nAdditionalRowTime)	// approx bad time for other rows
+		+ 2000;	// time for server to send all jobs and gather all results
 }
 
 //------------------------------------------------------
@@ -139,82 +167,78 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 		bool bTargetSet = false;
 		RecalculateTotalTimeout();
 
+		const OptionCol options = GetAllOptions();
+
 		for (int i = 1; i < argc; ++i)
 		{
 			const string sArg = argv[i];
-			const bool bFirstArg = (1 == i);
 			const bool bLastArg = (i + 1 == argc);
 
 			if (g_bTerminateProgram)
 				throw PException("ProcessCommandLine: Terminate Program");
 
-			if (bFirstArg && sArg == "--help")
+			if (sArg == "--help")
 			{
 				cout << GetPrintVersion();
-				cout << GetPrintHelp();
+				cout << GetPrintHelp(*this);
 				return eRetCode::OK;
 			}
 #ifdef DEST_OS_WINDOWS
-			if (bFirstArg && sArg == "/?")
+			if (sArg == "/?")
 			{
 				cout << GetPrintVersion();
-				cout << GetPrintHelp();
+				cout << GetPrintHelp(*this);
 				return eRetCode::OK;
 			}
 #endif
-			if (bFirstArg && sArg == "--version")
+			if (sArg == "--version")
 			{
 				cout << GetPrintVersion();
 				cout << GetPrintCredits();
 				return eRetCode::OK;
 			}
 
-			if (sArg == "-v")
+			bool bKnownArgument = false;
+
+			// Try parse simple option declared by members derived from OptionBase class:
 			{
-				bVerbose = true;
-				cout << "Verbose mode ON" << endl;
+				const string sNextArg = i + 1 < argc ? argv[i + 1] : "";
+				bool bNextArgUsed = false;
+
+				for (auto it : options)
+				{
+					OptionBase* pOption = it.first;
+					const bool bProcessed = pOption->ProcessCommandLineArg(sArg, bLastArg, sNextArg, bNextArgUsed);
+
+					if (bProcessed && pOption->InfluencesOnTotalTimeot())
+					{
+						RecalculateTotalTimeout();
+					}
+
+					bKnownArgument = bKnownArgument || bProcessed;
+				}
+
+				if (bNextArgUsed)
+				{
+					++i;
+				}
 			}
-			else if (sArg == "--debug")
+
+			if (bKnownArgument)
 			{
-				bDebug = true;
-				cout << "Debug mode ON" << endl;
+				// do nothing - we already parsed it
 			}
-			else if (sArg == "--no-delay" || sArg == "--no-delays" || sArg == "--no-wait")
-			{
-				bNoDelays = true;
-			}
-			else if (sArg == "-n" && !bLastArg)
+			else if (sArg == "--api-url" && !bLastArg)
 			{
 				const string sNextArg = argv[++i];
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nCount = stoul(sNextArg);
+				sMashapeUrl = sNextArg;
 			}
-			else if (sArg == "-w" && !bLastArg)
+			else if (sArg == "--api-key" && !bLastArg)
 			{
 				const string sNextArg = argv[++i];
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nTimeoutPingMs = stoul(sNextArg);
-				RecalculateTotalTimeout();
-			}
-			else if (sArg == "-wt" && !bLastArg)
-			{
-				const string sNextArg = argv[++i];
-				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nTimeoutTotalMs = stoul(sNextArg);
-			}
-			else if (sArg == "-h" && !bLastArg)
-			{
-				const string sNextArg = argv[++i];
-				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nMaxHops = stoul(sNextArg);
-				RecalculateTotalTimeout();
-			}
-			else if (sArg == "-hf" && !bLastArg)
-			{
-				const string sNextArg = argv[++i];
-				CheckArgumentParameterNotEmpty(sArg, sNextArg);
-				nMaxHopsFailed = stoul(sNextArg);
-				RecalculateTotalTimeout();
+				sMashapeKey = sNextArg;
 			}
 			else if (sArg == "--country" && !bLastArg)
 			{
@@ -234,7 +258,6 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 			{
 				mode = MODE_GET_COUNTRIES;
 				sModeArgument.clear();
-				nCount = UINT_MAX;	// display ALL items from requested list
 			}
 			else if ((sArg == "--list-asn" || sArg == "--list-asns") && !bLastArg)
 			{
@@ -242,13 +265,15 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 				CheckArgumentParameterNotEmpty(sArg, sNextArg);
 				mode = MODE_GET_ASNS;
 				sModeArgument = sNextArg;
-				nCount = UINT_MAX;	// display ALL items from requested list
 			}
+			// Target is parsed for BY_COUNTRY and BY_ASN modes only if
+			// target was not set before AND argument does not start from "-":
 			else if ((
 #ifdef DO_BY_COUNTRY_BY_DEFAULT
 				MODE_UNKNOWN == mode ||
 #endif
-				MODE_DO_BY_COUNTRY == mode || MODE_DO_BY_ASN == mode) && bLastArg)
+				MODE_DO_BY_COUNTRY == mode || MODE_DO_BY_ASN == mode)
+				&& !bTargetSet && !begins(sArg, "-"))
 			{
 				CheckArgumentParameterNotEmpty("{target}", sArg);
 				sTarget = sArg;
@@ -260,6 +285,16 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 			}
 		}
 
+		if (bVerbose)
+		{
+			cout << "Verbose mode ON" << endl;
+		}
+
+		if (bDebug)
+		{
+			cout << "Debug mode ON" << endl;
+		}
+
 		if (MODE_UNKNOWN == mode)
 		{
 #ifdef DO_BY_COUNTRY_BY_DEFAULT
@@ -268,6 +303,12 @@ int ApplicationOptions::ProcessCommandLine(const int argc, const char* const arg
 #else
 			throw PException("Program mode is not specified.", eRetCode::BadArguments);
 #endif
+		}
+
+		// Check arguments consistency:
+		if (nStartHop > nMaxHop)
+		{
+			throw PException(eRetCode::BadArguments) << "Maximum hop number (" << nMaxHop << ") can't be less than starting hop number (" << nStartHop << ")!";
 		}
 
 		if ((MODE_DO_BY_COUNTRY == mode || MODE_DO_BY_ASN == mode) && !bTargetSet)

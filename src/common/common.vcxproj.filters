@@ -57,6 +57,9 @@
     <ClInclude Include="credits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CommonOptions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="VerInfo.ver">

@@ -1,7 +1,7 @@
 # ProbeAPI Tools
 ## About
-`ProbeAPI Tools` is a set of cross platform console command line utilities which are using public API to make distributed pinging, tracerouting and etc.
-All these tools are working almost the same as Windows and Linux built-in tools, but all network operations are going from different hosts in internet.
+`ProbeAPI Tools` is a set of cross platform console command line utilities which are using [public API](http://www.probeapi.com/) to make distributed pinging, tracerouting and etc.
+All these tools are working almost the same as Windows and Linux built-in tools, but all network operations are going from different hosts in the internet (we call them probes).
 "d" prefix from the name of all tools comes from the word **d**istributed.
 
 ## Particular Tools Documentation
@@ -13,6 +13,9 @@ All these tools are working almost the same as Windows and Linux built-in tools,
 ### Linux
 * [d**ping**](doc/dping.linux.md)
 * [d**traceroute**](doc/dtraceroute.linux.md)
+
+## ChangeLog
+[History of changes of ProbeAPI Tools](ChangeLog.md)
 
 ## Compilation
 
@@ -39,7 +42,7 @@ Checkout and build ProbeAPI Tools:
 ```
 cd ~
 git clone --recursive https://github.com/optimal-software/probe-api.git
-cd probe-api/build
+cd ~/probe-api/build
 cmake ..
 make
 ```
@@ -49,6 +52,12 @@ Now you can run tools:
 cd ~/probe-api/bin
 ./dping --version
 ./dtraceroute --version
+```
+
+To install tools after building:
+```
+cd ~/probe-api/build
+sudo make install
 ```
 
 You can also build RPM:
@@ -68,7 +77,9 @@ git clone --recursive https://github.com/optimal-software/probe-api.git
 1. Please install cmake for Windows.
 2. Execute following commands:
 ```
-cd probe-api/build
+cd ~
+git clone --recursive https://github.com/optimal-software/probe-api.git
+cd ~/probe-api/build
 ```
 And later:
 ```
@@ -79,6 +90,10 @@ or
 ```
 cmake ..
 make
+```
+To install after building:
+```
+sudo make install
 ```
 
 #### Microsoft Visual Studio

@@ -7,6 +7,7 @@
 #endif // _MSC_VER > 1000
 
 #include "HttpRequest.h"
+#include "CommonOptions.h"
 
 //------------------------------------------------------
 
@@ -19,7 +20,7 @@ class ProbeApiRequester: protected HttpRequester
 public:
 	struct Request : HttpRequester::Request
 	{
-		Request(const std::string& sRequestWithArgs);
+		Request(const std::string& sRequestWithArgs, const CommonOptions& options);
 	};
 
 	typedef HttpRequester::Reply Reply;
@@ -214,6 +215,19 @@ inline std::string implode(const std::vector<std::string>& vect, const std::stri
 
 std::string findandreplaceConst(const std::string& source, const std::string& find, const std::string& replace);
 void findandreplace(std::string& source, const std::string& find, const std::string& replace);
+
+//------------------------------------------------------
+
+inline uint32_t stoui32(const std::string& s)
+{
+	const unsigned long lresult = stoul(s, 0, 10);
+	const uint32_t result = lresult;
+	if (result != lresult)
+	{
+		throw std::out_of_range("stoui32 got bad argument: " + s);
+	}
+	return result;
+}
 
 //------------------------------------------------------
 

@@ -10,6 +10,8 @@
 #include <curlpp/Exception.hpp>
 #include <curlpp/Infos.hpp>
 
+#include <regex>
+
 //------------------------------------------------------
 
 #ifdef _MSC_VER
@@ -150,9 +152,12 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 
 		using namespace curlpp::Options;
 
+		ostream& ostr = cout; // cout, cerr
+		ostream& ostrMore = cerr; // cout, cerr
+
 		if (bVerbose)
 		{
-			cout << "HttpRequester verbose mode ON!" << endl;
+			ostr << "HttpRequester verbose mode ON!" << endl;
 		}
 		else
 		{
@@ -160,7 +165,7 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 		}
 		req.setOpt(new Verbose(bVerbose));
 #if 1
-		req.setOpt(DebugFunction([](const curl_infotype type, const char *data, const size_t size) -> int
+		req.setOpt(DebugFunction([&ostrMore](const curl_infotype type, const char *data, const size_t size) -> int
 		{
 			string sData(data, size);
 
@@ -168,7 +173,7 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 			// And we don't need those "\r" in linux console too:
 			findandreplace(sData, "\r\n", "\n");
 
-			cout << GetDebugPrefix(type) << sData << flush;
+			ostrMore << GetDebugPrefix(type) << sData << flush;
 			return 0;
 		}));
 #endif
@@ -194,6 +199,28 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 		}));
 #endif
 
+		string sHttpStatusText;
+
+		// Get HTTP headers to parse HTTP status text later:
+		req.setOpt(HeaderFunction([&sHttpStatusText](char *buffer, size_t size, size_t nitems) -> size_t
+		{
+			string str(buffer, size * nitems);
+
+			if (begins(str, "HTTP/"))
+			{
+				std::smatch sm;
+				// HTTP/1.0 404 Not Found
+				std::regex e(R"(^HTTP\/(?:1\.0|1\.1) \d{1,3} (.+))");
+				if (std::regex_search(str, sm, e))
+				{
+					// Replace HTTP status text with text from latest responce:
+					sHttpStatusText = sm[1];
+				}
+			}
+
+			return size * nitems;
+		}));
+
 		PrepareHttpRequest(req, info);
 
 		while (bPauseAllRequests)
@@ -204,12 +231,55 @@ HttpRequester::Reply HttpRequester::DoRequest(const HttpRequester::Request& info
 		cerr << flush;
 		cout << flush;
 
-		req.perform();
+		try
+		{
+			req.perform();
+			reply.bSucceeded = true;
+		}
+		catch (curlpp::LibcurlRuntimeError& e)
+		{
+			switch (e.whatCode())
+			{
+			case CURLE_HTTP_RETURNED_ERROR:
+			case CURLE_ABORTED_BY_CALLBACK:
+				// in case of CURLE_HTTP_RETURNED_ERROR or CURLE_ABORTED_BY_CALLBACK we can safely continue:
+				reply.sErrorDescription = "Error code " + to_string(e.whatCode()) + ": " + curl_easy_strerror(e.whatCode()) + "; " + e.what();
+				break;
+			default:
+				throw;
+			}
+		}
 
-		reply.bSucceeded = true;
 		reply.nHttpCode = curlpp::infos::ResponseCode::get(req);
-		reply.sContentType = curlpp::infos::ContentType::get(req);
+		reply.sHttpStatusText = sHttpStatusText;
 		reply.sEffectiveUrl = curlpp::infos::EffectiveUrl::get(req);
+
+		// Unfortunately libcurl can return NULL value for CURLINFO_EFFECTIVE_URL and 
+		// currently curlpp does not support this and makes a crash.
+		// So here I used manual way to get content type:
+		//reply.sContentType = curlpp::infos::ContentType::get(req);
+		{
+			char * tmp = nullptr;
+			curlpp::InfoGetter::get<char*>(req, CURLINFO_CONTENT_TYPE, tmp);
+			if (tmp)
+			{
+				reply.sContentType = tmp;
+			}
+			else
+			{
+				reply.sContentType = "";
+			}
+		}
+	}
+	catch (curlpp::LibcurlLogicError& e)
+	{
+		reply.sErrorDescription = string("cURL LibcurlLogicError: ")
+			+ "code " + to_string(e.whatCode()) + ": " + curl_easy_strerror(e.whatCode()) + "; " + e.what();
+	}
+	catch (curlpp::LibcurlRuntimeError& e)
+	{
+		reply.sErrorDescription = string("cURL LibcurlRuntimeError: ")
+			+ "code " + to_string(e.whatCode()) + ": " + curl_easy_strerror(e.whatCode()) + "; " + e.what();
 	}
 	catch (curlpp::LogicError& e)
 	{
