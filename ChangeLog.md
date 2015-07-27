@@ -3,6 +3,12 @@
 ## Next version
 
 
+## Version 1.4.32 (27 July 2015)
+
+* added command line options for dtracert:
+  * -hs hop_number  First hop number to start from.
+
+
 ## Version 1.4.30 (29 June 2015)
 
 * updated code to use and parse latest web API changes: more command line options, more control and etc.
