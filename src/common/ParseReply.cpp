@@ -111,7 +111,7 @@ ProbeAPI::PingInfo::PingInfo(const Json::Value& v)
 	// 	{
 	// 		"Status":"OK",
 	// 		"Destination":null,			// or "google-public-dns-a.google.com"
-	// 		"Hostname":null,			// or "google-public-dns-a.google.com"
+	// 		"HostName":null,			// or "google-public-dns-a.google.com"
 	// 		"IP":"8.8.8.8",
 	// 		"PingTime":35,				// average
 	// 		"PingTimeArray":[
@@ -126,7 +126,7 @@ ProbeAPI::PingInfo::PingInfo(const Json::Value& v)
 
 	const Json::Value v2 = v[0];
 
-	sTargetHost = v2.get("Hostname", "").asString();
+	sTargetHost = v2.get("HostName", "").asString();
 	sTargetIp = v2.get("IP", "").asString();
 
 	const Json::Value v3 = v2.get("PingTimeArray", "");
@@ -150,7 +150,7 @@ ProbeAPI::TracertHopResults::TracertHopResults(const Json::Value& v)
 	sReplyHost = v.get("HostName", "").asString();
 	sReplyIp = v.get("IP", "").asString();
 
-#if 0 // TODO: this code is broken by web API
+#if 1
 	const Json::Value v2 = v.get("PingTimeArray", "");
 
 	const Json::ArrayIndex n = v2.size();
@@ -270,7 +270,7 @@ ProbeAPI::ProbeInfo::ProbeInfo(const Json::Value& v, const eParseMode mode)
 	// 			{
 	// 				"Status":"OK",
 	// 				"Destination":null,			// or "google-public-dns-a.google.com"
-	// 				"Hostname":null,			// or "google-public-dns-a.google.com"
+	// 				"HostName":null,			// or "google-public-dns-a.google.com"
 	// 				"IP":"8.8.8.8",
 	// 				"PingTime":35,				// average
 	// 				"PingTimeArray":[
