@@ -64,7 +64,7 @@ public:
 	Option<bool>	bInfinitePing	= { false, { "-t" } };
 
 	// initialization sequence: { defaultValue, minValue, maxValue, {"--cmdArg"}, bChangesTimeoutTotalMs }
-	Option<uint32_t>	nTimeoutPingMs		= { 3000,	100,	10000,		{ "-w" },	true };
+	Option<uint32_t>	nTimeoutPingMs		= { 1000,	100,	10000,		{ "-w" },	true };
 	Option<uint32_t>	nTimeoutTotalMs		= { 0,		2000,	5*60*1000,	{ "-wt" } };
 	Option<uint32_t>	nWaitBetweenPingsMs	= { 100,	1,		10000,		{ },		true };
 	Option<uint32_t>	nPingsPerProbe		= { 1,		1,		10,			{ "-np" },	true };

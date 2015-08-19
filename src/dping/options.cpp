@@ -147,7 +147,7 @@ void ApplicationOptions::RecalculateTotalTimeout()
 	nTimeoutTotalMs =
 		nTimeoutPingMs * nPingsPerProbe + nWaitBetweenPingsMs * (nPingsPerProbe - 1)	// time for one probe to ping
 		+ (bResolveIp2Name ? 1000 : 0)	// time for probe to resolve IP to address
-		+ 2000;	// time for server to send all jobs and gather all results
+		+ 4000;	// time for server to send all jobs and gather all results
 }
 
 //------------------------------------------------------

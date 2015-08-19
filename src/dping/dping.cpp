@@ -117,6 +117,7 @@ public:
 			<< "&ttl=" << options.nTTL						// Max number of hops for ping
 			<< "&sleep=" << options.nWaitBetweenPingsMs		// Sleep between pings in milliseconds (default 1000ms).
 			<< "&timeout=" << options.nTimeoutTotalMs		// Maximum time available to probes for testing in milliseconds (default 6000). The whole test is most likely to last longer then this value.
+			<< "&commandTimeout=" << options.nTimeoutPingMs // Ping timeout in milliseconds that one ping can take (default 5000ms).
 			<< "&bufferSize=" << options.nPacketSize		// buffer size filled with 'A' char to send, default=32, max=65500
 			<< "&fragment=" << !options.bDontFragment		// opposite of "dontFragment" flag, default=1 => dontFragment=0
 			<< "&resolve=" << options.bResolveIp2Name		// if IP was given, try to resolve it, default=0
@@ -289,6 +290,7 @@ void PrintPackOfResults(const JobType& job, const ApplicationOptions& options, c
 				throw PException("PrintPackOfResults: Terminate Program");
 
 			++stats.nSent;
+
 			if (!pingResult.bTimeout)
 			{
 				++stats.nReceived;
@@ -300,6 +302,9 @@ void PrintPackOfResults(const JobType& job, const ApplicationOptions& options, c
 				DoSleep(pingResult, bFirstIteration);
 			}
 			job.PrintJobResult(info, pingResult);
+
+			if (stats.nSent == options.nProbesLimit)
+				return;
 		}
 	}
 }
@@ -317,7 +322,10 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 	const ProbeApiRequester::Reply reply = requester.DoRequest(request, options.bDebug);
 	if (!reply.bSucceeded)
 	{
-		throw PException("MakePackOfJobs: requester.DoRequest: " + reply.sErrorDescription, eRetCode::ApiFailure);
+		if (reply.nHttpCode == 203)
+			throw PException("Daily API limit reached - more information - http://www.probeapi.com/ip_api_limit_reached.html", eRetCode::ApiFailure);
+		else
+			throw PException("MakePackOfJobs: requester.DoRequest: " + reply.sErrorDescription, eRetCode::ApiFailure);
 	}
 
 	vector<ProbeAPI::ProbeInfo> items;
@@ -381,7 +389,8 @@ int DoJob(const ApplicationOptions& options)
 	}
 	catch (...)
 	{
-		job.PrintFooter(stats);
+		if (stats.nSent > 0)
+			job.PrintFooter(stats);
 		g_ptrStats.reset();
 		g_ptrJob.reset();
 		throw;
