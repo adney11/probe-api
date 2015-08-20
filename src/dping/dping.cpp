@@ -325,7 +325,7 @@ int MakePackOfJobs(const JobType& job, const string& sSearchArgument,
 		if (reply.nHttpCode == 203)
 			throw PException("Daily API limit reached - more information - http://www.probeapi.com/ip_api_limit_reached.html", eRetCode::ApiFailure);
 		else
-			throw PException("MakePackOfJobs: requester.DoRequest: " + reply.sErrorDescription, eRetCode::ApiFailure);
+			throw PException(reply.sErrorDescription, eRetCode::ApiFailure);
 	}
 
 	vector<ProbeAPI::ProbeInfo> items;

@@ -3,6 +3,16 @@
 ## Next version
 
 
+## Version 1.4.33 (19 August 2015)
+
+* minor changes in error messages
+* Changed default values in dping:
+  * single ping timeout: 3000ms -> 1000ms
+  * wait time for server response: 2000ms -> 4000ms
+* Changed default values in dtracert:
+  * wait time for server response: 2000ms -> 4000ms
+
+
 ## Version 1.4.32 (27 July 2015)
 
 * added command line options for dtracert:

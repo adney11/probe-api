@@ -149,7 +149,7 @@ void ApplicationOptions::RecalculateTotalTimeout()
 	nTimeoutTotalMs =
 		nMaxFailedHopsEffective * (nTimeoutPingMs * nTriesPerHop + nAdditionalRowTime) // max time for continuous sequence of rows full of timeouts
 		+ 10 * (nTimeoutPingMs * (nTriesPerHop - 1) + 500 + nAdditionalRowTime)	// approx bad time for other rows
-		+ 2000;	// time for server to send all jobs and gather all results
+		+ 4000;	// time for server to send all jobs and gather all results
 }
 
 //------------------------------------------------------
