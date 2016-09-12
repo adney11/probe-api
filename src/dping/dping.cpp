@@ -104,8 +104,8 @@ public:
 	string GetUrl(const ApplicationStats& stats, const string& sSearchArgument, const string& sTarget) const
 	{
 		// Documentation:
-		// https://www.mashape.com/optimalsoftware/freeprobeapi/#startpingtestbycountry
-		// https://www.mashape.com/optimalsoftware/freeprobeapi/#startpingtestbyasn
+		// https://cloudperf.speedchecker.xyz/application/docs-probeapi/#ping-test-by-country
+		// https://cloudperf.speedchecker.xyz/application/docs-probeapi/#ping-test-by-asn
 		const int64_t nRestProbes = options.nProbesLimit - stats.nSent;
 		const auto nRequestedProbeCount = (std::min)(options.nMaxProbesToRequest, (std::max)(options.nMinProbesToRequest, nRestProbes));
 

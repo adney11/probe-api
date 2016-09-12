@@ -90,8 +90,8 @@ public:
 	string GetUrl(const ApplicationStats& stats, const string& sSearchArgument, const string& sTarget) const
 	{
 		// Documentation:
-		// https://www.mashape.com/optimalsoftware/freeprobeapi/#starttracerttestbycountry
-		// https://www.mashape.com/optimalsoftware/freeprobeapi/#starttracerttestbyasn
+		// https://cloudperf.speedchecker.xyz/application/docs-probeapi/#traceroute-test-by-country
+		// https://cloudperf.speedchecker.xyz/application/docs-probeapi/#traceroute-test-by-asn
 		const int64_t nRestProbes = options.nProbesLimit - stats.nSent;
 		const auto nRequestedProbeCount = (std::min)(options.nMaxProbesToRequest, (std::max)(options.nMinProbesToRequest, nRestProbes));
 

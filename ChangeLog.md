@@ -3,6 +3,11 @@
 ## Next version
 
 
+## Version 1.4.34 (12 September 2016)
+
+* moved from Mashape to Kong
+
+
 ## Version 1.4.33 (19 August 2015)
 
 * minor changes in error messages

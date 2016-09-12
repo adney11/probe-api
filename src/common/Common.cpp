@@ -37,7 +37,7 @@ ProbeApiRequester::Request::Request(const std::string& sRequestWithArgs, const C
 {
 	eMethod = HTTP_GET;
 	sUrl = options.sMashapeUrl + sRequestWithArgs;
-	headers.emplace_back("X-Mashape-Key", options.sMashapeKey);
+	headers.emplace_back("apikey", options.sMashapeKey);
 	headers.emplace_back("Accept", "application/json");
 
 	sUserAgent = VERSION_PRODUCT_NAME " HTTP client v." MAIN_PRODUCT_VERSION_STR_A;
