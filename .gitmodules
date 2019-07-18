@@ -1,6 +1,7 @@
 [submodule "deps/curlpp"]
 	path = deps/curlpp
 	url = https://github.com/jpbarrette/curlpp.git
+	branch = develop
 [submodule "deps/jsoncpp"]
 	path = deps/jsoncpp
 	url = https://github.com/open-source-parsers/jsoncpp.git
@@ -8,6 +9,7 @@
 [submodule "deps/zlib"]
 	path = deps/zlib
 	url = https://github.com/madler/zlib.git
+	branch = develop
 [submodule "deps/curl"]
 	path = deps/curl
 	url = https://github.com/curl/curl.git
