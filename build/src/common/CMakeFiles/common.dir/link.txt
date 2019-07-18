@@ -1,2 +1,0 @@
-/usr/bin/ar qc libcommon.a  CMakeFiles/common.dir/Common.cpp.o CMakeFiles/common.dir/CommonOperations.cpp.o CMakeFiles/common.dir/HttpRequest.cpp.o CMakeFiles/common.dir/ParseReply.cpp.o CMakeFiles/common.dir/credits.cpp.o CMakeFiles/common.dir/stdafx.cpp.o
-/usr/bin/ranlib libcommon.a
