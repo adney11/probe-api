@@ -14,3 +14,6 @@
 	path = deps/curl
 	url = https://github.com/curl/curl.git
 	branch = curl-7_65_2
+[submodule "build/curlpp"]
+	path = build/curlpp
+	url = https://github.com/jpbarrette/curlpp.git
