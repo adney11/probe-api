@@ -5,7 +5,7 @@
 [submodule "deps/jsoncpp"]
 	path = deps/jsoncpp
 	url = https://github.com/open-source-parsers/jsoncpp.git
-	branch = 0.y.z
+	tag = 1.9.1
 [submodule "deps/zlib"]
 	path = deps/zlib
 	url = https://github.com/madler/zlib.git
