@@ -1,0 +1,1 @@
+/usr/bin/c++   -std=c++11 -Wno-deprecated-declarations -Os -DNDEBUG  -rdynamic CMakeFiles/dping.dir/dping.cpp.o CMakeFiles/dping.dir/main.cpp.o CMakeFiles/dping.dir/options.cpp.o CMakeFiles/dping.dir/stdafx.cpp.o  -o ../../../bin/dping ../common/libcommon.a ../../deps/build.projects/jsoncpp/libjsoncpp.a ../../deps/build.projects/curlpp/libcurlpp.a -lcurl 
